@@ -1,100 +1,88 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>@yield('title', 'Instruktur - WaveSkill')</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@yield('title', 'Instruktur')</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { background-color: #1e1e1e; }
 
-    <!-- Font Awesome (opsional) -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    .sidebar {
+      position: fixed; left: 0; top: 0; height: 100vh; width: 70px;
+      background-color: #FF9F29; display: flex; flex-direction: column;
+      align-items: center; padding-top: 20px;
+    }
 
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f5f7fa;
-        }
+    .sidebar img.logo { width: 40px; margin-bottom: 20px; }
 
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            background-color: #0077b6;
-            padding: 20px;
-            color: white;
-        }
+    .sidebar nav { display: flex; flex-direction: column; gap: 20px; margin-top: 40px; }
+    .sidebar nav a {
+      width: 30px; height: 30px; background-color: #ffffff33;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
 
-        .sidebar h4 {
-            font-size: 1.4rem;
-            margin-bottom: 2rem;
-        }
+    .topbar {
+      margin-left: 70px; background-color: #FFA447; padding: 16px 24px;
+      color: white; display: flex; justify-content: space-between; align-items: center;
+    }
 
-        .sidebar a {
-            color: white;
-            display: block;
-            margin: 10px 0;
-            text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-        }
+    .content {
+      margin-left: 70px; padding: 20px;
+      background-color: #4AC9FF;
+      min-height: calc(100vh - 60px);
+    }
 
-        .sidebar a:hover, .sidebar a.active {
-            background-color: #023e8a;
-        }
+    .class-card {
+      background-color: #FF9F29; border-radius: 10px; padding: 20px;
+      color: white; margin-bottom: 20px;
+    }
 
-        .content {
-            margin-left: 220px;
-            padding: 30px;
-        }
+    .class-card img {
+      width: 100%; border-radius: 10px; margin-bottom: 10px;
+    }
 
-        .topbar {
-            background-color: #00b4d8;
-            padding: 10px 20px;
-            color: white;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-    </style>
+    .tabs {
+      display: flex; gap: 10px; margin-bottom: 20px;
+    }
+
+    .tabs button {
+      border: none; border-radius: 15px; padding: 5px 15px;
+      cursor: pointer; font-weight: bold;
+    }
+
+    .tabs .active { background-color: #FF9F29; color: white; }
+
+    .search-box {
+      background: white; border-radius: 10px; padding: 10px; margin-bottom: 20px;
+    }
+
+    .accordion {
+      background-color: #FFF176; border: none; margin-bottom: 10px;
+      border-radius: 10px; padding: 15px; cursor: pointer; width: 100%;
+      font-weight: bold; text-align: left;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="sidebar">
+    <img class="logo" src="{{ asset('images/logo.png') }}" alt="Logo WaveSkill" />
+    <nav>
+      <a href="{{ route('instruktur.dashboard') }}"><img src="{{ asset('images/icon-home.png') }}" alt="Home" /></a>
+      <a href="#"><img src="{{ asset('images/icon-user.png') }}" alt="Users" /></a>
+      <a href="#"><img src="{{ asset('images/icon-settings.png') }}" alt="Settings" /></a>
+    </nav>
+  </div>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h4>WaveSkill</h4>
-        <a href="{{ route('instruktur.dashboard') }}" class="{{ request()->is('instruktur/dashboard') ? 'active' : '' }}">
-            <i class="fas fa-home me-2"></i> Dashboard
-        </a>
-        <a href="#">
-            <i class="fas fa-chalkboard-teacher me-2"></i> Kursus Saya
-        </a>
-        <a href="#">
-            <i class="fas fa-file-alt me-2"></i> Materi
-        </a>
-        <a href="#">
-            <i class="fas fa-tasks me-2"></i> Tugas
-        </a>
-        <a href="{{ route('instruktur.logout') }}"
-           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            <i class="fas fa-sign-out-alt me-2"></i> Logout
-        </a>
+  <div class="topbar">
+    <div>Halo, <strong>{{ Auth::user()->name ?? 'Instruktur' }}</strong></div>
+    <div><img src="{{ asset('images/avatar.png') }}" alt="User" style="border-radius: 50%; width: 32px;" /> {{ Auth::user()->name ?? 'Instruktur' }}</div>
+  </div>
 
-        <form id="logout-form" action="{{ route('instruktur.logout') }}" method="POST" class="d-none">
-            @csrf
-        </form>
-    </div>
-
-    <!-- Main Content -->
-    <div class="content">
-        <div class="topbar">
-            <strong>👨‍🏫 Halo, {{ Auth::user()->name ?? 'Instruktur' }}</strong>
-        </div>
-
-        @yield('content')
-    </div>
-
+  <div class="content">
+    @yield('content')
+  </div>
 </body>
 </html>

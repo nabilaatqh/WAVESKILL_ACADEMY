@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Instructor;
+namespace App\Http\Controllers\Instruktur;
 
-use App\Http\Controllers\Controller; // ← ini yang kurang
+use App\Http\Controllers\Controller; 
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 

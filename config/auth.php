@@ -42,12 +42,12 @@ return [
 
         'instrukturs' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Instruktur::class,
         ],
 
         'students' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Student::class,
         ],
     ],
 
