@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Hash;
 
 class UserManagementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return view('admin.users.index', compact('users'));
+        $role = $request->query('role', 'admin'); // default ke admin
+
+        $users = User::where('role', $role)->get();
+
+        return view('admin.users.index', compact('users', 'role'));
     }
 
     public function create()
@@ -51,14 +54,24 @@ class UserManagementController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'role' => 'required|in:admin,instructor,student',
+            'name'      => 'required|string|max:255',
+            'email'     => 'required|email|unique:users,email,' . $id,
+            'role'      => 'required|in:admin,instructor,student',
             'is_active' => 'required|boolean',
         ]);
 
-        $user->update([
+        $data = [
+            'name'      => $request->name,
+            'email'     => $request->email,
             'role'      => $request->role,
             'is_active' => $request->is_active,
-        ]);
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
 
         return redirect()->route('admin.users.index')->with('success', 'User berhasil diperbarui.');
     }

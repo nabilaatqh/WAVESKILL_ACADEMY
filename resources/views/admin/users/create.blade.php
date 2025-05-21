@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container mt-4">
+<div class="mt-4">
     <h3>➕ Tambah User Baru</h3>
 
     <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-secondary mb-3">← Kembali ke Daftar User</a>
@@ -41,6 +41,15 @@
                 <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                 <option value="instructor" {{ old('role') == 'instructor' ? 'selected' : '' }}>Instructor</option>
                 <option value="student" {{ old('role') == 'student' ? 'selected' : '' }}>Student</option>
+            </select>
+        </div>
+
+        <div class="form-group mt-2">
+            <label>Status</label>
+            <select name="is_active" class="form-control" required>
+                <option value="">-- Pilih Status --</option>
+                <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Aktif</option>
+                <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Nonaktif</option>
             </select>
         </div>
 

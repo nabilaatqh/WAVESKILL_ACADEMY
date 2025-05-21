@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\PengaturanController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\InstructorLoginController;
@@ -51,11 +52,17 @@ Route::post('/student/register', [StudentRegisterController::class, 'register'])
 // ============== ADMIN AREA ==============
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
-
+    Route::get('/admin/users', [UserManagementController::class, 'index'])->name('admin.users.index');
+    
     // Manajemen User
     Route::resource('users', UserManagementController::class)->except(['show']);
     Route::patch('users/{user}/toggle', [UserManagementController::class, 'toggleStatus'])->name('users.toggle');
     Route::patch('users/{user}/role', [UserManagementController::class, 'changeRole'])->name('users.role');
+    
+    Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
+    Route::post('/pengaturan/update-foto', [PengaturanController::class, 'updateFoto'])->name('updateFoto');
+
+
 });
 
 
