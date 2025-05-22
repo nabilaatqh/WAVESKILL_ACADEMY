@@ -6,13 +6,6 @@ use Illuminate\Support\Facades\Route;
 // AUTH CONTROLLERS
 use App\Http\Controllers\Auth\AdminLoginController;
 
-// Instruktur
-use App\Http\Controllers\Instruktur\DashboardController;
-use App\Http\Controllers\Instruktur\KelasController;
-use App\Http\Controllers\Instruktur\MateriController;
-use App\Http\Controllers\Instruktur\ProjectController;
-use App\Http\Controllers\Auth\InstructorLoginController;
-
 // Student
 use App\Http\Controllers\Auth\StudentLoginController;
 use App\Http\Controllers\Auth\StudentRegisterController;
@@ -27,6 +20,7 @@ use App\Http\Controllers\Instruktur\MateriController;
 use App\Http\Controllers\Instruktur\ProjectController;
 use App\Http\Controllers\Instruktur\KelasController;
 use App\Http\Controllers\Instruktur\GroupController;
+use App\Http\Controllers\Auth\InstructorLoginController;
 
 // STUDENT CONTROLLERS
 use App\Http\Controllers\Student\StudentController;
