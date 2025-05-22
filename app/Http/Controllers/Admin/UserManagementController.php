@@ -11,38 +11,13 @@ use Illuminate\Support\Facades\Hash;
 
 class UserManagementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $admins = Admin::all()->map(function ($admin) {
-            return [
-                'id' => $admin->id,
-                'name' => $admin->name,
-                'email' => $admin->email,
-                'role' => 'admin',
-            ];
-        });
+        $role = $request->query('role', 'admin'); // default ke admin
 
-        $instrukturs = Instruktur::all()->map(function ($instruktur) {
-            return [
-                'id' => $instruktur->id,
-                'name' => $instruktur->name,
-                'email' => $instruktur->email,
-                'role' => 'instructor',
-            ];
-        });
+        $users = User::where('role', $role)->get();
 
-        $students = Student::all()->map(function ($student) {
-            return [
-                'id' => $student->id,
-                'name' => $student->name,
-                'email' => $student->email,
-                'role' => 'student',
-            ];
-        });
-
-        $users = $admins->merge($instrukturs)->merge($students);
-
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index', compact('users', 'role'));
     }
 
     public function create()
@@ -91,11 +66,24 @@ class UserManagementController extends Controller
         $user = $this->getUserByRole($role, $id);
 
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
+            'name'      => 'required|string|max:255',
+            'email'     => 'required|email|unique:users,email,' . $id,
+            'role'      => 'required|in:admin,instructor,student',
+            'is_active' => 'required|boolean',
         ]);
 
-        $user->update($request->only('name', 'email'));
+        $data = [
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'role'      => $request->role,
+            'is_active' => $request->is_active,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
 
         return redirect()->route('admin.users.index')->with('success', 'User berhasil diperbarui.');
     }
