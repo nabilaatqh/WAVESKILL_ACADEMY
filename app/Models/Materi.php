@@ -9,17 +9,15 @@ class Materi extends Model
 {
     use HasFactory;
 
-    protected $table = 'materis';
-
     protected $fillable = [
-        'kelas_id',
-        'judul',
-        'deskripsi',
-        'file',
+        'judul', 
+        'deskripsi', 
+        'file_path', 
+        'kelas_id'
     ];
 
     public function kelas()
     {
-        return $this->belongsTo(Kelas::class);
+        return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 }

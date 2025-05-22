@@ -1,27 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\Instruktur;
+  namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use App\Models\Kelas;
+use App\Models\Materi;
 
 class DashboardController extends Controller
 {
-    public function index()
-{
-    $instruktur = Auth::guard('instruktur')->user();
+    public function index(): View
+    {
+        $instrukturId = Auth::id();
 
-    $kelasAktif = Kelas::where('instruktur_id', $instruktur->id)->latest()->first();
-    $kelasList = Kelas::where('instruktur_id', $instruktur->id)
-                    ->where('id', '!=', optional($kelasAktif)->id)
-                    ->get();
+        $kelas = Kelas::where('instruktur_id', $instrukturId)->get();
 
-    // Ambil materi dari kelas aktif (relasi harus benar)
-    $materis = $kelasAktif ? $kelasAktif->materi()->latest()->get() : collect();
-     $projects = $kelasAktif ? $kelasAktif->project()->latest()->get() : collect(); // ✅ Tambahkan ini
+        $materi = Materi::whereHas('kelas', function ($q) use ($instrukturId) {
+            $q->where('instruktur_id', $instrukturId);
+        })->latest()->get();
 
-    return view('instruktur.dashboard', compact(
-        'instruktur', 'kelasAktif', 'kelasList', 'materis', 'projects'
-    ));
-}}
+        return view('instruktur.dashboard', compact('kelas', 'materi'));
+    }
+}

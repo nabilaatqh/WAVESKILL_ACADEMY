@@ -3,103 +3,119 @@
 namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Materi;
 use App\Models\Kelas;
+use App\Models\Materi;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class MateriController extends Controller
 {
-    public function index(Request $request)
-    {
-    $kelasId = $request->query('kelas');
-
-    if ($kelasId) {
-        $materi = Materi::where('kelas_id', $kelasId)->latest()->get();
-        $kelas = \App\Models\Kelas::find($kelasId);
-    } else {
-        $materi = Materi::latest()->get();
-        $kelas = null;
-    }
-
-    return view('instruktur.materi.index', compact('materi', 'kelas'));
-    }
-
-
-    public function create()
-    {
-    $instruktur = Auth::guard('instruktur')->user();
-    $kelasAktif = Kelas::where('instruktur_id', $instruktur->id)->latest()->first();
-
-    if (!$kelasAktif) {
-        return redirect()->route('instruktur.dashboard')->with('error', 'Tidak ada kelas aktif untuk mengunggah materi.');
-    }
-
-    return view('instruktur.materi.create', compact('kelasAktif'));
-    }
-
-
-    public function store(Request $request)
+    public function index()
 {
-    $instruktur = Auth::guard('instruktur')->user();
-    $kelasAktif = Kelas::where('instruktur_id', $instruktur->id)->latest()->first();
+    $materi = Materi::whereHas('kelas', function ($q) {
+        $q->where('instruktur_id', Auth::id());
+    })->latest()->get();
 
-    if (!$kelasAktif) {
-        return redirect()->route('instruktur.dashboard')->with('error', 'Tidak ada kelas aktif untuk menyimpan materi.');
-    }
+    $kelasAktif = Kelas::where('instruktur_id', Auth::id())->first(); // contoh kelas aktif
 
-    $data = $request->validate([
-        'judul' => 'required|string|max:255',
-        'deskripsi' => 'required|string',
-        'file' => 'nullable|file|max:10240',
-    ]);
-
-    // Tambahkan kelas_id dari kelas aktif
-    $data['kelas_id'] = $kelasAktif->id;
-
-    if ($request->hasFile('file')) {
-        $data['file'] = $request->file('file')->store('materi', 'public');
-    }
-
-    Materi::create($data);
-    return redirect()->route('instruktur.materi.index')->with('success', 'Materi berhasil ditambahkan.');
+    return view('instruktur.materi.index', compact('materi', 'kelasAktif'));
 }
 
 
-    public function edit(Materi $materi)
+    public function create(Kelas $kelas)
     {
-        $kelas = Kelas::all();
-        return view('instruktur.materi.edit', compact('materi', 'kelas'));
+        // Pastikan kelas milik instruktur ini
+        if ($kelas->instruktur_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('instruktur.materi.create', compact('kelas'));
     }
 
-    public function update(Request $request, Materi $materi)
+    public function store(Request $request, Kelas $kelas)
     {
-        $data = $request->validate([
-            'kelas_id' => 'required|exists:kelas,id',
+        if ($kelas->instruktur_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'file' => 'nullable|file|max:10240',
+            'file' => 'required|file|mimes:pdf,docx,pptx,mp4|max:20480',
+        ]);
+
+        $filePath = $request->file('file')->store('materi_files', 'public');
+
+        Materi::create([
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'file_path' => $filePath,
+            'kelas_id' => $kelas->id,
+        ]);
+
+        return redirect()->route('instruktur.materi.index')->with('success', 'Materi berhasil ditambahkan.');
+    }
+
+    // Tambahkan method show() untuk menghindari error dari Route::resource
+    public function show(Materi $materi)
+    {
+        // Pastikan materi milik instruktur yang sedang login
+        if ($materi->kelas->instruktur_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        return view('instruktur.materi.show', compact('materi'));
+    }
+
+    // Method edit() untuk form edit materi
+    public function edit(Materi $materi)
+    {
+        if ($materi->kelas->instruktur_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Ambil kelas milik instruktur untuk dropdown jika perlu
+        $kelasList = Kelas::where('instruktur_id', Auth::id())->get();
+
+        return view('instruktur.materi.edit', compact('materi', 'kelasList'));
+    }
+
+    // Method update() untuk proses update materi
+    public function update(Request $request, Materi $materi)
+    {
+        if ($materi->kelas->instruktur_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'file' => 'nullable|file|mimes:pdf,docx,pptx,mp4|max:20480',
+            'kelas_id' => 'required|exists:kelas,id',
         ]);
 
         if ($request->hasFile('file')) {
-            $data['file'] = $request->file('file')->store('materi', 'public');
+            $filePath = $request->file('file')->store('materi_files', 'public');
+            $materi->file_path = $filePath;
         }
 
-        $materi->update($data);
-        $this->authorize('update', $materi);
+        $materi->judul = $request->judul;
+        $materi->deskripsi = $request->deskripsi;
+        $materi->kelas_id = $request->kelas_id;
+        $materi->save();
+
         return redirect()->route('instruktur.materi.index')->with('success', 'Materi berhasil diperbarui.');
     }
 
-    public function show(Materi $materi)
-    {
-    $this->authorize('view', $materi); // optional jika pakai policy
-    return view('instruktur.materi.show', compact('materi'));
-    }
-
-
+    // Method destroy() untuk hapus materi
     public function destroy(Materi $materi)
     {
+        if ($materi->kelas->instruktur_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
         $materi->delete();
+
         return redirect()->route('instruktur.materi.index')->with('success', 'Materi berhasil dihapus.');
     }
 }

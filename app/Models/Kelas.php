@@ -12,27 +12,35 @@ class Kelas extends Model
     protected $table = 'kelas';
 
     protected $fillable = [
-        'nama',
-        'deskripsi',
-        'banner',
+        'nama_kelas',
+        'nama_kelas',
         'instruktur_id',
+        'whatsapp_link',
+        'banner',
     ];
 
-    // Relasi ke instruktur (user yang mengajar kelas ini)
     public function instruktur()
     {
-        return $this->belongsTo(User::class, 'instruktur_id');
+        return $this->belongsTo(Instruktur::class, 'instruktur_id');
     }
 
-    // Relasi ke materi-materi dalam kelas
-    public function materi()
+    public function materis()
     {
-        return $this->hasMany(Materi::class);
+        return $this->hasMany(Materi::class, 'kelas_id');
     }
 
-    // Relasi ke project-project dalam kelas
-    public function project()
+    public function projects()
     {
-        return $this->hasMany(Project::class);
+        return $this->hasMany(Project::class, 'kelas_id');
+    }
+
+    public function group()
+    {
+        return $this->hasOne(Group::class, 'kelas_id');
+    }
+
+    public function students()
+    {
+        return $this->belongsToMany(Student::class, 'kelas_student', 'kelas_id', 'student_id');
     }
 }

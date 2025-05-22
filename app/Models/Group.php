@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model
+class Group extends Model
 {
-    protected $fillable = ['judul', 'deskripsi', 'kelas_id', 'deadline'];
+    protected $fillable = ['kelas_id', 'link_whatsapp'];
 
     public function kelas()
     {

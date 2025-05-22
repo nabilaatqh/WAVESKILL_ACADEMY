@@ -15,17 +15,17 @@ return [
 
         'admin' => [
             'driver' => 'session',
-            'provider' => 'users'
+            'provider' => 'admins'
         ],
 
         'instruktur' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'instrukturs',
         ],
 
         'student' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'students',
         ],
     ],
 
