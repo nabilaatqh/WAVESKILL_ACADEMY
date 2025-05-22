@@ -2,25 +2,31 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\PengaturanController;
 use App\Http\Controllers\Admin\UserManagementController;
+
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\InstructorLoginController;
 use App\Http\Controllers\Auth\StudentLoginController;
 use App\Http\Controllers\Auth\StudentRegisterController;
-use App\Http\Controllers\Instructor\InstructorController;
+
+use App\Http\Controllers\Instruktur\InstrukturController;
+use App\Http\Controllers\Instruktur\MateriController;
+use App\Http\Controllers\Instruktur\ProjectController;
+use App\Http\Controllers\Instruktur\GroupController;
+use App\Http\Controllers\Instruktur\DashboardController;
+
 use App\Http\Controllers\Student\StudentController;
 
 // ============== HOME & LOGIN SELECTOR ==============
 Route::get('/', fn () => view('welcome'))->name('welcome');
 
 Route::get('/login', function () {
-    // Jika sudah login, arahkan langsung ke dashboard sesuai role
     if (Auth::guard('instruktur')->check()) return redirect()->route('instruktur.dashboard');
     if (Auth::guard('student')->check()) return redirect()->route('student.dashboard');
 
-    // Tampilkan halaman pemilih login Instruktur/Mahasiswa (tanpa admin)
     return view('auth.select_login');
 })->name('login');
 
@@ -53,24 +59,38 @@ Route::post('/student/register', [StudentRegisterController::class, 'register'])
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/admin/users', [UserManagementController::class, 'index'])->name('admin.users.index');
-    
-    // Manajemen User
+
     Route::resource('users', UserManagementController::class)->except(['show']);
     Route::patch('users/{user}/toggle', [UserManagementController::class, 'toggleStatus'])->name('users.toggle');
     Route::patch('users/{user}/role', [UserManagementController::class, 'changeRole'])->name('users.role');
-    
+
     Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
     Route::post('/pengaturan/update-foto', [PengaturanController::class, 'updateFoto'])->name('updateFoto');
-
-
 });
 
 
 // ============== INSTRUKTUR AREA ==============
 Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.')->group(function () {
-    Route::get('/dashboard', [InstructorController::class, 'index'])->name('dashboard');
-    // Tambah: kursus, materi, tugas, dll
+
+    Route::get('/dashboard', [InstrukturController::class, 'dashboard'])->name('dashboard');
+
+    // Profil
+    Route::get('/profile/edit', [InstrukturController::class, 'editProfile'])->name('profile.edit');
+    Route::put('/profile/update', [InstrukturController::class, 'updateProfile'])->name('profile.update');
+    // Materi
+    Route::resource('materi', MateriController::class);
+    Route::resource('materi', MateriController::class)->except(['show']);
+    Route::get('materi/show/{materi}', [MateriController::class, 'show'])->name('materi.show');
+
+    Route::resource('project', ProjectController::class);
+
+    Route::resource('group', GroupController::class);
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 });
+
+
 
 
 // ============== STUDENT AREA ==============
