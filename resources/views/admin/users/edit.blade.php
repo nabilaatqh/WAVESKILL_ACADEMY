@@ -1,8 +1,8 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <div class="container mt-4">
-    <h3>➕ Tambah User Baru</h3>
+    <h3>✏️ Edit User</h3>
 
     <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-secondary mb-3">← Kembali ke Daftar User</a>
 
@@ -16,35 +16,21 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.users.store') }}" method="POST">
+    <form action="{{ route('admin.users.update', ['role' => $role, 'id' => $user->id]) }}" method="POST">
         @csrf
+        @method('PUT')
 
         <div class="form-group">
             <label>Nama Lengkap</label>
-            <input type="text" name="name" class="form-control" required value="{{ old('name') }}">
+            <input type="text" name="name" class="form-control" required value="{{ old('name', $user->name) }}">
         </div>
 
         <div class="form-group mt-2">
             <label>Email</label>
-            <input type="email" name="email" class="form-control" required value="{{ old('email') }}">
+            <input type="email" name="email" class="form-control" required value="{{ old('email', $user->email) }}">
         </div>
 
-        <div class="form-group mt-2">
-            <label>Password</label>
-            <input type="password" name="password" class="form-control" required>
-        </div>
-
-        <div class="form-group mt-2">
-            <label>Role</label>
-            <select name="role" class="form-control" required>
-                <option value="">-- Pilih Role --</option>
-                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                <option value="instructor" {{ old('role') == 'instructor' ? 'selected' : '' }}>Instructor</option>
-                <option value="student" {{ old('role') == 'student' ? 'selected' : '' }}>Student</option>
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-success mt-3">Simpan</button>
+        <button type="submit" class="btn btn-success mt-3">Perbarui</button>
     </form>
 </div>
 @endsection
