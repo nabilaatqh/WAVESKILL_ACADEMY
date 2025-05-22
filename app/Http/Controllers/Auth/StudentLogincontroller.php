@@ -13,17 +13,11 @@ class StudentLoginController extends Controller
         $this->middleware('guest:student')->except('logout');
     }
 
-    /**
-     * Tampilkan form login student.
-     */
     public function showLoginForm()
     {
         return view('auth.student.login'); // Pastikan view ini ada
     }
 
-    /**
-     * Proses login student.
-     */
     public function login(Request $request)
     {
         $request->validate([
@@ -42,9 +36,6 @@ class StudentLoginController extends Controller
         ])->withInput($request->only('email'));
     }
 
-    /**
-     * Logout student.
-     */
     public function logout()
     {
         Auth::guard('student')->logout();

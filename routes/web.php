@@ -9,23 +9,35 @@ use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\InstructorLoginController;
 use App\Http\Controllers\Auth\StudentLoginController;
 use App\Http\Controllers\Auth\StudentRegisterController;
-use App\Http\Controllers\Instructor\InstructorController;
+
+// ADMIN CONTROLLERS
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\UserManagementController;
+
+// INSTRUKTUR CONTROLLERS
+use App\Http\Controllers\Instruktur\InstructorController;
+use App\Http\Controllers\Instruktur\MateriController;
+use App\Http\Controllers\Instruktur\ProjectController;
+use App\Http\Controllers\Instruktur\KelasController;
+use App\Http\Controllers\Instruktur\GroupController;
+
+// STUDENT CONTROLLERS
 use App\Http\Controllers\Student\StudentController;
 
 // ============== HOME & LOGIN SELECTOR ==============
 Route::get('/', fn () => view('welcome'))->name('welcome');
 
 Route::get('/login', function () {
-    // Jika sudah login, arahkan langsung ke dashboard sesuai role
-    if (Auth::guard('instruktur')->check()) return redirect()->route('instruktur.dashboard');
-    if (Auth::guard('student')->check()) return redirect()->route('student.dashboard');
-
-    // Tampilkan halaman pemilih login Instruktur/Mahasiswa (tanpa admin)
+    if (Auth::guard('instruktur')->check()) {
+        return redirect()->route('instruktur.dashboard');
+    }
+    if (Auth::guard('student')->check()) {
+        return redirect()->route('student.dashboard');
+    }
     return view('auth.select_login');
 })->name('login');
 
 Route::get('/home', fn () => redirect('/'))->name('home');
-
 
 // ============== AUTH LOGIN / LOGOUT ROUTES ==============
 
@@ -48,7 +60,6 @@ Route::post('/student/logout', [StudentLoginController::class, 'logout'])->name(
 Route::get('/student/register', [StudentRegisterController::class, 'showRegistrationForm'])->name('student.register');
 Route::post('/student/register', [StudentRegisterController::class, 'register']);
 
-
 // ============== ADMIN AREA ==============
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
@@ -69,12 +80,43 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 // ============== INSTRUKTUR AREA ==============
 Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.')->group(function () {
     Route::get('/dashboard', [InstructorController::class, 'index'])->name('dashboard');
-    // Tambah: kursus, materi, tugas, dll
-});
 
+    // Materi resource (except create & store karena ada kelas sebagai parameter)
+    Route::resource('materi', MateriController::class)->except(['create', 'store']);
+
+    // Materi create & store harus bawa parameter kelas
+    Route::get('/kelas/{kelas}/materi/create', [MateriController::class, 'create'])->name('materi.create');
+    Route::post('/kelas/{kelas}/materi', [MateriController::class, 'store'])->name('materi.store');
+
+    Route::resource('projects', ProjectController::class);
+    // Projects CRUD (gunakan bentuk jamak/plural)
+    Route::resource('projects', ProjectController::class)->names([
+        'index' => 'project.index',
+        'create' => 'project.create',
+        'store' => 'project.store',
+        'show' => 'project.show',
+        'edit' => 'project.edit',
+        'update' => 'project.update',
+        'destroy' => 'project.destroy',
+    ]);
+
+    // Group CRUD (lengkap)
+    Route::get('/group', [GroupController::class, 'index'])->name('group.index');
+    Route::get('/group/create', [GroupController::class, 'create'])->name('group.create');
+    Route::post('/group', [GroupController::class, 'store'])->name('group.store');
+    Route::get('/group/{group}/edit', [GroupController::class, 'edit'])->name('group.edit');
+    Route::put('/group/{group}', [GroupController::class, 'update'])->name('group.update');
+    Route::delete('/group/{group}', [GroupController::class, 'destroy'])->name('group.destroy');
+
+    // Kelas CRUD
+    Route::resource('kelas', KelasController::class);
+
+    // Profile edit & update manual routes
+    Route::get('/profile/edit', [InstructorController::class, 'editProfile'])->name('profile.edit');
+    Route::put('/profile/update', [InstructorController::class, 'updateProfile'])->name('profile.update');
+});
 
 // ============== STUDENT AREA ==============
 Route::middleware(['auth:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentController::class, 'index'])->name('dashboard');
-    // Tambah: daftar kursus, materi, tugas, forum, profil, dll
 });

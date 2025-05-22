@@ -35,6 +35,11 @@
         </div>
 
         <div class="form-group mt-2">
+            <label>Konfirmasi Password</label>
+            <input type="password" name="password_confirmation" class="form-control" required>
+        </div>
+
+        <div class="form-group mt-2">
             <label>Role</label>
             <select name="role" class="form-control" required>
                 <option value="">-- Pilih Role --</option>
