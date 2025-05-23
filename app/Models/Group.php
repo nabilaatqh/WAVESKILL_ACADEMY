@@ -10,14 +10,14 @@ class Group extends Model
     use HasFactory;
 
     protected $fillable = [
-        'kelas_id',
+        'course_id',
         'link_whatsapp',
         'deskripsi',
     ];
 
     // Relasi ke kelas
-    public function kelas()
+    public function course()
     {
-        return $this->belongsTo(Kelas::class);
+        return $this->belongsTo(Course::class);
     }
 }

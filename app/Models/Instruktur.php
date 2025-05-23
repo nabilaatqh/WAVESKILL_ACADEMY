@@ -30,8 +30,8 @@ class Instruktur extends Authenticatable
     ];
 
     // Relasi: Instruktur punya banyak kelas
-    public function kelas()
+    public function course()
     {
-        return $this->hasMany(Kelas::class);
+        return $this->hasMany(Course::class);
     }
 }

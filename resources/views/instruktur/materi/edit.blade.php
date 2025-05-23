@@ -23,14 +23,14 @@
         </div>
 
         <div class="mb-3">
-            <label>Kelas <span class="text-danger">*</span></label>
-            <select name="kelas_id" class="form-control" required>
-                <option value="">-- Pilih Kelas --</option>
-                @foreach($kelas as $k)
-                    <option value="{{ $k->id }}" {{ (old('kelas_id', $materi->kelas_id) == $k->id) ? 'selected' : '' }}>{{ $k->nama_kelas }}</option>
+            <label>Course <span class="text-danger">*</span></label>
+            <select name="course_id" class="form-control" required>
+                <option value="">-- Pilih Course --</option>
+                @foreach($course as $k)
+                    <option value="{{ $k->id }}" {{ (old('course_id', $materi->course_id) == $k->id) ? 'selected' : '' }}>{{ $k->nama_course }}</option>
                 @endforeach
             </select>
-            @error('kelas_id')<small class="text-danger">{{ $message }}</small>@enderror
+            @error('course_id')<small class="text-danger">{{ $message }}</small>@enderror
         </div>
 
         <div class="mb-3">

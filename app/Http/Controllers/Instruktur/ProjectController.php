@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
-use App\Models\Kelas;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,7 +12,7 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::whereHas('kelas', function ($q) {
+        $projects = Project::whereHas('course', function ($q) {
             $q->where('instruktur_id', Auth::id());
         })->latest()->get();
 
@@ -21,9 +21,9 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $kelasList = Kelas::where('instruktur_id', Auth::id())->get();
+        $courseList = Course::where('instruktur_id', Auth::id())->get();
 
-        return view('instruktur.project.create', compact('kelasList'));
+        return view('instruktur.project.create', compact('courseList'));
     }
 
     public function store(Request $request)
@@ -31,19 +31,19 @@ class ProjectController extends Controller
         $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'kelas_id' => 'required|exists:kelas,id',
+            'course_id' => 'required|exists:course,id',
         ]);
 
-        // Cek akses instruktur ke kelas
-        $kelas = Kelas::findOrFail($request->kelas_id);
-        if ($kelas->instruktur_id !== Auth::id()) {
+        // Cek akses instruktur ke course
+        $course = Course::findOrFail($request->course_id);
+        if ($course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
         Project::create([
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi,
-            'kelas_id' => $kelas->id,
+            'course_id' => $course->id,
         ]);
 
         return redirect()->route('instruktur.project.index')->with('success', 'Project berhasil dibuat.');
@@ -51,7 +51,7 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        if ($project->kelas->instruktur_id !== Auth::id()) {
+        if ($project->course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
@@ -60,37 +60,37 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        if ($project->kelas->instruktur_id !== Auth::id()) {
+        if ($project->course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
-        $kelasList = Kelas::where('instruktur_id', Auth::id())->get();
+        $courseList = Course::where('instruktur_id', Auth::id())->get();
 
-        return view('instruktur.project.edit', compact('project', 'kelasList'));
+        return view('instruktur.project.edit', compact('project', 'courseList'));
     }
 
     public function update(Request $request, Project $project)
     {
-        if ($project->kelas->instruktur_id !== Auth::id()) {
+        if ($project->course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
         $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'kelas_id' => 'required|exists:kelas,id',
+            'course_id' => 'required|exists:course,id',
         ]);
 
-        // Cek akses instruktur ke kelas baru
-        $kelas = Kelas::findOrFail($request->kelas_id);
-        if ($kelas->instruktur_id !== Auth::id()) {
+        // Cek akses instruktur ke course baru
+        $course = Course::findOrFail($request->course_id);
+        if ($course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
         $project->update([
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi,
-            'kelas_id' => $kelas->id,
+            'course_id' => $course->id,
         ]);
 
         return redirect()->route('instruktur.project.index')->with('success', 'Project berhasil diperbarui.');
@@ -98,7 +98,7 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-        if ($project->kelas->instruktur_id !== Auth::id()) {
+        if ($project->course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 

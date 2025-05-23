@@ -17,7 +17,7 @@
         <thead>
             <tr>
                 <th>Judul</th>
-                <th>Kelas</th>
+                <th>Course</th>
                 <th>File</th>
                 <th>Aksi</th>
             </tr>
@@ -26,7 +26,7 @@
             @foreach($materis as $materi)
             <tr>
                 <td>{{ $materi->judul }}</td>
-                <td>{{ $materi->kelas->nama_kelas ?? '-' }}</td>
+                <td>{{ $materi->course->nama_course ?? '-' }}</td>
                 <td>
                     <a href="{{ asset('storage/' . $materi->file_path) }}" target="_blank">Lihat File</a>
                 </td>

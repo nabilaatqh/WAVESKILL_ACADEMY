@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Controller;
-use App\Models\Kelas;
+use App\Models\Course;
 use App\Models\Materi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,16 +12,16 @@ use Illuminate\Validation\Rule;
 
 class InstrukturController extends Controller
 {
-    // Tampilkan dashboard dengan kelas dan materi
+    // Tampilkan dashboard dengan course dan materi
     public function dashboard()
     {
-        $kelasAktif = Kelas::where('instruktur_id', Auth::id())->first();
+        $courseAktif = Course::where('instruktur_id', Auth::id())->first();
 
-        $materi = Materi::whereHas('kelas', function ($query) {
+        $materi = Materi::whereHas('course', function ($query) {
             $query->where('instruktur_id', Auth::id());
         })->get();
 
-        return view('instruktur.dashboard', compact('kelasAktif', 'materi'));
+        return view('instruktur.dashboard', compact('courseAktif', 'materi'));
     }
 
     // Tampilkan form edit profil

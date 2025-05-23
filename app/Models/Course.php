@@ -8,14 +8,14 @@ use App\Models\Instruktur;
 use App\Models\Materi;
 use App\Models\Project;
 
-class Kelas extends Model
+class Course extends Model
 {
     use HasFactory;
 
-    protected $table = 'kelas';
+    protected $table = 'courses';
 
     protected $fillable = [
-        'nama_kelas',
+        'nama_course',
         'deskripsi',
         'banner',
         'instruktur_id',
@@ -23,12 +23,12 @@ class Kelas extends Model
 
     public function instruktur()
     {
-        return $this->belongsTo(Instruktur::class);
+        return $this->belongsTo(Instruktur::class, 'instruktur_id');
     }
 
     public function materis()
     {
-        return $this->hasMany(Materi::class);
+        return $this->hasMany(Materi::class, 'course_id');
     }
 
     public function projects()

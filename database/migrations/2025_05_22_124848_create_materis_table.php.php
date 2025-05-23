@@ -10,13 +10,15 @@ class CreateMaterisTable extends Migration
     {
         Schema::create('materis', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('kelas_id');
+            $table->unsignedBigInteger('course_id'); // relasi ke courses
             $table->string('judul');
             $table->text('deskripsi')->nullable();
-            $table->string('file_path');
+            $table->string('tipe')->nullable(); // misal 'video', 'pdf'
+            $table->string('file')->nullable(); // file path jika ada
+            $table->string('link')->nullable(); // link video jika ada
             $table->timestamps();
 
-            $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
+            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });
     }
 
