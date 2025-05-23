@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah Course')
+@section('title', 'Edit Course')
 
 @section('content')
 <div class="container">
-    <h1>Tambah Course</h1>
+    <h1>Edit Course</h1>
 
-    <form action="{{ route('admin.course.store') }}" method="POST">
+    <form action="{{ route('admin.course.store') }}" method="POST" enctype="multipart/form-data"> 
         @csrf
 
         <div class="mb-3">
@@ -40,8 +40,18 @@
             @enderror
         </div>
 
+        <!-- Field untuk upload gambar banner -->
+        <div class="mb-3">
+            <label for="banner_image" class="form-label">Banner Course (Opsional)</label>
+            <input type="file" class="form-control @error('banner_image') is-invalid @enderror" id="banner_image" name="banner_image">
+            @error('banner_image')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
         <button type="submit" class="btn btn-primary">Simpan</button>
         <a href="{{ route('admin.course.index') }}" class="btn btn-secondary">Batal</a>
     </form>
+
 </div>
 @endsection

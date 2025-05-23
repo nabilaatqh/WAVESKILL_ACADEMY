@@ -26,16 +26,32 @@ class CourseController extends Controller
         return view('admin.course.create', compact('instrukturs'));
     }
 
-    // Simpan course baru
+        // Simpan course baru
     public function store(Request $request)
     {
+        // Validasi input
         $request->validate([
             'nama_course' => 'required|string|max:255',
-            'instruktur_id' => 'nullable|exists:users,id,role,instructor', // Ganti 'instruktur' dengan 'instructor'
+            'instruktur_id' => 'nullable|exists:users,id,role,instructor',
             'deskripsi' => 'nullable|string',
+            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validasi gambar
         ]);
 
-        Course::create($request->only('nama_course', 'instruktur_id', 'deskripsi'));
+        // Simpan gambar jika ada
+        if ($request->hasFile('banner_image')) {
+            // Mendapatkan nama asli file dan ekstensi
+            $filename = pathinfo($request->file('banner_image')->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $request->file('banner_image')->getClientOriginalExtension();
+            $finalName = $filename . '.' . $extension; // Membuat nama file yang benar
+
+            // Simpan gambar di public/storage/course_banners
+            $imagePath = $request->file('banner_image')->storeAs('course_banners', $finalName, 'public');
+        }
+
+        // Simpan data course
+        Course::create($request->only('nama_course', 'instruktur_id', 'deskripsi') + [
+            'banner_image' => $imagePath ?? null, // Simpan path gambar
+        ]);
 
         return redirect()->route('admin.course.index')->with('success', 'Course berhasil ditambahkan');
     }
@@ -53,11 +69,29 @@ class CourseController extends Controller
     {
         $request->validate([
             'nama_course' => 'required|string|max:255',
-            'instruktur_id' => 'nullable|exists:users,id,role,instructor', // Ganti 'instruktur' dengan 'instructor'
+            'instruktur_id' => 'nullable|exists:users,id,role,instructor',
             'deskripsi' => 'nullable|string',
+            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validasi gambar
         ]);
 
-        $course->update($request->only('nama_course', 'instruktur_id', 'deskripsi'));
+        // Cek apakah ada file banner_image yang di-upload
+        if ($request->hasFile('banner_image')) {
+            // Hapus gambar lama jika ada
+            if ($course->banner_image) {
+                Storage::disk('public')->delete($course->banner_image);
+            }
+
+            // Simpan gambar baru
+            $filename = pathinfo($request->file('banner_image')->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $request->file('banner_image')->getClientOriginalExtension();
+            $finalName = $filename . '.' . $extension;
+            $imagePath = $request->file('banner_image')->storeAs('course_banners', $finalName, 'public');
+        }
+
+        // Update course dengan banner_image baru (jika ada)
+        $course->update($request->only('nama_course', 'instruktur_id', 'deskripsi') + [
+            'banner_image' => $imagePath ?? $course->banner_image, // Gunakan gambar lama jika tidak ada gambar baru
+        ]);
 
         return redirect()->route('admin.course.index')->with('success', 'Course berhasil diperbarui');
     }
