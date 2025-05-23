@@ -14,7 +14,7 @@
         @if($selectedCourse)
         <div class="course-card">
             @if($selectedCourse->banner)
-            <img src="{{ asset('storage/' . $selectedCourse->banner) }}" alt="Banner Course" class="course-banner" />
+            <img src="{{ asset('storage/' . $course->banner) }}" alt="Course Banner">
             @endif
             <h4>{{ $selectedCourse->nama_course }}</h4>
             <p>{{ $selectedCourse->deskripsi }}</p>
@@ -32,32 +32,61 @@
     </nav>
 
     {{-- Materi Section --}}
-    <section id="section-materi">
-        @if($selectedCourse)
-        <div class="materi-subtitle">Daftar Materi {{ $selectedCourse->nama_course }}</div>
-        <div class="search-box">
-            <input type="search" placeholder="Cari Materi" id="search-materi" />
-        </div>
-        <div class="materi-list">
-            @forelse($materi as $item)
-            <div class="materi-item">
-                <div class="materi-icon">📘</div>
-                <div class="materi-content">
-                    <strong>{{ $item->judul }}</strong>
-                    <p>{{ $item->deskripsi }}</p>
-                </div>
-                <div class="materi-action">
-                    <a href="{{ route('instruktur.materi.show', $item->id) }}" class="btn btn-warning">Lihat Materi</a>
-                </div>
+<section id="section-materi">
+    @if($selectedCourse)
+    <div class="materi-subtitle">Daftar Materi {{ $selectedCourse->nama_course }}</div>
+
+    {{-- Form Tambah Materi --}}
+    <form action="{{ route('instruktur.materi.store') }}" method="POST" enctype="multipart/form-data" class="mb-4">
+        @csrf
+        <input type="hidden" name="course_id" value="{{ $selectedCourse->id }}">
+
+        <input type="text" name="judul" class="form-control mb-2" placeholder="Judul Materi" required>
+        <textarea name="deskripsi" class="form-control mb-2" placeholder="Deskripsi Materi" rows="2"></textarea>
+        <input type="file" name="file" class="form-control mb-2" accept="application/pdf" required>
+
+        <input type="hidden" name="tipe" value="pdf">
+
+        <button type="submit" class="btn btn-success">Tambah Materi</button>
+    </form>
+
+    {{-- Search Box --}}
+    <div class="search-box mb-3">
+        <input type="search" placeholder="Cari Materi" id="search-materi" class="form-control" />
+    </div>
+
+    {{-- List Materi --}}
+    <div class="materi-list">
+        @forelse($materi as $item)
+        <div class="materi-item d-flex justify-content-between align-items-start mb-3 p-3 border rounded">
+            <div class="materi-content">
+                <strong>{{ $item->judul }}</strong>
+                <p>{{ $item->deskripsi }}</p>
+
+                @if($item->file)
+                    <a href="{{ asset('storage/' . $item->file) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                        📄 Lihat PDF
+                    </a>
+                @endif
             </div>
-            @empty
-            <p class="no-materi">Belum ada materi untuk course ini.</p>
-            @endforelse
+            <div class="materi-action d-flex flex-column gap-2">
+                <a href="{{ route('instruktur.materi.show', $item->id) }}" class="btn btn-warning btn-sm">Detail</a>
+                <form action="{{ route('instruktur.materi.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus materi ini?')">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-danger btn-sm">Hapus</button>
+                </form>
+            </div>
         </div>
-        @else
-        <p class="no-materi">Belum ada course yang aktif.</p>
-        @endif
-    </section>
+        @empty
+        <p class="no-materi">Belum ada materi untuk course ini.</p>
+        @endforelse
+    </div>
+    @else
+    <p class="no-materi">Belum ada course yang aktif.</p>
+    @endif
+</section>
+
 
     {{-- Project Section --}}
     <section id="section-project" class="d-none">

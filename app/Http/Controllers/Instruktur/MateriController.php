@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Storage;
 
 class MateriController extends Controller
 {
-    // Menampilkan daftar materi berdasarkan course
     public function index()
     {
         $user = Auth::user();
@@ -19,14 +18,12 @@ class MateriController extends Controller
         return view('instruktur.materi.index', compact('courses'));
     }
 
-    // Form tambah materi baru
     public function create()
     {
         $courses = Course::where('instruktur_id', Auth::id())->get();
         return view('instruktur.materi.create', compact('courses'));
     }
 
-    // Simpan materi baru
     public function store(Request $request)
     {
         $request->validate([
@@ -44,15 +41,15 @@ class MateriController extends Controller
         $materi->course_id = $request->course_id;
 
         if ($request->hasFile('file')) {
-            $materi->file = $request->file('file')->store('materi');
+            $materi->file = $request->file('file')->store('materi_files', 'public');
         }
 
         $materi->save();
 
-        return redirect()->route('materi.index')->with('success', 'Materi berhasil ditambahkan.');
+        return redirect()->route('instruktur.dashboard', ['course_id' => $materi->course_id])
+            ->with('success', 'Materi berhasil ditambahkan.');
     }
 
-    // Form edit materi
     public function edit($id)
     {
         $materi = Materi::findOrFail($id);
@@ -60,7 +57,6 @@ class MateriController extends Controller
         return view('instruktur.materi.edit', compact('materi', 'courses'));
     }
 
-    // Update materi
     public function update(Request $request, $id)
     {
         $materi = Materi::findOrFail($id);
@@ -80,24 +76,33 @@ class MateriController extends Controller
 
         if ($request->hasFile('file')) {
             if ($materi->file) {
-                Storage::delete($materi->file);
+                Storage::disk('public')->delete($materi->file);
             }
-            $materi->file = $request->file('file')->store('materi');
+            $materi->file = $request->file('file')->store('materi_files', 'public');
         }
 
         $materi->save();
 
-        return redirect()->route('materi.index')->with('success', 'Materi berhasil diperbarui.');
+        return redirect()->route('instruktur.dashboard', ['course_id' => $materi->course_id])
+            ->with('success', 'Materi berhasil diperbarui.');
     }
 
-    // Hapus materi
     public function destroy($id)
     {
         $materi = Materi::findOrFail($id);
+
         if ($materi->file) {
-            Storage::delete($materi->file);
+            Storage::disk('public')->delete($materi->file);
         }
+
         $materi->delete();
-        return redirect()->route('materi.index')->with('success', 'Materi berhasil dihapus.');
+
+        return redirect()->route('instruktur.dashboard', ['course_id' => $materi->course_id])
+            ->with('success', 'Materi berhasil dihapus.');
+    }
+
+    public function show(Materi $materi)
+    {
+        return view('instruktur.materi.show', compact('materi'));
     }
 }

@@ -74,25 +74,23 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 });
 
 
-// ============== INSTRUKTUR AREA ==============
-Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.')->group(function () {
+    // ============== INSTRUKTUR AREA ==============
+    Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.')->group(function () {
 
-    Route::get('/dashboard', [InstrukturController::class, 'dashboard'])->name('dashboard');
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Profil
     Route::get('/profile/edit', [InstrukturController::class, 'editProfile'])->name('profile.edit');
     Route::put('/profile/update', [InstrukturController::class, 'updateProfile'])->name('profile.update');
-    // Materi
-    Route::resource('materi', MateriController::class);
+
+    // Materi (CRUD + custom show)
     Route::resource('materi', MateriController::class)->except(['show']);
     Route::get('materi/show/{materi}', [MateriController::class, 'show'])->name('materi.show');
 
+    // Project & Group
     Route::resource('project', ProjectController::class);
-
     Route::resource('group', GroupController::class);
-
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
 });
 
 

@@ -9,14 +9,16 @@ class CreateMaterisTable extends Migration
     public function up()
 {
     Schema::create('materis', function (Blueprint $table) {
-        $table->id();
-        $table->string('judul');
-        $table->text('deskripsi')->nullable();
-        $table->string('file')->nullable(); 
-        $table->string('tipe'); 
-        $table->unsignedBigInteger('course_id');
-        $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
-            });
+    $table->id();
+    $table->string('judul');
+    $table->text('deskripsi')->nullable();
+    $table->string('file')->nullable();
+    $table->string('tipe');
+    $table->unsignedBigInteger('course_id');
+    $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
+    $table->timestamps(); // ← penting
+});
+
 }
 
 
