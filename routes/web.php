@@ -21,7 +21,6 @@ use App\Http\Controllers\Instruktur\DashboardController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Student\LandingPageController;
 use App\Http\Controllers\Student\CourseController;
-use App\Http\Controllers\Student\groupController;
 use App\Http\Controllers\Student\certificateController;
 use App\Http\Controllers\Student\ProfileController;
 
