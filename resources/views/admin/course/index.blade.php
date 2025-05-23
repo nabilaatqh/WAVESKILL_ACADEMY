@@ -21,6 +21,7 @@
                 <th>Nama Course</th>
                 <th>Instruktur</th>
                 <th>Jumlah Student</th>
+                <th>Link WhatsApp</th> {{-- Kolom baru --}}
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -28,8 +29,17 @@
             @foreach ($courses as $course)
             <tr>
                 <td>{{ $course->nama_course }}</td>
-                <td>{{ $course->instruktur ? $course->instruktur->name : '-' }}</td> <!-- Ganti 'nama' menjadi 'name' jika kolom instruktur di users adalah 'name' -->
+                <td>{{ $course->instruktur ? $course->instruktur->name : '-' }}</td>
                 <td>{{ $course->students_count }}</td>
+                <td>
+                    @if ($course->whatsapp_link)
+                        <a href="{{ $course->whatsapp_link }}" target="_blank" class="btn btn-success btn-sm">
+                            Gabung WA
+                        </a>
+                    @else
+                        <span class="text-muted">Belum ada</span>
+                    @endif
+                </td>
                 <td>
                     <a href="{{ route('admin.course.show', $course->id) }}" class="btn btn-info btn-sm">Detail</a>
                     <a href="{{ route('admin.course.edit', $course->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -39,7 +49,6 @@
                         @method('DELETE')
                         <button class="btn btn-danger btn-sm">Hapus</button>
                     </form>
-
                 </td>
             </tr>
             @endforeach

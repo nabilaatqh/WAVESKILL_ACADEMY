@@ -41,6 +41,11 @@
             @enderror
         </div>
 
+        <div class="mb-3">
+            <label for="whatsapp_link" class="form-label">Link WhatsApp Grup</label>
+            <input type="url" class="form-control" name="whatsapp_link" value="{{ old('whatsapp_link', $course->whatsapp_link ?? '') }}" placeholder="https://chat.whatsapp.com/xxxx">
+        </div>
+
         <!-- Menampilkan banner_image jika ada -->
         @if($course->banner_image)
             <div class="mb-3">

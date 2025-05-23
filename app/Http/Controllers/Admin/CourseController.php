@@ -35,6 +35,7 @@ class CourseController extends Controller
             'nama_course' => 'required|string|max:255',
             'instruktur_id' => 'nullable|exists:users,id,role,instructor',
             'deskripsi' => 'nullable|string',
+            'whatsapp_link' => 'nullable|url',
             'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -53,9 +54,11 @@ class CourseController extends Controller
             $imagePath = 'course_banners/' . $finalName;
         }
 
-        Course::create($request->only('nama_course', 'instruktur_id', 'deskripsi') + [
-            'banner_image' => $imagePath ?? null,
-        ]);
+        Course::create(
+            $request->only('nama_course', 'instruktur_id', 'deskripsi', 'whatsapp_link') + [
+                'banner_image' => $imagePath ?? null,
+            ]
+        );
 
         return redirect()->route('admin.course.index')->with('success', 'Course berhasil ditambahkan');
     }
@@ -75,6 +78,7 @@ class CourseController extends Controller
             'nama_course' => 'required|string|max:255',
             'instruktur_id' => 'nullable|exists:users,id,role,instructor',
             'deskripsi' => 'nullable|string',
+            'whatsapp_link' => 'nullable|url',
             'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -97,9 +101,11 @@ class CourseController extends Controller
             $imagePath = 'course_banners/' . $finalName;
         }
 
-        $course->update($request->only('nama_course', 'instruktur_id', 'deskripsi') + [
-            'banner_image' => $imagePath ?? $course->banner_image,
-        ]);
+        $course->update(
+            $request->only('nama_course', 'instruktur_id', 'deskripsi', 'whatsapp_link') + [
+                'banner_image' => $imagePath ?? null,
+            ]
+        );
 
         return redirect()->route('admin.course.index')->with('success', 'Course berhasil diperbarui');
     }
