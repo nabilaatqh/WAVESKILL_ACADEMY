@@ -19,8 +19,8 @@ use App\Http\Controllers\Instruktur\GroupController;
 use App\Http\Controllers\Instruktur\DashboardController;
 
 use App\Http\Controllers\Student\StudentController;
+use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Student\LandingPageController;
-use App\Http\Controllers\Student\CourseController;
 use App\Http\Controllers\Student\certificateController;
 use App\Http\Controllers\Student\ProfileController;
 
@@ -71,6 +71,10 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 
     Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
     Route::post('/pengaturan/update-foto', [PengaturanController::class, 'updateFoto'])->name('updateFoto');
+
+    Route::resource('course', CourseController::class);
+
+
 });
 
 
