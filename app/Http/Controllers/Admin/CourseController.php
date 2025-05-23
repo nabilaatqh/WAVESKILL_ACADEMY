@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\User; // Menggunakan model User, bukan Instruktur
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CourseController extends Controller
 {
@@ -29,28 +31,30 @@ class CourseController extends Controller
         // Simpan course baru
     public function store(Request $request)
     {
-        // Validasi input
         $request->validate([
             'nama_course' => 'required|string|max:255',
             'instruktur_id' => 'nullable|exists:users,id,role,instructor',
             'deskripsi' => 'nullable|string',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validasi gambar
+            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Simpan gambar jika ada
         if ($request->hasFile('banner_image')) {
-            // Mendapatkan nama asli file dan ekstensi
-            $filename = pathinfo($request->file('banner_image')->getClientOriginalName(), PATHINFO_FILENAME);
-            $extension = $request->file('banner_image')->getClientOriginalExtension();
-            $finalName = $filename . '.' . $extension; // Membuat nama file yang benar
+            $file = $request->file('banner_image');
+            $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+            $extension = $file->getClientOriginalExtension();
+            $finalName = $filename . '-' . time() . '.' . $extension;
 
-            // Simpan gambar di public/storage/course_banners
-            $imagePath = $request->file('banner_image')->storeAs('course_banners', $finalName, 'public');
+            $destination = public_path('storage/course_banners');
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $file->move($destination, $finalName);
+            $imagePath = 'course_banners/' . $finalName;
         }
 
-        // Simpan data course
         Course::create($request->only('nama_course', 'instruktur_id', 'deskripsi') + [
-            'banner_image' => $imagePath ?? null, // Simpan path gambar
+            'banner_image' => $imagePath ?? null,
         ]);
 
         return redirect()->route('admin.course.index')->with('success', 'Course berhasil ditambahkan');
@@ -71,26 +75,30 @@ class CourseController extends Controller
             'nama_course' => 'required|string|max:255',
             'instruktur_id' => 'nullable|exists:users,id,role,instructor',
             'deskripsi' => 'nullable|string',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validasi gambar
+            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Cek apakah ada file banner_image yang di-upload
         if ($request->hasFile('banner_image')) {
-            // Hapus gambar lama jika ada
-            if ($course->banner_image) {
-                Storage::disk('public')->delete($course->banner_image);
+            if ($course->banner_image && file_exists(public_path('storage/' . $course->banner_image))) {
+                unlink(public_path('storage/' . $course->banner_image));
             }
 
-            // Simpan gambar baru
-            $filename = pathinfo($request->file('banner_image')->getClientOriginalName(), PATHINFO_FILENAME);
-            $extension = $request->file('banner_image')->getClientOriginalExtension();
-            $finalName = $filename . '.' . $extension;
-            $imagePath = $request->file('banner_image')->storeAs('course_banners', $finalName, 'public');
+            $file = $request->file('banner_image');
+            $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+            $extension = $file->getClientOriginalExtension();
+            $finalName = $filename . '-' . time() . '.' . $extension;
+
+            $destination = public_path('storage/course_banners');
+            if (!file_exists($destination)) {
+                mkdir($destination, 0755, true);
+            }
+
+            $file->move($destination, $finalName);
+            $imagePath = 'course_banners/' . $finalName;
         }
 
-        // Update course dengan banner_image baru (jika ada)
         $course->update($request->only('nama_course', 'instruktur_id', 'deskripsi') + [
-            'banner_image' => $imagePath ?? $course->banner_image, // Gunakan gambar lama jika tidak ada gambar baru
+            'banner_image' => $imagePath ?? $course->banner_image,
         ]);
 
         return redirect()->route('admin.course.index')->with('success', 'Course berhasil diperbarui');
