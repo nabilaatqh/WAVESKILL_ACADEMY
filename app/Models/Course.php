@@ -12,14 +12,8 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $table = 'courses';
-
-    protected $fillable = [
-        'nama_course',
-        'deskripsi',
-        'banner',
-        'instruktur_id',
-    ];
+    // Tambahkan kolom yang bisa diisi
+    protected $fillable = ['nama_course', 'instruktur_id', 'deskripsi', 'whatsapp_link', 'banner_image'];
 
     // Relasi: Course dimiliki oleh 1 Instruktur (User dengan role 'instruktur')
     public function instruktur()
