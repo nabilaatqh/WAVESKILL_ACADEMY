@@ -10,6 +10,12 @@ use App\Http\Controllers\Auth\StudentLoginController;
 use App\Http\Controllers\Auth\StudentRegisterController;
 use App\Http\Controllers\Instructor\InstructorController;
 use App\Http\Controllers\Student\StudentController;
+use App\Http\Controllers\Student\LandingPageController;
+use App\Http\Controllers\Student\CourseController;
+use App\Http\Controllers\Student\groupController;
+use App\Http\Controllers\Student\certificateController;
+use App\Http\Controllers\Student\ProfileController;
+
 
 // ============== HOME & LOGIN SELECTOR ==============
 Route::get('/', fn () => view('welcome'))->name('welcome');
@@ -17,7 +23,7 @@ Route::get('/', fn () => view('welcome'))->name('welcome');
 Route::get('/login', function () {
     // Jika sudah login, arahkan langsung ke dashboard sesuai role
     if (Auth::guard('instruktur')->check()) return redirect()->route('instruktur.dashboard');
-    if (Auth::guard('student')->check()) return redirect()->route('student.dashboard');
+    if (Auth::guard('student')->check()) return redirect()->route('student.landingpage');
 
     // Tampilkan halaman pemilih login Instruktur/Mahasiswa (tanpa admin)
     return view('auth.select_login');
@@ -69,5 +75,13 @@ Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.'
 // ============== STUDENT AREA ==============
 Route::middleware(['auth:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentController::class, 'index'])->name('dashboard');
+    Route::get('/landingpage', [LandingPageController::class, 'index'])->name('landingpage');
+    Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+    Route::get('/courses/{id}', [CourseController::class, 'show'])->name('courses.show');
+    Route::get('/groups', [groupController::class, 'index'])->name('groups.index');
+    Route::get('/certificates', [certificateController::class, 'index'])->name('certificates.index');
+    Route::get('/certificates/{course}', [CertificateController::class, 'show'])->name('certificates.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     // Tambah: daftar kursus, materi, tugas, forum, profil, dll
 });
