@@ -21,6 +21,17 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'is_active',
+
+        // Tambahan profil
+        'nama_awal',
+        'nama_akhir',
+        'domisili',
+        'tentang_saya',
+        'telepon',
+        'tempat_lahir',
+        'tanggal_lahir',
     ];
 
     /**
@@ -40,5 +51,15 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'tanggal_lahir' => 'date',
+        'is_active' => 'boolean',
     ];
+
+    /**
+     * Helper method untuk cek role instruktur
+     */
+    public function isInstruktur()
+    {
+        return $this->role === 'instruktur';
+    }
 }
