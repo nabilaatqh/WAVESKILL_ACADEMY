@@ -32,6 +32,6 @@ class Instruktur extends Authenticatable
     // Relasi: Instruktur punya banyak kelas
     public function course()
     {
-        return $this->hasMany(Course::class);
+        return $this->hasMany(Course::class, 'instruktur_id');
     }
 }

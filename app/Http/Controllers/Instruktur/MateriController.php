@@ -3,124 +3,101 @@
 namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Controller;
-use App\Models\Course;
-use App\Models\Materi;
 use Illuminate\Http\Request;
+use App\Models\Materi;
+use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class MateriController extends Controller
 {
-    public function index(Request $request)
+    // Menampilkan daftar materi berdasarkan course
+    public function index()
     {
-        $query = Materi::whereHas('course', function ($q) {
-            $q->where('instruktur_id', Auth::id());
-        });
-
-        if ($request->course_id) {
-            $query->where('course_id', $request->course_id);
-        }
-
-        $materi = $query->latest()->get();
-        $courseList = Course::where('instruktur_id', Auth::id())->get();
-
-        return view('instruktur.materi.index', compact('materi', 'courseList'));
+        $user = Auth::user();
+        $courses = Course::where('instruktur_id', $user->id)->get();
+        return view('instruktur.materi.index', compact('courses'));
     }
 
-    public function create(Course $course)
+    // Form tambah materi baru
+    public function create()
     {
-        if ($course->instruktur_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
-        }
-
-        return view('instruktur.materi.create', compact('course'));
+        $courses = Course::where('instruktur_id', Auth::id())->get();
+        return view('instruktur.materi.create', compact('courses'));
     }
 
-    public function store(Request $request, Course $course)
+    // Simpan materi baru
+    public function store(Request $request)
     {
-        if ($course->instruktur_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
-        }
-
         $request->validate([
             'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'file' => 'required|file|mimes:pdf,docx,pptx,mp4|max:20480',
+            'deskripsi' => 'nullable|string',
+            'tipe' => 'required|in:pdf,video,link',
+            'file' => 'nullable|file|mimes:pdf,mp4|max:20480',
+            'course_id' => 'required|exists:courses,id'
         ]);
 
-        $filePath = $request->file('file')->store('materi_files', 'public');
-
-        Materi::create([
-            'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
-            'file_path' => $filePath,
-            'course_id' => $course->id,
-        ]);
-
-        return redirect()->route('instruktur.materi.index')->with('success', 'Materi berhasil ditambahkan.');
-    }
-
-    public function show(Materi $materi)
-    {
-        if ($materi->course->instruktur_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
-        }
-
-        return view('instruktur.materi.show', compact('materi'));
-    }
-
-    public function edit(Materi $materi)
-    {
-        if ($materi->course->instruktur_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
-        }
-
-        $courseList = Course::where('instruktur_id', Auth::id())->get();
-
-        return view('instruktur.materi.edit', compact('materi', 'courseList'));
-    }
-
-    public function update(Request $request, Materi $materi)
-    {
-        if ($materi->course->instruktur_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
-        }
-
-        $request->validate([
-            'judul' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'file' => 'nullable|file|mimes:pdf,docx,pptx,mp4|max:20480',
-            'course_id' => 'required|exists:course,id',
-        ]);
+        $materi = new Materi();
+        $materi->judul = $request->judul;
+        $materi->deskripsi = $request->deskripsi;
+        $materi->tipe = $request->tipe;
+        $materi->course_id = $request->course_id;
 
         if ($request->hasFile('file')) {
-            if ($materi->file_path && Storage::disk('public')->exists($materi->file_path)) {
-                Storage::disk('public')->delete($materi->file_path);
-            }
-            $filePath = $request->file('file')->store('materi_files', 'public');
-            $materi->file_path = $filePath;
+            $materi->file = $request->file('file')->store('materi');
         }
+
+        $materi->save();
+
+        return redirect()->route('materi.index')->with('success', 'Materi berhasil ditambahkan.');
+    }
+
+    // Form edit materi
+    public function edit($id)
+    {
+        $materi = Materi::findOrFail($id);
+        $courses = Course::where('instruktur_id', Auth::id())->get();
+        return view('instruktur.materi.edit', compact('materi', 'courses'));
+    }
+
+    // Update materi
+    public function update(Request $request, $id)
+    {
+        $materi = Materi::findOrFail($id);
+
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
+            'tipe' => 'required|in:pdf,video,link',
+            'file' => 'nullable|file|mimes:pdf,mp4|max:20480',
+            'course_id' => 'required|exists:courses,id'
+        ]);
 
         $materi->judul = $request->judul;
         $materi->deskripsi = $request->deskripsi;
+        $materi->tipe = $request->tipe;
         $materi->course_id = $request->course_id;
+
+        if ($request->hasFile('file')) {
+            if ($materi->file) {
+                Storage::delete($materi->file);
+            }
+            $materi->file = $request->file('file')->store('materi');
+        }
+
         $materi->save();
 
-        return redirect()->route('instruktur.materi.index')->with('success', 'Materi berhasil diperbarui.');
+        return redirect()->route('materi.index')->with('success', 'Materi berhasil diperbarui.');
     }
 
-    public function destroy(Materi $materi)
+    // Hapus materi
+    public function destroy($id)
     {
-        if ($materi->course->instruktur_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
+        $materi = Materi::findOrFail($id);
+        if ($materi->file) {
+            Storage::delete($materi->file);
         }
-
-        if ($materi->file_path && Storage::disk('public')->exists($materi->file_path)) {
-            Storage::disk('public')->delete($materi->file_path);
-        }
-
         $materi->delete();
-
-        return redirect()->route('instruktur.materi.index')->with('success', 'Materi berhasil dihapus.');
+        return redirect()->route('materi.index')->with('success', 'Materi berhasil dihapus.');
     }
 }

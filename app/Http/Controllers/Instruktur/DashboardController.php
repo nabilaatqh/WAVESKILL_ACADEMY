@@ -3,23 +3,32 @@
 namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
 use App\Models\Materi;
-use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index()
+    /**
+     * Tampilkan dashboard instruktur dengan daftar course, materi dan project.
+     */
+    public function index(Request $request)
     {
-        // Ambil course pertama yang dipegang instruktur
-        $courseAktif = Course::where('instruktur_id', Auth::id())->first();
+        $user = Auth::user();
 
-        // Ambil materi yang terkait dengan course instruktur
-        $materi = Materi::whereHas('course', function ($query) {
-            $query->where('instruktur_id', Auth::id());
-        })->get();
+        // Ambil semua course yang dimiliki instruktur
+        $courses = Course::where('instruktur_id', $user->id)->get();
 
-        // Kirim data ke view
-        return view('instruktur.dashboard', compact('courseAktif', 'materi'));
+        // Tentukan course yang dipilih, default ke course pertama
+        $selectedCourseId = $request->input('course_id') ?? ($courses->first()->id ?? null);
+
+        $selectedCourse = $selectedCourseId ? Course::find($selectedCourseId) : null;
+
+        // Ambil materi & project dari course yang dipilih
+        $materi = $selectedCourse ? $selectedCourse->materis : collect();
+        $projects = $selectedCourse ? $selectedCourse->projects : collect();
+
+        return view('instruktur.dashboard', compact('courses', 'selectedCourse', 'materi', 'projects'));
     }
 }

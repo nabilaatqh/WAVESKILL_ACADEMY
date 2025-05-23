@@ -4,26 +4,25 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMaterisTable extends Migration
+class CreateProjectsTable extends Migration
 {
     public function up()
     {
-        Schema::create('materis', function (Blueprint $table) {
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('course_id'); // relasi ke courses
+            $table->unsignedBigInteger('course_id')->nullable();
             $table->string('judul');
             $table->text('deskripsi')->nullable();
-            $table->string('tipe')->nullable(); // misal 'video', 'pdf'
-            $table->string('file')->nullable(); // file path jika ada
-            $table->string('link')->nullable(); // link video jika ada
+            $table->string('file')->nullable(); // jika ada upload file
             $table->timestamps();
 
+            // Foreign key ke courses
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('materis');
+        Schema::dropIfExists('projects');
     }
 }

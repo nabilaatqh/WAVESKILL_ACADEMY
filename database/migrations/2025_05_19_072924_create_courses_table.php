@@ -26,19 +26,19 @@ class CreateCoursesTable extends Migration
         // Buat pivot table course_student
         Schema::create('course_student', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('course_id'); // Kolom untuk relasi ke courses
-            $table->unsignedBigInteger('student_id'); // Kolom untuk relasi ke users (sebagai student)
+            $table->unsignedBigInteger('course_id'); 
+            $table->unsignedBigInteger('student_id'); 
             $table->timestamps();
 
-            // Foreign key ke course dan student (hanya student yang memiliki role 'student')
+         
             $table->foreign('course_id')
                 ->references('id')->on('courses')
-                ->onDelete('cascade'); // Delete course, delete relasi
+                ->onDelete('cascade'); 
 
             $table->foreign('student_id')
-                ->references('id')->on('users') // Students ada di tabel users
-                ->where('role', 'student') // Pastikan hanya student yang dapat dipilih
-                ->onDelete('cascade'); // Delete student, delete relasi
+                ->references('id')->on('users') 
+                ->where('role', 'student') 
+                ->onDelete('cascade');
         });
     }
 
