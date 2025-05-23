@@ -51,15 +51,16 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'tanggal_lahir' => 'date',
-        'is_active' => 'boolean',
     ];
 
-    /**
-     * Helper method untuk cek role instruktur
-     */
-    public function isInstruktur()
+    public function courses()
     {
-        return $this->role === 'instruktur';
+        return $this->hasMany(Course::class, 'instruktur_id');
+    }
+
+    // Relasi dengan courses (student)
+    public function enrolledCourses()
+    {
+        return $this->belongsToMany(Course::class, 'course_student', 'student_id', 'course_id');
     }
 }
