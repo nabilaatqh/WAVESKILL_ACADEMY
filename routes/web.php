@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\StudentLoginController;
 use App\Http\Controllers\Auth\StudentRegisterController;
 use App\Http\Controllers\Instructor\InstructorController;
 use App\Http\Controllers\Student\StudentController;
+use App\Http\Controllers\Admin\CourseController;
 
 // ============== HOME & LOGIN SELECTOR ==============
 Route::get('/', fn () => view('welcome'))->name('welcome');
@@ -61,6 +62,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     
     Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
     Route::post('/pengaturan/update-foto', [PengaturanController::class, 'updateFoto'])->name('updateFoto');
+
+    Route::resource('course', CourseController::class);
 
 
 });
