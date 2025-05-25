@@ -10,13 +10,11 @@ class CreateProjectsTable extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('course_id')->nullable();
+            $table->unsignedBigInteger('course_id');
             $table->string('judul');
             $table->text('deskripsi')->nullable();
-            $table->string('file')->nullable(); // jika ada upload file
+            $table->string('file')->nullable(); 
             $table->timestamps();
-
-            // Foreign key ke courses
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });
     }

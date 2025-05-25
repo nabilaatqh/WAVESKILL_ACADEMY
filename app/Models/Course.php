@@ -11,7 +11,7 @@ use App\Models\Project;
 class Course extends Model
 {
     use HasFactory;
-
+    protected $table = 'courses'; 
     // Tambahkan kolom yang bisa diisi
     protected $fillable = ['nama_course', 'instruktur_id', 'deskripsi', 'whatsapp_link', 'banner_image'];
 

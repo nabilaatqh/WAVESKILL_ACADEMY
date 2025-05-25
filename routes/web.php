@@ -74,8 +74,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 });
 
 
-    // ============== INSTRUKTUR AREA ==============
-    Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.')->group(function () {
+Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -84,13 +83,28 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/profile/edit', [InstrukturController::class, 'editProfile'])->name('profile.edit');
     Route::put('/profile/update', [InstrukturController::class, 'updateProfile'])->name('profile.update');
 
-    // Materi (CRUD + custom show)
-    Route::resource('materi', MateriController::class)->except(['show']);
-    Route::get('materi/show/{materi}', [MateriController::class, 'show'])->name('materi.show');
+    // Group (only index)
+    Route::get('group', [GroupController::class, 'index'])->name('group.index');
 
-    // Project & Group
-    Route::resource('project', ProjectController::class);
-    Route::resource('group', GroupController::class);
+    // Materi CRUD
+    Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
+    Route::get('materi/create', [MateriController::class, 'create'])->name('materi.create');
+    Route::post('materi', [MateriController::class, 'store'])->name('materi.store');
+    Route::get('materi/{materi}', [MateriController::class, 'show'])->name('materi.show');
+    Route::get('materi/{materi}/edit', [MateriController::class, 'edit'])->name('materi.edit');
+    Route::put('materi/{materi}', [MateriController::class, 'update'])->name('materi.update');
+    Route::delete('materi/{materi}', [MateriController::class, 'destroy'])->name('materi.destroy');
+
+    // Project CRUD
+    Route::get('project', [ProjectController::class, 'index'])->name('project.index');
+    Route::get('project/create', [ProjectController::class, 'create'])->name('project.create');
+    Route::post('project', [ProjectController::class, 'store'])->name('project.store');
+    Route::get('project/{project}', [ProjectController::class, 'show'])->name('project.show');
+    Route::get('project/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
+    Route::put('project/{project}', [ProjectController::class, 'update'])->name('project.update');
+    Route::delete('project/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
+    // Log Out
+    Route::post('/logout', [InstrukturController::class, 'logout'])->name('logout');
 });
 
 

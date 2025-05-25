@@ -18,12 +18,6 @@ class Project extends Model
     // Relasi ke kelas
     public function course()
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Course::class, 'course_id');
     }
-
-    // Relasi ke submission (jika ada model Submission)
-    // public function submissions()
-    // {
-    //     return $this->hasMany(Submission::class);
-    // }
 }

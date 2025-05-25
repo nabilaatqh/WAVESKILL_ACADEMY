@@ -19,7 +19,6 @@ class CreateCoursesTable extends Migration
             // Foreign key instruktur_id mengacu pada tabel users (instruktur)
             $table->foreign('instruktur_id')
                 ->references('id')->on('users')
-                ->where('role', 'instruktur') // Pastikan hanya instruktur yang dapat dipilih
                 ->onDelete('set null');
         });
 
@@ -30,14 +29,12 @@ class CreateCoursesTable extends Migration
             $table->unsignedBigInteger('student_id'); 
             $table->timestamps();
 
-         
             $table->foreign('course_id')
                 ->references('id')->on('courses')
                 ->onDelete('cascade'); 
 
             $table->foreign('student_id')
                 ->references('id')->on('users') 
-                ->where('role', 'student') 
                 ->onDelete('cascade');
         });
     }

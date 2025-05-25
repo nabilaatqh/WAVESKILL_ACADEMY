@@ -64,8 +64,6 @@
         </table>
     </div>
 
-    <div class="mt-3">
-        {{ $courses->links() }}
-    </div>
+
 </div>
 @endsection

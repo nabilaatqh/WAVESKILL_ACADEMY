@@ -45,7 +45,7 @@ class InstrukturController extends Controller
             'telepon' => ['required', 'string', 'max:20'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
             'tanggal_lahir' => ['required', 'date'],
-            'password' => ['nullable', 'string', 'min:6', 'confirmed'], // optional password
+            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ]);
 
         // Update data profil
@@ -58,14 +58,23 @@ class InstrukturController extends Controller
         $instruktur->tempat_lahir = $request->tempat_lahir;
         $instruktur->tanggal_lahir = $request->tanggal_lahir;
 
-        // Jika password diisi, hash dan update
         if ($request->filled('password')) {
             $instruktur->password = Hash::make($request->password);
         }
-
         $instruktur->save();
 
         return redirect()->route('instruktur.profile.edit')->with('success', 'Profil berhasil diperbarui.');
     }
 
+    // Method logout
+    public function logout(Request $request)
+    {
+        Auth::guard('instruktur')->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
 }

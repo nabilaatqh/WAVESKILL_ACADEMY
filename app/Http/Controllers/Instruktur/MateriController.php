@@ -14,14 +14,14 @@ class MateriController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $courses = Course::where('instruktur_id', $user->id)->get();
-        return view('instruktur.materi.index', compact('courses'));
+        $course = Course::where('instruktur_id', $user->id)->get();
+        return view('instruktur.materi.index', compact('course'));
     }
 
     public function create()
     {
-        $courses = Course::where('instruktur_id', Auth::id())->get();
-        return view('instruktur.materi.create', compact('courses'));
+        $course = Course::where('instruktur_id', Auth::id())->get();
+        return view('instruktur.materi.create', compact('course'));
     }
 
     public function store(Request $request)
@@ -53,8 +53,8 @@ class MateriController extends Controller
     public function edit($id)
     {
         $materi = Materi::findOrFail($id);
-        $courses = Course::where('instruktur_id', Auth::id())->get();
-        return view('instruktur.materi.edit', compact('materi', 'courses'));
+        $course = Course::where('instruktur_id', Auth::id())->get();
+        return view('instruktur.materi.edit', compact('materi', 'course'));
     }
 
     public function update(Request $request, $id)

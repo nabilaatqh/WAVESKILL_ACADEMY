@@ -7,30 +7,55 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
 use App\Models\Materi;
+use App\Models\Project;
 
 class DashboardController extends Controller
 {
-    /**
-     * Tampilan dashboard instruktur dengan daftar course, materi, dan project.
-     */
     public function index(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-      
-        $courses = Course::where('instruktur_id', $user->id)->get();
+    $courses = Course::where('instruktur_id', $user->id)->get();
 
-        
-        $selectedCourseId = $request->input('course_id') ?? ($courses->first()->id ?? null);
+    $selectedCourseId = $request->input('course_id') ?? ($courses->first()->id ?? null);
 
-        $selectedCourse = $selectedCourseId
-            ? Course::with(['materis', 'projects'])->find($selectedCourseId)
-            : null;
+    $searchMateri = $request->input('search_materi');
+    $searchProject = $request->input('search_project');
 
-        
-        $materi = $selectedCourse ? $selectedCourse->materis : collect();
-        $projects = $selectedCourse ? $selectedCourse->projects : collect();
+    $selectedCourse = null;
+    $materi = collect();
+    $projects = collect();
 
-        return view('instruktur.dashboard', compact('courses', 'selectedCourse', 'materi', 'projects'));
+    if ($selectedCourseId) {
+        $selectedCourse = Course::find($selectedCourseId);
+
+        if ($selectedCourse) {
+            $materiQuery = Materi::where('course_id', $selectedCourse->id);
+
+            if ($searchMateri) {
+                $materiQuery->where('judul', 'like', "%{$searchMateri}%");
+            }
+
+            $materi = $materiQuery->orderBy('created_at', 'desc')->get();
+
+            $projectQuery = Project::where('course_id', $selectedCourse->id);
+
+            if ($searchProject) {
+                $projectQuery->where('judul', 'like', "%{$searchProject}%");
+            }
+
+            $projects = $projectQuery->orderBy('created_at', 'desc')->get();
+        }
     }
+
+    return view('instruktur.dashboard', compact(
+        'courses',
+        'selectedCourse',
+        'materi',
+        'projects',
+        'searchMateri',
+        'searchProject'
+    ));
+}
+
 }
