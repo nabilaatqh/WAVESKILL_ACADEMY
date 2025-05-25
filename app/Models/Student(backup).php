@@ -8,16 +8,14 @@ use App\Models\Course;
 use App\Models\Group;
 use App\Models\Certificate;
 
-class Student extends Authenticatable
+class Student(backup) extends Authenticatable
 {
     use Notifiable;
 
     protected $guard = 'student'; // Sesuai guard
 
-    protected $table = 'users'; // Pakai tabel users
-
     protected $fillable = [
-        'name', 'email', 'username', 'password', 'photo', 'phone',
+        'name', 'email', 'username', 'password', 'foto', 'phone',
     ];
 
     protected $hidden = [
@@ -52,4 +50,5 @@ class Student extends Authenticatable
     {
         return $this->belongsToMany(Course::class, 'course_student');
     }
+
 }
