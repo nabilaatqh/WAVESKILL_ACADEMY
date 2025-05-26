@@ -1,0 +1,284 @@
+/* Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+    background-color: #A8F1FF; /* biru pucat dari palette */
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 70px;
+    height: 100vh;
+    background-color: #F68B1F; /* oranye utama */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    gap: 25px;
+    z-index: 1000;
+}
+
+.sidebar .logo {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+    color: #F68B1F;
+}
+
+.sidebar a {
+    width: 48px;
+    height: 48px;
+    background-color: transparent;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.sidebar a.active,
+.sidebar a:hover {
+    background-color: #F7AD53; /* oranye muda saat hover */
+}
+
+/* Main content wrapper */
+.main-content {
+    margin-left: 70px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Topbar */
+.topbar {
+    height: 60px;
+    background-color: #F68B1F;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 20px;
+    gap: 20px;
+    color: white;
+    font-weight: 600;
+}
+
+.topbar .notif {
+    font-size: 18px;
+    cursor: pointer;
+    position: relative;
+}
+
+.topbar .notif::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    border-radius: 50%;
+}
+
+.topbar .profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    position: relative;
+}
+
+.topbar .profile img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+.topbar .profile .name {
+    font-weight: 600;
+}
+
+/* Content area */
+.content-area {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #6FE6FC; /* biru cerah */
+    overflow-y: auto;
+}
+
+/* Welcome message */
+.welcome {
+    font-weight: 700;
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #ffffff; 
+}
+
+.welcome .highlight {
+    font-weight: 900;
+    color: #F68B1F;
+}
+
+/* Kelas yang diajar card */
+.kelas-card {
+    background-color: #FFF48D; /* kuning muda */
+    border-radius: 10px;
+    padding: 15px;
+    color: #333;
+    max-width: 500px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(246, 139, 31, 0.3); /* shadow lembut oranye */
+}
+
+.kelas-card img {
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* Tab menu */
+.tab-menu {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    background-color: transparent;
+    border: none;
+    color: #F68B1F;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 8px 20px;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+    box-shadow: inset 0 0 0 2px #F68B1F;
+}
+
+.tab-button.active,
+.tab-button:hover {
+    background-color: #F68B1F;
+    color: white;
+}
+
+/* List materi */
+.materi-list {
+    max-width: 600px;
+}
+
+.materi-item {
+    background-color: #FFFA8D; /* kuning pucat */
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+}
+
+.materi-item:hover {
+    box-shadow: 0 4px 10px rgba(255, 255, 0, 0.5);
+}
+
+.materi-item .title {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Search box */
+.search-box {
+  margin-bottom: 20px;
+  max-width: 600px;
+}
+
+.search-box input[type="search"] {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 20px;
+  border: 2px solid #008080;
+  background-color: #f5f9fa;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  /* Shadow halus agar efek "mengambang" */
+  box-shadow: 0 0 8px rgba(0, 128, 128, 0.25);
+  transition: box-shadow 0.3s ease;
+}
+
+.search-box input[type="search"]::placeholder {
+  color: #888;
+  font-weight: 500;
+}
+
+.search-box input[type="search"]:focus {
+  box-shadow: 0 0 12px rgba(0, 128, 128, 0.6);
+  border-color: #008080;
+}
+
+form .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+}
+
+form .form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1.5px solid #F68B1F;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+form .form-control:focus {
+    border-color: #f16005;
+}
+
+form textarea.form-control {
+    resize: vertical;
+}
+
+form .btn-danger {
+    background-color: #f16005;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+form .btn-danger:hover {
+    background-color: #d35303;
+}

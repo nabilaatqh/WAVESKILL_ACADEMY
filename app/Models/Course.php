@@ -10,7 +10,7 @@ class Course extends Model
     use HasFactory;
 
     // Tambahkan kolom yang bisa diisi
-    protected $fillable = ['nama_course', 'instruktur_id', 'deskripsi', 'whatsapp_link', 'banner_image'];
+    protected $fillable = ['nama_course', 'instruktur_id', 'deskripsi', 'harga', 'whatsapp_link', 'banner_image'];
 
     // Relasi ke instruktur (User dengan role 'instructor')
     public function instruktur()
@@ -22,5 +22,10 @@ class Course extends Model
     public function students()
     {
         return $this->belongsToMany(User::class, 'course_student', 'course_id', 'student_id')->where('role', 'student');
+    }
+
+    public function groups()
+    {
+        return $this->hasMany(\App\Models\Group::class);
     }
 }
