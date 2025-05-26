@@ -19,10 +19,12 @@ use App\Http\Controllers\Instruktur\GroupController;
 use App\Http\Controllers\Instruktur\DashboardController;
 
 use App\Http\Controllers\Student\StudentController;
-use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Student\LandingPageController;
 use App\Http\Controllers\Student\certificateController;
 use App\Http\Controllers\Student\ProfileController;
+use App\Http\Controllers\Student\courseController;
+use App\Http\Controllers\Student\EnrollmentController;
 
 
 // ============== HOME & LOGIN SELECTOR ==============
@@ -72,7 +74,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
     Route::post('/pengaturan/update-foto', [PengaturanController::class, 'updateFoto'])->name('updateFoto');
 
-    Route::resource('course', CourseController::class);
+    Route::resource('course', AdminCourseController::class);
 
 
 });
@@ -106,8 +108,8 @@ Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.'
 Route::middleware(['auth:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentController::class, 'index'])->name('dashboard');
     Route::get('/landingpage', [LandingPageController::class, 'index'])->name('landingpage');
-    Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
-    Route::get('/courses/{id}', [CourseController::class, 'show'])->name('courses.show');
+    Route::get('/courses', [courseController::class, 'index'])->name('courses.index');
+    Route::get('/courses/{id}', [courseController::class, 'show'])->name('courses.show');
     Route::get('/courses/{id}/enroll', [EnrollmentController::class, 'showEnrollmentForm'])->name('enroll.form');
     Route::post('/courses/{id}/enroll', [EnrollmentController::class, 'processEnrollment'])->name('enroll.process');
     Route::get('/enrollments/status/{id}', [EnrollmentController::class, 'enrollmentStatus'])->name('enroll.status');

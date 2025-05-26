@@ -23,4 +23,9 @@ class Course extends Model
     {
         return $this->belongsToMany(User::class, 'course_student', 'course_id', 'student_id')->where('role', 'student');
     }
+
+    public function groups()
+    {
+        return $this->hasMany(\App\Models\Group::class);
+    }
 }

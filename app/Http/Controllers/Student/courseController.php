@@ -6,18 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; 
+
 
 class courseController extends Controller
 {
     // Daftar semua kursus
     public function index()
     {
-        // Tambahkan debug untuk memastikan siapa yang login
-        dd(
-            'Student guard: ', Auth::guard('student')->user(),
-            'Admin guard: ', Auth::guard('admin')->user()
-        );
         
+        $student = Auth::guard('student')->user();
          // Ambil semua course dengan hitung jumlah student (seperti di admin)
         $courses = Course::withCount('students')->latest()->get();
 
