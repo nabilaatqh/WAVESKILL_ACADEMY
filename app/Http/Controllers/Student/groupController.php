@@ -11,9 +11,16 @@ class groupController extends Controller
     {
         $student = auth()->guard('student')->user();
 
-        // Ambil grup yang diikuti student dengan data course-nya
-        $groups = $student->groups()->with('course')->get();
+        // Ambil semua course yang sudah dibayar (approved)
+        $approvedCourseIds = $student->enrollments()
+            ->where('status', 'approved')
+            ->pluck('course_id');
 
+        // Ambil semua grup dari course yang sudah dibayar student
+        $groups = \App\Models\Group::whereIn('course_id', $approvedCourseIds)
+            ->with('course')
+            ->get();
+            
         return view('student.groups.index', compact('groups'));
     }
 }

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Models\Group;
 
 class CourseController extends Controller
 {
@@ -39,6 +40,8 @@ class CourseController extends Controller
             'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        // Upload banner jika ada
+        $imagePath = null;
         if ($request->hasFile('banner_image')) {
             $file = $request->file('banner_image');
             $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
@@ -54,13 +57,23 @@ class CourseController extends Controller
             $imagePath = 'course_banners/' . $finalName;
         }
 
-        Course::create(
-            $request->only('nama_course', 'instruktur_id', 'deskripsi', 'whatsapp_link') + [
-                'banner_image' => $imagePath ?? null,
-            ]
-        );
+        // Simpan course
+        $course = Course::create([
+            'nama_course' => $request->nama_course,
+            'instruktur_id' => $request->instruktur_id,
+            'deskripsi' => $request->deskripsi,
+            'whatsapp_link' => $request->whatsapp_link,
+            'banner_image' => $imagePath,
+        ]);
 
-        return redirect()->route('admin.course.index')->with('success', 'Course berhasil ditambahkan');
+        // 🆕 Buat grup default otomatis
+        Group::create([
+            'title' => 'Grup ' . $course->nama_course,
+            'whatsapp_link' => $request->whatsapp_link, // boleh null, bisa diedit nanti
+            'course_id' => $course->id,
+        ]);
+
+        return redirect()->route('admin.course.index')->with('success', 'Course dan grup default berhasil dibuat');
     }
 
     // Tampilkan form edit course

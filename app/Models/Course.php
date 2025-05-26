@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Certificate;
 
 class Course extends Model
 {
@@ -26,6 +27,16 @@ class Course extends Model
 
     public function groups()
     {
-        return $this->hasMany(\App\Models\Group::class);
+        return $this->hasMany(Group::class);
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
     }
 }
