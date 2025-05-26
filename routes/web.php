@@ -17,6 +17,7 @@ use App\Http\Controllers\Instruktur\MateriController;
 use App\Http\Controllers\Instruktur\ProjectController;
 use App\Http\Controllers\Instruktur\GroupController;
 use App\Http\Controllers\Instruktur\DashboardController;
+use App\Http\Controllers\Instruktur\SubmissionController;
 
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Admin\CourseController;
@@ -73,7 +74,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 
 });
 
-
+// ============== INSTRUKTUR AREA ==============
 Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.')->group(function () {
 
     // Dashboard
@@ -103,6 +104,12 @@ Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.'
     Route::get('project/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
     Route::put('project/{project}', [ProjectController::class, 'update'])->name('project.update');
     Route::delete('project/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
+
+    // Submission
+    Route::get('/project/{project}/submissions', [SubmissionController::class, 'index'])->name('submission.index');
+    Route::get('submission/detail/{submission}', [SubmissionController::class, 'show'])->name('submission.show');
+    Route::put('submission/detail/{submission}', [SubmissionController::class, 'update'])->name('submission.update');
+
     // Log Out
     Route::post('/logout', [InstrukturController::class, 'logout'])->name('logout');
 });

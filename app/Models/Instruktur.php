@@ -22,6 +22,7 @@ class Instruktur extends Authenticatable
         'telepon',
         'tempat_lahir',
         'tanggal_lahir',
+        'foto',
 ];
 
     protected $hidden = [

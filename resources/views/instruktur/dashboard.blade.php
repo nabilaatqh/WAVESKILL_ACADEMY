@@ -12,8 +12,8 @@
 
         @if($selectedCourse)
         <div class="course-card">
-            @if($selectedCourse->banner)
-            <img src="{{ asset('storage/' . $selectedCourse->banner) }}" alt="Course Banner" style="max-width: 100%; max-height: 200px;">
+            @if($selectedCourse->banner_image)
+            <img src="{{ asset('storage/' . $selectedCourse->banner_image) }}" alt="Course Banner" style="max-width: 100%; max-height: 200px;">
             @endif
             <h4>{{ $selectedCourse->nama_course }}</h4>
             <p>{{ $selectedCourse->deskripsi }}</p>
@@ -144,7 +144,7 @@
                             <div class="project-description" style="font-size: 13px; margin-top: 4px;">50 Project dikumpulkan</div>
                         </div>
                     </div>
-                    <a href="{{ route('instruktur.project.show', $item->id) }}" class="btn-submission">Lihat Submission</a>
+                    <a href="{{ route('instruktur.submission.index', $item->id) }}" class="btn-submission">Lihat Submission</a>
                 </div>
                 @empty
                 <p class="text-white">Belum ada project untuk course ini.</p>
@@ -162,8 +162,8 @@
             @forelse($courses as $course)
                 <div class="kelas-horizontal-card">
                     <div class="card-image">
-                        @if(!empty($course->banner))
-                            <img src="{{ asset('storage/' . $course->banner) }}" alt="Course Banner" style="max-width: 150px; max-height: 100px;">
+                        @if(!empty($course->banner_image))
+                            <img src="{{ asset('storage/' . $course->banner_image) }}" alt="Course Banner" style="max-width: 150px; max-height: 100px;">
                         @else
                             <img src="https://via.placeholder.com/150x100?text=Course" alt="Default Banner">
                         @endif
@@ -223,52 +223,4 @@
         form.style.display = form.style.display === 'none' ? 'block' : 'none';
     }
 </script>
-
-@push('scripts')
-<script>
-    document.querySelectorAll('.btn-hapus-materi').forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.preventDefault();
-            const formId = this.dataset.form;
-
-            Swal.fire({
-                title: 'Yakin ingin menghapus?',
-                text: "Materi ini akan dihapus secara permanen.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
-                cancelButtonColor: '#95a5a6',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(formId).submit();
-                }
-            });
-        });
-    });
-
-    document.querySelectorAll('.btn-hapus-project').forEach(button => {
-        button.addEventListener('click', function (e) {
-            e.preventDefault();
-            const formId = this.dataset.form;
-
-            Swal.fire({
-                title: 'Yakin ingin menghapus?',
-                text: "Project ini akan dihapus secara permanen.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
-                cancelButtonColor: '#95a5a6',
-                confirmButtonText: 'Ya, hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(formId).submit();
-                }
-            });
-        });
-    });
-</script>
-@endpush
 @endsection

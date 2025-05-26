@@ -32,39 +32,52 @@ class InstrukturController extends Controller
     }
 
     public function updateProfile(Request $request)
-    {
-        $instruktur = Auth::user();
+{
+    $instruktur = Auth::user();
 
-        // Validasi input sesuai field form
-        $request->validate([
-            'nama_awal' => ['required', 'string', 'max:255'],
-            'nama_akhir' => ['nullable', 'string', 'max:255'],
-            'domisili' => ['nullable', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($instruktur->id)],
-            'tentang_saya' => ['nullable', 'string'],
-            'telepon' => ['required', 'string', 'max:20'],
-            'tempat_lahir' => ['required', 'string', 'max:255'],
-            'tanggal_lahir' => ['required', 'date'],
-            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
-        ]);
+    $request->validate([
+        'nama_awal' => ['required', 'string', 'max:255'],
+        'nama_akhir' => ['nullable', 'string', 'max:255'],
+        'domisili' => ['nullable', 'string', 'max:255'],
+        'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($instruktur->id)],
+        'tentang_saya' => ['nullable', 'string'],
+        'telepon' => ['required', 'string', 'max:20'],
+        'tempat_lahir' => ['required', 'string', 'max:255'],
+        'tanggal_lahir' => ['required', 'date'],
+        'password' => ['nullable', 'string', 'min:6', 'confirmed'],
+        'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'], // ← tambahkan ini
+    ]);
 
-        // Update data profil
-        $instruktur->nama_awal = $request->nama_awal;
-        $instruktur->nama_akhir = $request->nama_akhir;
-        $instruktur->domisili = $request->domisili;
-        $instruktur->email = $request->email;
-        $instruktur->tentang_saya = $request->tentang_saya;
-        $instruktur->telepon = $request->telepon;
-        $instruktur->tempat_lahir = $request->tempat_lahir;
-        $instruktur->tanggal_lahir = $request->tanggal_lahir;
+    // Simpan data profil
+    $instruktur->nama_awal = $request->nama_awal;
+    $instruktur->nama_akhir = $request->nama_akhir;
+    $instruktur->domisili = $request->domisili;
+    $instruktur->email = $request->email;
+    $instruktur->tentang_saya = $request->tentang_saya;
+    $instruktur->telepon = $request->telepon;
+    $instruktur->tempat_lahir = $request->tempat_lahir;
+    $instruktur->tanggal_lahir = $request->tanggal_lahir;
 
-        if ($request->filled('password')) {
-            $instruktur->password = Hash::make($request->password);
-        }
-        $instruktur->save();
-
-        return redirect()->route('instruktur.profile.edit')->with('success', 'Profil berhasil diperbarui.');
+    if ($request->filled('password')) {
+        $instruktur->password = Hash::make($request->password);
     }
+
+    if ($request->hasFile('foto')) {
+        // Hapus file lama jika ada
+        if ($instruktur->foto && \Storage::exists($instruktur->foto)) {
+            \Storage::delete($instruktur->foto);
+        }
+
+        // Simpan file baru
+        $path = $request->file('foto')->store('images/instruktur', 'public');
+        $instruktur->foto = $path;
+    }
+
+    $instruktur->save();
+
+    return redirect()->route('instruktur.profile.edit')->with('success', 'Profil berhasil diperbarui.');
+}
+
 
     // Method logout
     public function logout(Request $request)
