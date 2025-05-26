@@ -13,12 +13,12 @@ class Materi extends Model
         'judul',
         'deskripsi',
         'file_path',
-        'kelas_id',
+        'course_id',
     ];
 
     // Relasi ke kelas
-    public function kelas()
+    public function course()
     {
-        return $this->belongsTo(Kelas::class);
+        return $this->belongsTo(Course::class, 'course_id');
     }
 }

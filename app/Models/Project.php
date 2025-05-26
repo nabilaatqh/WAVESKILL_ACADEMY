@@ -12,18 +12,12 @@ class Project extends Model
     protected $fillable = [
         'judul',
         'deskripsi',
-        'kelas_id',
+        'course_id',
     ];
 
     // Relasi ke kelas
-    public function kelas()
+    public function course()
     {
-        return $this->belongsTo(Kelas::class);
+        return $this->belongsTo(Course::class, 'course_id');
     }
-
-    // Relasi ke submission (jika ada model Submission)
-    // public function submissions()
-    // {
-    //     return $this->hasMany(Submission::class);
-    // }
 }

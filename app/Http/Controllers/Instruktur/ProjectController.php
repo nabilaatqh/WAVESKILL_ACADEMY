@@ -4,26 +4,24 @@ namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
-use App\Models\Kelas;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::whereHas('kelas', function ($q) {
-            $q->where('instruktur_id', Auth::id());
-        })->latest()->get();
-
-        return view('instruktur.project.index', compact('projects'));
+        $user = Auth::user();
+        $course = Course::where('instruktur_id', $user->id)->get();
+        return view('instruktur.project.index', compact('course'));
     }
 
     public function create()
     {
-        $kelasList = Kelas::where('instruktur_id', Auth::id())->get();
-
-        return view('instruktur.project.create', compact('kelasList'));
+        $course = Course::where('instruktur_id', Auth::id())->get();
+        return view('instruktur.project.create', compact('course'));
     }
 
     public function store(Request $request)
@@ -31,79 +29,101 @@ class ProjectController extends Controller
         $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'kelas_id' => 'required|exists:kelas,id',
+            'course_id' => 'required|exists:courses,id',
+            'file' => 'nullable|file|mimes:pdf|max:20480',
         ]);
 
-        // Cek akses instruktur ke kelas
-        $kelas = Kelas::findOrFail($request->kelas_id);
-        if ($kelas->instruktur_id !== Auth::id()) {
+        $course = Course::findOrFail($request->course_id);
+        if ($course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
-        Project::create([
-            'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
-            'kelas_id' => $kelas->id,
-        ]);
+        $project = new Project();
+        $project->judul = $request->judul;
+        $project->deskripsi = $request->deskripsi;
+        $project->course_id = $course->id;
+        $project->tipe = 'pdf'; // langsung set pdf
 
-        return redirect()->route('instruktur.project.index')->with('success', 'Project berhasil dibuat.');
+        if ($request->hasFile('file')) {
+            $project->file = $request->file('file')->store('project_files', 'public');
+        }
+
+        $project->save();
+
+        return redirect()->route('instruktur.dashboard', ['course_id' => $project->course_id])
+            ->with('success', 'Project berhasil ditambahkan.');
     }
 
     public function show(Project $project)
     {
-        if ($project->kelas->instruktur_id !== Auth::id()) {
+        if ($project->course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
-
         return view('instruktur.project.show', compact('project'));
     }
 
-    public function edit(Project $project)
+    public function edit($id)
     {
-        if ($project->kelas->instruktur_id !== Auth::id()) {
+        $project = Project::findOrFail($id);
+        if ($project->course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
-        $kelasList = Kelas::where('instruktur_id', Auth::id())->get();
-
-        return view('instruktur.project.edit', compact('project', 'kelasList'));
+        $course = Course::where('instruktur_id', Auth::id())->get();
+        return view('instruktur.project.edit', compact('project', 'course'));
     }
 
-    public function update(Request $request, Project $project)
+    public function update(Request $request, $id)
     {
-        if ($project->kelas->instruktur_id !== Auth::id()) {
+        $project = Project::findOrFail($id);
+        if ($project->course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
         $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'kelas_id' => 'required|exists:kelas,id',
+            'course_id' => 'required|exists:courses,id',
+            'file' => 'nullable|file|mimes:pdf|max:20480',
         ]);
 
-        // Cek akses instruktur ke kelas baru
-        $kelas = Kelas::findOrFail($request->kelas_id);
-        if ($kelas->instruktur_id !== Auth::id()) {
+        $course = Course::findOrFail($request->course_id);
+        if ($course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
 
-        $project->update([
-            'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
-            'kelas_id' => $kelas->id,
-        ]);
+        $project->judul = $request->judul;
+        $project->deskripsi = $request->deskripsi;
+        $project->course_id = $course->id;
+        $project->tipe = 'pdf';
 
-        return redirect()->route('instruktur.project.index')->with('success', 'Project berhasil diperbarui.');
+        if ($request->hasFile('file')) {
+            if ($project->file) {
+                Storage::disk('public')->delete($project->file);
+            }
+            $project->file = $request->file('file')->store('project_files', 'public');
+        }
+
+        $project->save();
+
+        return redirect()->route('instruktur.dashboard', ['course_id' => $project->course_id])
+            ->with('success', 'Project berhasil diperbarui.');
     }
 
-    public function destroy(Project $project)
+    public function destroy($id)
     {
-        if ($project->kelas->instruktur_id !== Auth::id()) {
+        $project = Project::findOrFail($id);
+        if ($project->course->instruktur_id !== Auth::id()) {
             abort(403, 'Unauthorized');
+        }
+
+        if ($project->file) {
+            Storage::disk('public')->delete($project->file);
         }
 
         $project->delete();
 
-        return redirect()->route('instruktur.project.index')->with('success', 'Project berhasil dihapus.');
+        return redirect()->route('instruktur.dashboard', ['course_id' => $project->course_id])
+            ->with('success', 'Project berhasil dihapus.');
     }
 }

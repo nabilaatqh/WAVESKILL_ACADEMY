@@ -10,9 +10,24 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <form action="{{ route('instruktur.profile.update') }}" method="POST" style="max-width: 500px; background: white; padding: 25px; border-radius: 12px;">
+    <form action="{{ route('instruktur.profile.update') }}" method="POST" enctype="multipart/form-data" style="max-width: 500px; background: white; padding: 25px; border-radius: 12px;">
         @csrf
         @method('PUT')
+
+        {{-- Tampilkan foto profil saat ini jika ada --}}
+        <div class="text-center mb-3">
+            @if($instruktur->foto)
+                <img src="{{ asset('storage/' . $instruktur->foto) }}" alt="Foto Profil" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+            @else
+                <img src="https://ui-avatars.com/api/?name={{ urlencode($instruktur->nama_awal . ' ' . $instruktur->nama_akhir) }}" alt="Avatar" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+            @endif
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Unggah Foto Profil</label>
+            <input type="file" name="foto" class="form-control">
+            @error('foto') <small class="text-danger">{{ $message }}</small> @enderror
+        </div>
 
         <div class="form-group mb-3">
             <label>Nama awal <span style="color: red;">*</span></label>
@@ -58,7 +73,9 @@
 
         <div class="form-group mb-3">
             <label>Tanggal lahir <span style="color: red;">*</span></label>
-            <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $instruktur->tanggal_lahir ? $instruktur->tanggal_lahir->format('Y-m-d') : '') }}" class="form-control" required>
+            <input type="date" name="tanggal_lahir"
+                value="{{ old('tanggal_lahir', optional($instruktur->tanggal_lahir)->format('Y-m-d')) }}"
+                class="form-control" required>
             @error('tanggal_lahir') <small class="text-danger">{{ $message }}</small> @enderror
         </div>
 

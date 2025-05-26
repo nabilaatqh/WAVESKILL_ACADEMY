@@ -3,15 +3,35 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
 
 class Instruktur extends Authenticatable
 {
-    use HasFactory;
+    use Notifiable;
 
-    protected $table = 'users'; // Pakai tabel users
+    protected $guard = 'instruktur';
 
-    public function courses()
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'nama_awal',
+        'nama_akhir',
+        'domisili',
+        'tentang_saya',
+        'telepon',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'foto',
+];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    // Relasi: Instruktur punya banyak kelas
+    public function course()
     {
         return $this->hasMany(Course::class, 'instruktur_id');
     }

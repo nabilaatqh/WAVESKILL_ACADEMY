@@ -3,36 +3,76 @@
 @section('title', 'Detail Course')
 
 @section('content')
-<div class="container">
-    <h1>Detail Course: {{ $course->nama_course }}</h1>
+<div class="container py-4">
+    <div class="card shadow-sm rounded mb-4">
+        <div class="card-body">
+            <h3 class="mb-3">{{ $course->nama_course }}</h3>
 
-    <p><strong>Instruktur:</strong> {{ $course->instruktur ? $course->instruktur->name : '-' }}</p>
-    <p><strong>Deskripsi:</strong> {{ $course->deskripsi ?? '-' }}</p>
+            <div class="mb-2">
+                <strong>Instruktur:</strong>
+                <p class="mb-0">{{ $course->instruktur->name ?? '-' }}</p>
+            </div>
 
-    <h3>Daftar Student</h3>
-    @if($course->students->count() > 0)
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Nama Student</th>
-                <th>Email</th>
-                <th>Tanggal Bergabung</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($course->students as $student)
-            <tr>
-                <td>{{ $student->name }}</td> <!-- Ganti 'nama' menjadi 'name' -->
-                <td>{{ $student->email }}</td>
-                <td>{{ $student->created_at->format('d M Y') }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-    @else
-        <p>Belum ada student yang terdaftar di course ini.</p>
-    @endif
+            <div class="mb-3">
+                <strong>Deskripsi:</strong>
+                <p class="mb-0 text-muted">{{ $course->deskripsi ?? '-' }}</p>
+            </div>
 
-    <a href="{{ route('admin.course.index') }}" class="btn btn-secondary mt-3">Kembali</a>
+            @if($course->whatsapp_link)
+                <div class="mb-3">
+                    <strong>Link WhatsApp Grup:</strong>
+                    <p>
+                        <a href="{{ $course->whatsapp_link }}" target="_blank" class="btn btn-sm btn-success">
+                            Gabung WA Grup
+                        </a>
+                    </p>
+                </div>
+            @endif
+
+            @if($course->banner_image)
+                <div class="mb-3">
+                    <strong>Banner Course:</strong><br>
+                    <img src="{{ asset('storage/' . $course->banner_image) }}"
+                         alt="Banner Course" class="img-fluid rounded mt-2 border"
+                         style="max-height: 350px; object-fit: cover;">
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <div class="card shadow-sm rounded">
+        <div class="card-body">
+            <h4 class="mb-3">📚 Daftar Student Terdaftar</h4>
+
+            @if($course->students->count() > 0)
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nama Student</th>
+                                <th>Email</th>
+                                <th>Tanggal Bergabung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($course->students as $student)
+                                <tr>
+                                    <td>{{ $student->name }}</td>
+                                    <td>{{ $student->email }}</td>
+                                    <td>{{ $student->pivot->created_at->format('d M Y') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <p class="text-muted">Belum ada student yang terdaftar dalam course ini.</p>
+            @endif
+
+            <a href="{{ route('admin.course.index') }}" class="btn btn-secondary mt-3">
+                ← Kembali ke Daftar Course
+            </a>
+        </div>
+    </div>
 </div>
 @endsection
