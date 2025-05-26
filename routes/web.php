@@ -108,10 +108,22 @@ Route::middleware(['auth:student'])->prefix('student')->name('student.')->group(
     Route::get('/landingpage', [LandingPageController::class, 'index'])->name('landingpage');
     Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
     Route::get('/courses/{id}', [CourseController::class, 'show'])->name('courses.show');
+    Route::get('/courses/{id}/enroll', [EnrollmentController::class, 'showEnrollmentForm'])->name('enroll.form');
+    Route::post('/courses/{id}/enroll', [EnrollmentController::class, 'processEnrollment'])->name('enroll.process');
+    Route::get('/enrollments/status/{id}', [EnrollmentController::class, 'enrollmentStatus'])->name('enroll.status');
     Route::get('/groups', [groupController::class, 'index'])->name('groups.index');
     Route::get('/certificates', [certificateController::class, 'index'])->name('certificates.index');
     Route::get('/certificates/{course}', [CertificateController::class, 'show'])->name('certificates.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     // Tambah: daftar kursus, materi, tugas, forum, profil, dll
+});
+
+Route::get('/force-logout-all', function () {
+    Auth::guard('web')->logout();
+    Auth::guard('admin')->logout();
+    Auth::guard('instruktur')->logout();
+    Auth::guard('student')->logout();
+    Session::flush();
+    return 'Logout semua selesai, silakan login ulang.';
 });

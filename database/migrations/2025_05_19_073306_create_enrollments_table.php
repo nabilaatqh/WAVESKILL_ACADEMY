@@ -9,13 +9,12 @@ class CreateEnrollmentsTable extends Migration
     {
         Schema::create('enrollments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('student_id'); // FK ke users.id
-            $table->unsignedBigInteger('course_id');  // FK ke courses.id
+            $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('course_id')->constrained()->onDelete('cascade');
+            $table->string('bukti_transfer')->nullable(); // file bukti pembayaran
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->timestamp('paid_at')->nullable();
             $table->timestamps();
-
-            // Relasi FK
-            $table->foreign('student_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });
     }
 

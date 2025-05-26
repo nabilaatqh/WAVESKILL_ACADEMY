@@ -10,7 +10,7 @@ class Course extends Model
     use HasFactory;
 
     // Tambahkan kolom yang bisa diisi
-    protected $fillable = ['nama_course', 'instruktur_id', 'deskripsi', 'whatsapp_link', 'banner_image'];
+    protected $fillable = ['nama_course', 'instruktur_id', 'deskripsi', 'whatsapp_link', 'banner_image', 'harga'];
 
     // Relasi ke instruktur (User dengan role 'instructor')
     public function instruktur()
