@@ -46,7 +46,6 @@ class Student extends Authenticatable
         return $this->hasMany(Certificate::class, 'student_id');
     }
 
-    protected $table = 'users';
     
     public function courses()
     {

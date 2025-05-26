@@ -18,8 +18,8 @@ class LandingPageController extends Controller
             return redirect()->route('student.dashboard');
         }
 
-        $courses = Course::latest()->take(5)->get();
-
+        $courses = Course::select('id', 'nama_course as title', 'harga')->latest()->take(5)->get();
+        
         return view('student.landingpage', compact('student', 'courses'));
     }
 }

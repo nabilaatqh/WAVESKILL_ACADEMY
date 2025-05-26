@@ -12,17 +12,25 @@ class courseController extends Controller
     // Daftar semua kursus
     public function index()
     {
-        $courses = Course::withCount('students')->get(); // jika belum ada data, akan kosong
+        // Tambahkan debug untuk memastikan siapa yang login
+        dd(
+            'Student guard: ', Auth::guard('student')->user(),
+            'Admin guard: ', Auth::guard('admin')->user()
+        );
+        
+         // Ambil semua course dengan hitung jumlah student (seperti di admin)
+        $courses = Course::withCount('students')->latest()->get();
+
         return view('student.courses.index', compact('courses'));
     }
 
     // Detail kursus
     public function show($id)
     {
-        // Ambil kursus berdasarkan ID dengan relasi grup kelas
-        $course = Course::with('groups')->findOrFail($id);
-
-        // Bisa tambahkan data lain jika perlu, misalnya materi, instruktur, dsb
+        // Detail course dengan relasi grup
+        $course = Course::with('groups')
+            ->select('id', 'nama_course as title', 'deskripsi', 'harga')
+            ->findOrFail($id);
 
         return view('student.courses.show', compact('course'));
     }

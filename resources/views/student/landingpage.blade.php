@@ -45,7 +45,7 @@
             <div class="col-md-6">
                 <h1 class="fw-bold mb-3">Selamat Datang, {{ Auth::guard('student')->user()->name ?? 'Student' }}!</h1>
                 <p>Yuk, tingkatkan kemampuanmu dengan kursus berkualitas bersama <strong>WaveSkill Academy!</strong></p>
-                <a href="{{ route('student.courses.index') }}" class="btn btn-danger mt-3">Ikuti Kursus Sekarang</a>
+                <a href="{{ route('student.courses.index') }}" class="btn btn-danger mt-3">Beli Kursus Sekarang</a>
                 <a href="{{ route('student.dashboard') }}" class="btn btn-success mt-3">Lihat Kelas Saya</a>
             </div>
             <div class="col-md-6 text-center">
