@@ -11,33 +11,26 @@
     </div>
 
     <!-- Current Class Section -->
-    <div class="current-class-card">
-        <h4 class="class-title">Kelas kamu saat ini</h4>
+    <div class="current-class-card" id="current-course">
+        <h4 class="class-title">Kursus kamu saat ini</h4>
 
-        @if($enrolledCourses->isEmpty())
-            <div class="class-content mb-3" style="background-color: #FFEB99; border-radius: 10px; padding: 20px; color: #555;">
-                <p>Belum ada kelas tersedia.</p>
+        @if ($currentCourse)
+            <div class="class-content mb-3" style="background-color: #FFB347; border-radius: 10px; padding: 15px; display: flex; gap: 15px; align-items: center;">
+                <div class="class-image" style="width: 35%;">
+                    <img src="{{ asset('images/' . ($currentCourse->image ?? 'default-course.png')) }}"
+                        alt="{{ $currentCourse->nama_course }}" style="width: 100%; border-radius: 10px;">
+                </div>
+                <div class="class-details" style="width: 65%; color: white;">
+                    <h3 class="course-title" style="font-weight: 600;">{{ $currentCourse->nama_course }}</h3>
+                    <p class="mb-0">Instruktur: <strong>{{ $currentCourse->instruktur->name ?? '-' }}</strong></p>
+                    <p class="course-description" style="font-size: 0.9rem;">
+                        {{ Str::limit($currentCourse->deskripsi, 150) }}
+                    </p>
+                    <a href="{{ route('student.courses.show', $currentCourse->id) }}" class="btn btn-light btn-sm mt-2">Lihat Detail Kelas</a>
+                </div>
             </div>
         @else
-            @foreach($enrolledCourses as $course)
-                <div class="class-content mb-3" style="background-color: #FFB347; border-radius: 10px; padding: 15px; display: flex; gap: 15px; align-items: center;">
-                    <div class="class-image" style="width: 35%;">
-                        @if($course->image)
-                            <img src="{{ asset('images/' . $course->image) }}" alt="{{ $course->title }}" style="width: 100%; border-radius: 10px;">
-                        @else
-                            <img src="{{ asset('images/default-course.png') }}" alt="Default Course Image" style="width: 100%; border-radius: 10px;">
-                        @endif
-                    </div>
-
-                    <div class="class-details" style="width: 65%; color: white;">
-                        <h3 class="course-title" style="font-weight: 600;">{{ $course->title }}</h3>
-                        <p class="course-description" style="font-size: 0.9rem;">
-                            {{ Str::limit($course->description, 150) }}
-                        </p>
-                        <a href="{{ route('student.courses.show', $course->id) }}" class="btn btn-light btn-sm mt-2">Lihat Detail Kelas</a>
-                    </div>
-                </div>
-            @endforeach
+            <p>Belum ada kursus aktif.</p>
         @endif
     </div>
 
@@ -45,65 +38,63 @@
     <div class="navigation-tabs" style="margin-top: 20px;">
         <button class="tab tab-button active" data-tab="materi">Materi</button>
         <button class="tab tab-button" data-tab="project">Project</button>
-        <button class="tab tab-button" data-tab="kelas-kamu">Kelas Kamu</button>
+        <button class="tab tab-button" data-tab="kelas-kamu">Kursus Kamu</button>
     </div>
 
-    <!-- Tab Contents -->
+    <!-- Tab Materi -->
     <div id="materi" class="tab-content" style="display: block; margin-top: 15px;">
-        <h4 style="color: #FFA017;">Daftar Materi Figma UI/UX Design</h4>
-        <input type="text" id="search-materi" placeholder="Cari Materi" style="padding: 10px; width: 100%; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 15px;">
+        <h4 style="color: #FFA017;">Materi dari Kursus: {{ $currentCourse->title ?? '-' }}</h4>
 
-        <div class="materi-list" style="background: #FFF9C4; border-radius: 10px; padding: 10px;">
-            <div style="padding: 10px; margin-bottom: 10px; background: #FFF59D; border-radius: 8px; cursor: pointer;">
-                <span>Class Preparation</span>
-                <span style="float: right;">&#x25BC;</span>
-            </div>
-            <div style="padding: 10px; margin-bottom: 10px; background: #FFF59D; border-radius: 8px; cursor: pointer;">
-                <span>Fundamental UI/UX Design</span>
-                <span style="float: right;">&#x25BC;</span>
-            </div>
-            <div style="padding: 10px; margin-bottom: 10px; background: #FFF59D; border-radius: 8px; cursor: pointer;">
-                <span>Advanced UI/UX Design</span>
-                <span style="float: right;">&#x25BC;</span>
-            </div>
-            <div style="padding: 10px; background: #FFF59D; border-radius: 8px; cursor: pointer;">
-                <span>Extra Class for UI/UX Design</span>
-                <span style="float: right;">&#x25BC;</span>
-            </div>
-        </div>
+        @if ($materi->isEmpty())
+            <div style="background: #FFF3CD; padding: 15px; border-radius: 8px;">Belum ada materi tersedia.</div>
+        @else
+            @foreach ($materi as $item)
+                <div style="background: #FFF59D; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                    <strong>{{ $item->judul }}</strong><br>
+                    <small>{{ Str::limit($item->deskripsi, 100) }}</small>
+                </div>
+            @endforeach
+        @endif
     </div>
 
-    <div id="project" class="tab-content" style="display: none; margin-top: 15px; color: white;">
-        <h4>Portfolio Project</h4>
-        <div class="project-portfolio" style="display: flex; gap: 10px; margin-bottom: 20px;">
-            <img src="{{ asset('images/project1.png') }}" alt="Project 1" style="height: 100px; border-radius: 8px;">
-            <img src="{{ asset('images/project2.png') }}" alt="Project 2" style="height: 100px; border-radius: 8px;">
-            <img src="{{ asset('images/project3.png') }}" alt="Project 3" style="height: 100px; border-radius: 8px;">
-            <img src="{{ asset('images/project4.png') }}" alt="Project 4" style="height: 100px; border-radius: 8px;">
-        </div>
-        <div class="project-list">
-            @for ($i = 1; $i <= 5; $i++)
-            <div style="background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; color: black; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h5>Project {{ $i }} : Dasar UI/UX</h5>
-                    <p>Deadline: 2 Mei 2025</p>
+    <!-- Tab Project -->
+    <div id="project" class="tab-content" style="display: none; margin-top: 15px;">
+        <h4>Project dari Kursus: {{ $currentCourse->title ?? '-' }}</h4>
+
+        @if ($projects->isEmpty())
+            <div style="background: #FFE5B4; padding: 15px; border-radius: 8px;">Belum ada project tersedia.</div>
+        @else
+            @foreach ($projects as $project)
+                <div style="background: #FFF; padding: 15px; border-radius: 10px; margin-bottom: 10px; color: black;">
+                    <h5>{{ $project->judul }}</h5>
+                    <p>{{ Str::limit($project->deskripsi, 100) }}</p>
+                    <a href="{{ route('student.project.show', $project->id) }}" class="btn btn-sm btn-primary">Lihat Project</a>
                 </div>
-                <div>
-                    <button class="btn btn-success btn-sm" style="margin-right: 10px;">Selesai</button>
-                    <button class="btn btn-danger btn-sm">Unsubmit</button>
-                </div>
-            </div>
-            @endfor
-        </div>
+            @endforeach
+        @endif
     </div>
 
     <div id="kelas-kamu" class="tab-content" style="display: none; margin-top: 15px; color: white;">
-        <h4>Daftar Kelas Yang Ada</h4>
-        <div class="class-card" style="background-color: #FF8C00; border-radius: 10px; padding: 15px;">
-            <img src="{{ asset('images/figma-ui-ux-illustration.png') }}" alt="Figma UI/UX Design" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">
-            <h5 style="color: white;">Figma UI/UX Design</h5>
-            <p style="color: white;">Kursus ini dirancang khusus untuk pemula yang ingin mempelajari dasar-dasar desain UI/UX menggunakan Figma. Kamu akan belajar bagaimana merancang tampilan aplikasi/web dari nol, memahami prinsip desain, hingga membuat prototipe interaktif.</p>
-        </div>
+        <h4>Semua Kursus Kamu</h4>
+        @foreach ($enrolledCourses as $course)
+            <div class="class-card mb-3 select-course"
+                data-id="{{ $course->id }}"
+                data-nama="{{ $course->nama_course }}"
+                data-deskripsi="{{ $course->deskripsi }}"
+                data-image="{{ asset('images/' . ($course->image ?? 'default-course.png')) }}"
+                data-instruktur="{{ $course->instruktur->name ?? '-' }}"
+                style="background-color: #FF8C00; border-radius: 10px; padding: 15px; cursor: pointer;">
+                
+                <img src="{{ asset('images/' . ($course->image ?? 'default-course.png')) }}"
+                    alt="{{ $course->nama_course }}" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">
+                <h5 style="color: white;">{{ $course->nama_course }}</h5>
+                <p class="mb-1" style="color: white;">
+                    Instruktur: <strong>{{ $course->instruktur->name ?? '-' }}</strong>
+                </p>
+                <p style="color: white;">{{ Str::limit($course->deskripsi, 150) }}</p>
+                <a href="{{ route('student.courses.show', $course->id) }}" class="btn btn-light btn-sm mt-2">Lihat Detail</a>
+            </div>
+        @endforeach
     </div>
 </div>
 
@@ -142,27 +133,28 @@
 </style>
 
 <script>
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.addEventListener('click', () => {
-            const tab = button.dataset.tab;
+    document.querySelectorAll('.select-course').forEach(card => {
+        card.addEventListener('click', () => {
+            const id = card.dataset.id;
+            const nama = card.dataset.nama;
+            const deskripsi = card.dataset.deskripsi;
+            const image = card.dataset.image;
+            const instruktur = card.dataset.instruktur;
 
-            // Sembunyikan semua konten tab
-            document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
-
-            // Nonaktifkan semua tombol tab
-            document.querySelectorAll('.tab-button').forEach(tb => tb.classList.remove('active'));
-
-            // Tampilkan konten yang sesuai dengan tab yang dipilih
-            document.getElementById(tab).style.display = 'block';
-
-            // Tandai tombol yang aktif
-            button.classList.add('active');
+            document.getElementById('current-course').innerHTML = `
+                <h4 class="class-title">Kursus kamu saat ini</h4>
+                <div class="class-content mb-3" style="background-color: #FFB347; border-radius: 10px; padding: 15px; display: flex; gap: 15px; align-items: center;">
+                    <div class="class-image" style="width: 35%;">
+                        <img src="${image}" alt="${nama}" style="width: 100%; border-radius: 10px;">
+                    </div>
+                    <div class="class-details" style="width: 65%; color: white;">
+                        <h3 class="course-title" style="font-weight: 600;">${nama}</h3>
+                        <p class="mb-0">Instruktur: <strong>${instruktur}</strong></p>
+                        <p class="course-description" style="font-size: 0.9rem;">${deskripsi.substring(0, 150)}</p>
+                        <a href="/student/courses/${id}" class="btn btn-light btn-sm mt-2">Lihat Detail Kelas</a>
+                    </div>
+                </div>`;
         });
-    });
-
-    // Script filter pencarian materi bisa ditambahkan nanti
-    document.getElementById('search-materi').addEventListener('input', function() {
-        console.log('Mencari:', this.value);
     });
 </script>
 @endsection

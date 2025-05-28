@@ -12,13 +12,21 @@ use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
-        public function index()
-    {
-        $student = auth()->guard('student')->user();
+        public function index(Request $request)
+        {
+            $student = auth()->guard('student')->user();
 
-        // Ambil kursus yang sudah diikuti student
-        $enrolledCourses = $student->enrolledCourses()->get();
+            // Ambil semua course yang diikuti student
+            $enrolledCourses = $student->enrolledCourses()->with(['materis', 'projects', 'instruktur'])->get();
+            // Ambil ID course yang dipilih dari query string, jika ada
+             $selectedCourseId = $request->input('course_id') ?? ($enrolledCourses->first()->id ?? null);
+            // Ambil course pertama sebagai currentCourse (bisa pakai pilihan jika mau)
+            $currentCourse = $enrolledCourses->firstWhere('id', $selectedCourseId);
 
-        return view('student.dashboard', compact('enrolledCourses'));
-    }
+            // Ambil materi dan project dari course aktif
+            $materi = $currentCourse ? $currentCourse->kelass->flatMap->materis : collect();
+            $projects = $currentCourse ? $currentCourse->projects : collect();
+
+            return view('student.dashboard', compact('enrolledCourses', 'currentCourse', 'materi', 'projects'));
+        }    
 }

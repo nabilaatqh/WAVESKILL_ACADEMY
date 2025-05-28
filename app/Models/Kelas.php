@@ -28,7 +28,12 @@ class Kelas extends Model
 
     public function materis()
     {
-        return $this->hasMany(Materi::class);
+        return $this->hasMany(Materi::class, 'kelas_id');
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
     }
 
     public function projects()

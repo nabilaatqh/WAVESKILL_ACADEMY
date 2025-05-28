@@ -135,9 +135,9 @@
     <div class="app-container">
         {{-- Sidebar --}}
         <aside class="sidebar">
-            <div class="logo">
+            <a href="{{ route('student.landingpage') }}" class="logo" title="Beranda">
                 <img src="{{ asset('image/logo_umkt.png') }}" alt="Logo WaveSkill">
-            </div>
+            </a>
             <a href="{{ route('student.dashboard') }}" class="{{ request()->routeIs('student.dashboard') ? 'active' : '' }}" title="Dashboard">
                 <i class="fas fa-home"></i>
             </a>
@@ -150,7 +150,13 @@
             <a href="{{ route('student.profile.edit') }}" class="{{ request()->routeIs('student.profile') ? 'active' : '' }}" title="Profil">
                 <i class="fas fa-user"></i>
             </a>
-            {{-- Tambah menu sidebar lainnya sesuai kebutuhan --}}
+            <form method="POST" action="{{ route('student.logout') }}" class="mt-auto">
+                @csrf
+                <button type="submit" class="btn btn-outline-light btn-sm rounded-circle" style="width: 45px; height: 45px;" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </form>
+
         </aside>
 
         {{-- Main Content (Topbar + Content) --}}
