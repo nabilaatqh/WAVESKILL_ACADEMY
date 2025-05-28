@@ -75,7 +75,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
     Route::post('/pengaturan/update-foto', [PengaturanController::class, 'updateFoto'])->name('updateFoto');
 
-    Route::resource('course', CourseController::class);
+    Route::resource('course', AdminCourseController::class);
 
 
 });

@@ -23,4 +23,35 @@ class Course extends Model
     {
         return $this->belongsToMany(User::class, 'course_student', 'course_id', 'student_id')->where('role', 'student');
     }
+
+    public function groups()
+    {
+        return $this->hasMany(\App\Models\Group::class);
+    }
+
+    // app/Models/Course.php
+
+    public function materis()
+    {
+        return $this->hasManyThrough(
+            \App\Models\Materi::class,  // Model tujuan akhir
+            \App\Models\Kelas::class,   // Model perantara
+            'course_id',                // FK di kelas: mengacu ke course
+            'kelas_id',                 // FK di materi: mengacu ke kelas
+            'id',                       // PK di course
+            'id'                        // PK di kelas
+        );
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
+
+    public function kelass()
+    {
+        return $this->hasMany(Kelas::class);
+    }
+
+
 }

@@ -21,4 +21,6 @@
 @endif
 
 <p><small>Mohon tunggu verifikasi admin maksimal 1x24 jam.</small></p>
+<a href="{{ route('student.landingpage') }}" class="btn btn-secondary mb-3">← Kembali ke Beranda</a>
+
 @endsection

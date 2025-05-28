@@ -7,13 +7,17 @@ use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; 
+
 
 class courseController extends Controller
 {
     // Daftar semua kursus
     public function index()
     {
-
+        
+        $student = Auth::guard('student')->user();
+         // Ambil semua course dengan hitung jumlah student (seperti di admin)
         $courses = Course::withCount('students')->latest()->get();
 
         return view('student.courses.index', compact('courses'));
