@@ -90,7 +90,7 @@
     <div class="login-container">
         <!-- Kiri (ilustrasi) -->
         <div class="left-section">
-            <img src="{{ asset('images/ilustrasi-login.png') }}" alt="Ilustrasi Mahasiswa">
+            <img src="{{ asset('image/about.png') }}" alt="Ilustrasi Mahasiswa">
         </div>
 
         <!-- Kanan (form login) -->

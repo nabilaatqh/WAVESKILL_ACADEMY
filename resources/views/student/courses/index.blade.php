@@ -1,7 +1,7 @@
-@extends('layouts.student')
+@extends('layouts.landing')
 
 @section('content')
-<a href="{{ route('student.landingpage') }}" class="btn btn-secondary mb-3">← Kembali ke Beranda</a>
+<a href="{{ route('student.landingpage') }}" class="btn btn-secondary mb-3">← Kembali</a>
 
 <h2>Daftar Kursus</h2>
 

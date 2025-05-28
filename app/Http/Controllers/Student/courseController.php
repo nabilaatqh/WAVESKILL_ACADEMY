@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
@@ -12,13 +13,7 @@ class courseController extends Controller
     // Daftar semua kursus
     public function index()
     {
-        // Tambahkan debug untuk memastikan siapa yang login
-        dd(
-            'Student guard: ', Auth::guard('student')->user(),
-            'Admin guard: ', Auth::guard('admin')->user()
-        );
-        
-         // Ambil semua course dengan hitung jumlah student (seperti di admin)
+
         $courses = Course::withCount('students')->latest()->get();
 
         return view('student.courses.index', compact('courses'));
