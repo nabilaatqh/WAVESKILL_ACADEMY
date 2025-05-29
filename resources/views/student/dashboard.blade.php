@@ -30,7 +30,31 @@
                 </div>
             </div>
         @else
-            <p>Belum ada kursus aktif.</p>
+            @foreach($enrolledCourses as $course)
+                <div class="class-content mb-3" style="background-color: #FFB347; border-radius: 10px; padding: 15px; display: flex; gap: 15px; align-items: center;">
+                    <div class="class-image" style="width: 35%;">
+                        @if ($course->banner_image)
+                            <img src="{{ asset('storage/' . $course->banner_image) }}"
+                                alt="{{ $course->nama_course }}"
+                                class="img-fluid rounded mb-3"
+                                style="max-height: 150px; object-fit: cover;">
+                        @else
+                            <img src="{{ asset('images/default-course.png') }}"
+                                alt="Default Image"
+                                class="img-fluid rounded mb-3"
+                                style="max-height: 150px; object-fit: cover;">
+                        @endif
+                    </div>
+
+                    <div class="class-details" style="width: 65%; color: white;">
+                        <h3 class="course-title" style="font-weight: 600;">{{ $course->nama_course }}</h3>
+                        <p class="course-description" style="font-size: 0.9rem;">
+                            {{ Str::limit($course->deskripsi ?? '-', 150) }}
+                        </p>
+                        <a href="{{ route('student.courses.show', $course->id) }}" class="btn btn-light btn-sm mt-2">Lihat Detail Kelas</a>
+                    </div>
+                </div>
+            @endforeach
         @endif
     </div>
 

@@ -28,19 +28,21 @@ class Student extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // Relasi many-to-many ke courses via enrollments
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class, 'student_id');
+    }
+
     public function enrolledCourses()
     {
         return $this->belongsToMany(Course::class, 'enrollments', 'student_id', 'course_id');
     }
 
-    // Relasi many-to-many ke groups via group_student
     public function groups()
     {
         return $this->belongsToMany(Group::class, 'group_student', 'student_id', 'group_id');
     }
 
-    // Relasi one-to-many ke certificates
     public function certificates()
     {
         return $this->hasMany(Certificate::class, 'student_id');
@@ -50,4 +52,5 @@ class Student extends Authenticatable
     {
         return $this->belongsToMany(Course::class, 'course_student');
     }
+
 }

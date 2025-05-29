@@ -226,8 +226,11 @@
             <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                 <i class="fas fa-users"></i>
             </a>
-                        <a href="{{ route('admin.course.index') }}" class="{{ request()->routeIs('admin.course.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.course.index') }}" class="{{ request()->routeIs('admin.course.*') ? 'active' : '' }}">
                 <i class="fas fa-chalkboard-teacher"></i>
+            </a>
+            <a href="{{ route('admin.enrollments.index') }}" class="{{ request()->routeIs('admin.enrollments.*') ? 'active' : '' }}">
+                <i class="fas fa-receipt"></i>
             </a>
             <a href="{{ route('admin.pengaturan.index') }}" class="{{ request()->routeIs('admin.pengaturan.index') ? 'active' : '' }}">
                 <i class="fas fa-user-cog"></i>
