@@ -48,7 +48,7 @@ class Student extends Authenticatable
         return $this->hasMany(Certificate::class, 'student_id');
     }
     
-    public function courses()
+    public function course()
     {
         return $this->belongsToMany(Course::class, 'course_student');
     }

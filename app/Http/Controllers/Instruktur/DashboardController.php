@@ -3,23 +3,61 @@
 namespace App\Http\Controllers\Instruktur;
 
 use App\Http\Controllers\Controller;
-use App\Models\Kelas;
-use App\Models\Materi;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Course;
+use App\Models\Materi;
+use App\Models\Project;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Ambil kelas pertama yang dipegang instruktur
-        $kelasAktif = Kelas::where('instruktur_id', Auth::id())->first();
+        $user = Auth::user();
 
-        // Ambil materi yang terkait dengan kelas instruktur
-        $materi = Materi::whereHas('kelas', function ($query) {
-            $query->where('instruktur_id', Auth::id());
-        })->get();
+        $courses = Course::where('instruktur_id', $user->id)->get();
 
-        // Kirim data ke view
-        return view('instruktur.dashboard', compact('kelasAktif', 'materi'));
+        $selectedCourseId = $request->input('course_id') ?? ($courses->first()->id ?? null);
+
+        $activeTab = $request->input('active_tab', 'materi'); // default tab materi
+
+        $searchMateri = $request->input('search_materi');
+        $searchProject = $request->input('search_project');
+
+        $selectedCourse = null;
+        $materi = collect();
+        $projects = collect();
+
+        if ($selectedCourseId) {
+            $selectedCourse = Course::find($selectedCourseId);
+
+            if ($selectedCourse) {
+                if ($activeTab === 'materi') {
+                    $materiQuery = Materi::where('course_id', $selectedCourse->id);
+                    if ($searchMateri) {
+                        $materiQuery->where('judul', 'like', "%{$searchMateri}%");
+                    }
+                    $materi = $materiQuery->orderBy('created_at', 'desc')->get();
+                }
+
+                if ($activeTab === 'project') {
+                    $projectQuery = Project::where('course_id', $selectedCourse->id);
+                    if ($searchProject) {
+                        $projectQuery->where('judul', 'like', "%{$searchProject}%");
+                    }
+                    $projects = $projectQuery->orderBy('created_at', 'desc')->get();
+                }
+            }
+        }
+
+        return view('instruktur.dashboard', compact(
+            'courses',
+            'selectedCourse',
+            'materi',
+            'projects',
+            'searchMateri',
+            'searchProject',
+            'activeTab'
+        ));
     }
 }

@@ -6,11 +6,60 @@
     <title>@yield('title', 'Dashboard Instruktur')</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('css/instruktur.css') }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .dropdown-profile {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-width: 150px;
+            display: none;
+            border-radius: 6px;
+            z-index: 999;
+        }
+
+        .dropdown-menu a,
+        .dropdown-menu form button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .dropdown-menu a:hover,
+        .dropdown-menu form button:hover {
+            background-color: #f5f5f5;
+        }
+
+        .profile:hover .dropdown-menu {
+            display: block;
+        }
+
+        .profile img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+    </style>
     @yield('head')
 </head>
 <body>
     <div class="sidebar">
         <div class="logo">WS</div>
+
         <a href="{{ route('instruktur.dashboard') }}" class="{{ request()->routeIs('instruktur.dashboard') ? 'active' : '' }}" title="Home">
             <i class="fas fa-home"></i>
         </a>
@@ -20,6 +69,12 @@
         <a href="{{ route('instruktur.profile.edit') }}" class="{{ request()->routeIs('instruktur.profile.*') ? 'active' : '' }}" title="Profil">
             <i class="fas fa-user"></i>
         </a>
+
+        @if(isset($selectedCourse) && $selectedCourse->whatsapp_group_link)
+        <a href="{{ $selectedCourse->whatsapp_group_link }}" target="_blank" title="Grup WhatsApp" style="margin-top: 15px;">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        @endif
     </div>
 
     <div class="main-content">
@@ -27,10 +82,25 @@
             <div class="notif" title="Notifikasi">
                 <i class="fas fa-bell"></i>
             </div>
-            <div class="profile">
-                <img src="{{ asset('images/avatar-default.png') }}" alt="Avatar" />
+
+            <div class="profile dropdown-profile">
+                @php
+                    $foto = Auth::user()->foto;
+                    $urlFoto = $foto ? asset('storage/' . $foto) : asset('images/avatar-default.png');
+                @endphp
+                <img src="{{ $urlFoto }}" alt="Avatar">
                 <span class="name">{{ Auth::user()->name }}</span>
                 <i class="fas fa-chevron-down"></i>
+
+                <div class="dropdown-menu">
+                    <a href="{{ route('instruktur.profile.edit') }}">
+                        <i class="fas fa-user-circle"></i> Edit Profil
+                    </a>
+                    <form method="POST" action="{{ route('instruktur.logout') }}">
+                        @csrf
+                        <button type="submit"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -39,6 +109,7 @@
         </div>
     </div>
 
+    @stack('scripts')
     @yield('scripts')
 </body>
 </html>

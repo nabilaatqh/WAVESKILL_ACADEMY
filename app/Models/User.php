@@ -68,8 +68,8 @@ class User extends Authenticatable
         return $this->hasMany(Course::class, 'instruktur_id');
     }
 
-    // Relasi dengan courses (student)
-    public function enrolledCourses()
+    // Relasi dengan course (student)
+    public function enrolledcourse()
     {
         return $this->belongsToMany(Course::class, 'course_student', 'student_id', 'course_id');
     }

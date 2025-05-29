@@ -7,18 +7,20 @@ use Illuminate\Support\Facades\Schema;
 class CreateMaterisTable extends Migration
 {
     public function up()
-    {
-        Schema::create('materis', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('kelas_id');
-            $table->string('judul');
-            $table->text('deskripsi')->nullable();
-            $table->string('file_path');
-            $table->timestamps();
+{
+    Schema::create('materis', function (Blueprint $table) {
+    $table->id();
+    $table->string('judul');
+    $table->text('deskripsi')->nullable();
+    $table->string('file')->nullable();
+    $table->string('tipe');
+    $table->unsignedBigInteger('course_id');
+    $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
+    $table->timestamps();
+});
 
-            $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
-        });
-    }
+}
+
 
     public function down()
     {

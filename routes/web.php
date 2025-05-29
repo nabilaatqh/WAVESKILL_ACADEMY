@@ -24,6 +24,7 @@ use App\Http\Controllers\Instruktur\MateriController;
 use App\Http\Controllers\Instruktur\ProjectController;
 use App\Http\Controllers\Instruktur\GroupController as InstrukturGroupController;
 use App\Http\Controllers\Instruktur\DashboardController;
+use App\Http\Controllers\Instruktur\SubmissionController;
 
 // STUDENT CONTROLLERS
 use App\Http\Controllers\Student\StudentController;
@@ -89,23 +90,47 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::post('/enrollments/{id}/reject', [AdminEnrollmentController::class, 'reject'])->name('enrollments.reject');
 });
 
-
 // ============== INSTRUKTUR AREA ==============
 Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.')->group(function () {
+
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Profil
     Route::get('/profile/edit', [InstrukturController::class, 'editProfile'])->name('profile.edit');
     Route::put('/profile/update', [InstrukturController::class, 'updateProfile'])->name('profile.update');
 
-    // Materi & Project
-    Route::resource('materi', MateriController::class)->except(['show']);
-    Route::get('materi/show/{materi}', [MateriController::class, 'show'])->name('materi.show');
-    Route::resource('project', ProjectController::class);
+    // Group (only index)
+    Route::get('group', [GroupController::class, 'index'])->name('group.index');
 
-    // Group
-    Route::resource('group', InstrukturGroupController::class);
+    // Materi CRUD
+    Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
+    Route::get('materi/create', [MateriController::class, 'create'])->name('materi.create');
+    Route::post('materi', [MateriController::class, 'store'])->name('materi.store');
+    Route::get('materi/{materi}', [MateriController::class, 'show'])->name('materi.show');
+    Route::get('materi/{materi}/edit', [MateriController::class, 'edit'])->name('materi.edit');
+    Route::put('materi/{materi}', [MateriController::class, 'update'])->name('materi.update');
+    Route::delete('materi/{materi}', [MateriController::class, 'destroy'])->name('materi.destroy');
+
+    // Project CRUD
+    Route::get('project', [ProjectController::class, 'index'])->name('project.index');
+    Route::get('project/create', [ProjectController::class, 'create'])->name('project.create');
+    Route::post('project', [ProjectController::class, 'store'])->name('project.store');
+    Route::get('project/{project}', [ProjectController::class, 'show'])->name('project.show');
+    Route::get('project/{project}/edit', [ProjectController::class, 'edit'])->name('project.edit');
+    Route::put('project/{project}', [ProjectController::class, 'update'])->name('project.update');
+    Route::delete('project/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
+
+    // Submission
+    Route::get('/project/{project}/submissions', [SubmissionController::class, 'index'])->name('submission.index');
+    Route::get('submission/detail/{submission}', [SubmissionController::class, 'show'])->name('submission.show');
+    Route::put('submission/detail/{submission}', [SubmissionController::class, 'update'])->name('submission.update');
+
+    // Log Out
+    Route::post('/logout', [InstrukturController::class, 'logout'])->name('logout');
 });
+
+
 
 
 // ============== STUDENT AREA ==============
