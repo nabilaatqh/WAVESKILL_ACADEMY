@@ -7,7 +7,6 @@ use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Student;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; 
 
 
 class courseController extends Controller

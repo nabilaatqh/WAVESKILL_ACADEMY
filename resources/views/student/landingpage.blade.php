@@ -117,31 +117,31 @@
             <div class="row text-center justify-content-between align-items-stretch">
                 {{-- Fitur 1 --}}
                 <div class="col-6 col-md-4 col-lg-2 d-flex flex-column align-items-center mb-4 mb-lg-0">
-                    <img src="{{ asset('image/fitur.png') }}" alt="Instruktur Berpengalaman" class="img-fluid mb-3" style="height: 150px;">
+                    <img src="{{ asset('image/fitur.png') }}" alt="Instruktur Berpengalaman" class="img-fluid mb-3" style="height: 120px;">
                     <h6 class="fw-bold">Instruktur Berpengalaman</h6>
                     <p class="small mb-0">WaveSkill Academy menghadirkan Instruktur yang ahli di bidangnya!</p>
                 </div>
                 {{-- Fitur 2 --}}
                 <div class="col-6 col-md-4 col-lg-2 d-flex flex-column align-items-center mb-4 mb-lg-0">
-                    <img src="{{ asset('image/fitur1.png') }}" alt="Akses di Mana Saja" class="img-fluid mb-3" style="height: 150px;">
+                    <img src="{{ asset('image/fitur1.png') }}" alt="Akses di Mana Saja" class="img-fluid mb-3" style="height: 120px;">
                     <h6 class="fw-bold">Akses di Mana Saja</h6>
                     <p class="small mb-0">Seluruh materi WaveSkill Academy bisa diakses dari mana saja loh!</p>
                 </div>
                 {{-- Fitur 3 --}}
                 <div class="col-6 col-md-4 col-lg-2 d-flex flex-column align-items-center mb-4 mb-lg-0">
-                    <img src="{{ asset('image/fitur2.png') }}" alt="Koneksi" class="img-fluid mb-3" style="height: 150px;">
+                    <img src="{{ asset('image/fitur2.png') }}" alt="Koneksi" class="img-fluid mb-3" style="height: 120px;">
                     <h6 class="fw-bold">Koneksi di seluruh Indonesia</h6>
                     <p class="small mb-0">Berkenalan dengan pelajar dan instruktur dari seluruh Indonesia!</p>
                 </div>
                 {{-- Fitur 4 --}}
                 <div class="col-6 col-md-4 col-lg-2 d-flex flex-column align-items-center mb-4 mb-lg-0">
-                    <img src="{{ asset('image/fitur3.png') }}" alt="Sertifikat" class="img-fluid mb-3" style="height: 150px;">
+                    <img src="{{ asset('image/fitur3.png') }}" alt="Sertifikat" class="img-fluid mb-3" style="height: 120px;">
                     <h6 class="fw-bold">Sertifikat Resmi</h6>
                     <p class="small mb-0">Kamu akan mendapatkan sertifikat resmi dari WaveSkill Academy</p>
                 </div>
                 {{-- Fitur 5 --}}
                 <div class="col-6 col-md-4 col-lg-2 d-flex flex-column align-items-center">
-                    <img src="{{ asset('image/fitur4.png') }}" alt="Biaya Murah" class="img-fluid mb-3" style="height: 150px;">
+                    <img src="{{ asset('image/fitur4.png') }}" alt="Biaya Murah" class="img-fluid mb-3" style="height: 120px;">
                     <h6 class="fw-bold">Biaya Murah</h6>
                     <p class="small mb-0">Akses banyak materi, tapi dengan biaya yang minim!</p>
                 </div>

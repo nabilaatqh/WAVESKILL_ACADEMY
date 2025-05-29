@@ -53,5 +53,9 @@ class Course extends Model
         return $this->hasMany(Kelas::class);
     }
 
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
 
-}
+}   
