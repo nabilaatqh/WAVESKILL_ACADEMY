@@ -18,8 +18,7 @@
             <img src="{{ asset('storage/' . $selectedCourse->banner_image) }}" alt="Course Banner" style="width: 100%; max-height: 320px; object-fit: cover; border-radius: 12px; margin-bottom: 12px;">
         @endif
         <h2 style="font-size: 24px; font-weight: bold;">{{ $selectedCourse->nama_course }}</h2>
-        <p style="font-size: 20px;">Kursus ini dirancang khusus untuk pemula yang ingin mempelajari dasar-dasar desain UI/UX menggunakan Figma. kamu akan belajar bagaimana merancang tampilan aplikasi/web dari nol, memahami prinsip desain, hingga membuat prototipe interaktif</p>
-        <p style="font-size: 14px;">{{ $selectedCourse->deskripsi }}</p>
+        <p style="font-size: 20px;">{{ $selectedCourse->deskripsi }}</p>
     </div>
 
     <nav class="tab-menu d-flex justify-content-center mb-4" style="gap: 12px;">
@@ -141,7 +140,7 @@
                         </div>
 
                          <button type="submit" class="button w-100 fw-bold" style="margin-bottom: 20px;">
-                            <i class="fas fa-save me-2"></i> Simpan Materi
+                            <i class="fas fa-save me-2"></i> Simpan Project
                         </button>
                     </form>
                 </div>

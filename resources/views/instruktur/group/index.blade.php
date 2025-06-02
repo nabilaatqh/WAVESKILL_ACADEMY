@@ -22,8 +22,7 @@
             {{-- Isi Card --}}
             <div class="group-body">
                 <h1 class="course-title">{{ $course->nama_course }}</h1>
-                <p class="course-summary">Kursus ini dirancang khusus untuk pemula yang ingin mempelajari dasar-dasar desain UI/UX menggunakan Figma. kamu akan belajar bagaimana merancang tampilan aplikasi/web dari nol, memahami prinsip desain, hingga membuat prototipe interaktif</p>
-                <p class="course-description">{{ $course->deskripsi }}</p>
+                <p class="course-description" >{{ $course->deskripsi }}</p>
             </div>
 
             <a href="{{ $course->whatsapp_link }}" target="_blank" class="group-btn">Lihat Grup Whatsapp</a>
