@@ -12,11 +12,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -34,64 +29,74 @@ class User extends Authenticatable
         'tanggal_lahir',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'tanggal_lahir' => 'date',
         'is_active' => 'boolean',
     ];
 
-    /**
-     * Helper method untuk cek role instruktur
-     */
+    // ======================== ROLE HELPER ========================
     public function isInstruktur()
     {
         return $this->role === 'instruktur';
     }
 
-    /**
-     * Relasi untuk instruktur yang memiliki banyak course
-     */
+    public function isStudent()
+    {
+        return $this->role === 'student';
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    // ======================== RELASI UNTUK INSTRUKTUR ========================
     public function courses()
     {
         return $this->hasMany(Course::class, 'instruktur_id');
     }
 
-    /**
-     * Alias relasi course untuk kompatibilitas (dari versi lain)
-     */
+    // Alias jika butuh course() di mana-mana
     public function course()
     {
-        return $this->hasMany(Course::class, 'instruktur_id');
+        return $this->courses();
     }
 
-    /**
-     * Relasi many-to-many antara student dan course
-     */
-    public function enrolledcourse()
+    // ======================== RELASI UNTUK STUDENT ========================
+
+    // Course yang diikuti oleh student
+    public function enrolledCourses()
     {
-        return $this->belongsToMany(Course::class, 'course_student', 'student_id', 'course_id');
+        return $this->belongsToMany(Course::class, 'enrollments', 'student_id', 'course_id');
     }
 
-    /**
-     * Alias untuk enrolledcourse
-     */
+    // Alias enrollments
     public function enrollments()
     {
-        return $this->enrolledcourse();
+        return $this->enrolledCourses();
+    }
+
+    // Relasi ke submissions (project submissions student)
+    public function submissions()
+    {
+        return $this->hasMany(Submission::class, 'student_id');
+    }
+
+    // Relasi ke sertifikat yang dimiliki student
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class, 'student_id');
+    }
+
+    // Grup (jika digunakan)
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_student', 'student_id', 'group_id');
     }
 }

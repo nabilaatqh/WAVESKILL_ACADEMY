@@ -64,6 +64,20 @@
             </div>
 
             <div class="mb-3">
+                <label for="certificate_file" class="form-label">Upload Sertifikat Template (PDF)</label>
+                <input type="file" name="certificate_file" class="form-control @error('certificate_file') is-invalid @enderror" accept=".pdf,.jpg,.jpeg,.png">
+                @error('certificate_file')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            @if(isset($course) && $course->certificate_file)
+                <p class="mt-2">Sertifikat saat ini:
+                    <a href="{{ asset('storage/' . $course->certificate_file) }}" target="_blank">Lihat</a>
+                </p>
+            @endif
+
+            <div class="mb-3">
                 <label for="banner_image" class="form-label">Banner Course (Opsional)</label>
                 <input type="file" class="form-control @error('banner_image') is-invalid @enderror"
                        id="banner_image" name="banner_image">

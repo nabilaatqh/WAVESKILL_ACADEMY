@@ -10,7 +10,7 @@
 
     <div class="dashboard-wrapper container-center wrapper-grup">
 
-        @forelse($course as $course)
+        @forelse($coursesWithLink as $course)
         <div class="course-card mb-5">
             {{-- Banner Course --}}
             @if($course->banner_image)
@@ -33,5 +33,6 @@
         @endforelse
 
     </div>
+
 </div>
 @endsection

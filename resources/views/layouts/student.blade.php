@@ -133,7 +133,9 @@
         <a href="{{ route('student.groups.index') }}" class="{{ request()->routeIs('student.groups.*') ? 'active' : '' }}" title="Grup Kelas">
             <i class="fas fa-users"></i>
         </a>
-        <a href="{{ route('student.certificates.index') }}" class="{{ request()->routeIs('student.certificates.*') ? 'active' : '' }}" title="Sertifikat">
+        <a href="{{ route('student.certificates.index') }}" 
+        class="{{ request()->routeIs('student.certificates.*') ? 'active' : '' }}" 
+        title="Sertifikat">
             <i class="fas fa-certificate"></i>
         </a>
         <a href="{{ route('student.profile.edit') }}" class="{{ request()->routeIs('student.profile') ? 'active' : '' }}" title="Profil">

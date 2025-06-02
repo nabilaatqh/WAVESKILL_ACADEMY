@@ -47,7 +47,7 @@
             <div class="mb-3">
                 <label for="harga" class="form-label">Harga Course (dalam Rupiah)</label>
                 <input type="number" class="form-control @error('harga') is-invalid @enderror"
-                    id="harga" name="harga" value="{{ old('harga') }}" min="0" placeholder="Contoh: 150000">
+                    id="harga" name="harga" value="{{ old('harga', $course->harga) }}" min="0" placeholder="Contoh: 150000">
                 @error('harga')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -62,6 +62,20 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+
+            <div class="mb-3">
+                <label for="certificate_file" class="form-label">Upload Sertifikat Template (PDF)</label>
+                <input type="file" name="certificate_file" class="form-control @error('certificate_file') is-invalid @enderror" accept=".pdf,.jpg,.jpeg,.png">
+                @error('certificate_file')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            @if(isset($course) && $course->certificate_file)
+                <p class="mt-2">Sertifikat saat ini:
+                    <a href="{{ asset('storage/' . $course->certificate_file) }}" target="_blank">Lihat</a>
+                </p>
+            @endif
 
             @if($course->banner_image)
                 <div class="mb-3">

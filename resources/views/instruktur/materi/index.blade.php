@@ -12,7 +12,9 @@
 
     @foreach($course as $course)
         <div class="kelas-card mt-4" >
-            <h4>{{ $course->nama_course }}</h4>
+            @foreach ($coursesWithLink as $course)
+                <h4>{{ $course->nama_course }}</h4>
+            @endforeach
             <a href="{{ route('instruktur.materi.create') }}?course_id={{ $course->id }}" class="btn btn-sm btn-primary">Tambah Materi</a>
             <ul class="mt-3">
                 @forelse($course->materis as $materi)

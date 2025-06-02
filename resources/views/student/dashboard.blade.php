@@ -14,23 +14,21 @@
     <div class="current-class-card" id="current-course">
         <h4 class="class-title">Kursus kamu saat ini</h4>
 
-        @if ($$selectedCourse)
-            <div class="class-content mb-3" style="background-color: #FFB347; border-radius: 10px; padding: 15px; display: flex; gap: 15px; align-items: center;">
+        @if ($selectedCourse)
+            <div class="class-content mb-3" style="...">
                 <div class="class-image" style="width: 35%;">
-                    <img src="{{ asset('images/' . ($$selectedCourse->image ?? 'default-course.png')) }}"
-                        alt="{{ $$selectedCourse->nama_course }}" style="width: 100%; border-radius: 10px;">
+                    <img src="{{ asset('images/' . ($selectedCourse->image ?? 'default-course.png')) }}"
+                        alt="{{ $selectedCourse->nama_course }}" style="width: 100%; border-radius: 10px;">
                 </div>
                 <div class="class-details" style="width: 65%; color: white;">
-                    <h3 class="course-title" style="font-weight: 600;">{{ $$selectedCourse->nama_course }}</h3>
-                    <p class="mb-0">Instruktur: <strong>{{ $$selectedCourse->instruktur->name ?? '-' }}</strong></p>
+                    <h3 class="course-title" style="font-weight: 600;">{{ $selectedCourse->nama_course }}</h3>
+                    <p class="mb-0">Instruktur: <strong>{{ $selectedCourse->instruktur->name ?? '-' }}</strong></p>
                     <p class="course-description" style="font-size: 0.9rem;">
-                        {{ Str::limit($$selectedCourse->deskripsi, 150) }}
+                        {{ Str::limit($selectedCourse->deskripsi, 150) }}
                     </p>
-                    <a href="{{ route('student.courses.show', $$selectedCourse->id) }}" class="btn btn-light btn-sm mt-2">Lihat Detail Kelas</a>
+                    <a href="{{ route('student.courses.detail', $selectedCourse->id) }}" class="btn btn-light btn-sm mt-2">Lihat Detail Kelas</a>
                 </div>
             </div>
-        @else
-            <p>Belum ada kursus aktif.</p>
         @endif
     </div>
 
@@ -43,7 +41,7 @@
 
     <!-- Tab Materi -->
     <div id="materi" class="tab-content" style="display: block; margin-top: 15px;">
-        <h4 style="color: #FFA017;">Materi dari Kursus: {{ $$selectedCourse->title ?? '-' }}</h4>
+        <h4 style="color: #FFA017;">Materi dari Kursus: {{ $selectedCourse->nama_course ?? '-' }}</h4>
 
         @if ($materi->isEmpty())
             <div style="background: #FFF3CD; padding: 15px; border-radius: 8px;">Belum ada materi tersedia.</div>
@@ -59,7 +57,7 @@
 
     <!-- Tab Project -->
     <div id="project" class="tab-content" style="display: none; margin-top: 15px;">
-        <h4>Project dari Kursus: {{ $$selectedCourse->title ?? '-' }}</h4>
+        <h4>Project dari Kursus: {{ $selectedCourse->nama_course ?? '-' }}</h4>
 
         @if ($projects->isEmpty())
             <div style="background: #FFE5B4; padding: 15px; border-radius: 8px;">Belum ada project tersedia.</div>
@@ -92,7 +90,7 @@
                     Instruktur: <strong>{{ $course->instruktur->name ?? '-' }}</strong>
                 </p>
                 <p style="color: white;">{{ Str::limit($course->deskripsi, 150) }}</p>
-                <a href="{{ route('student.courses.show', $course->id) }}" class="btn btn-light btn-sm mt-2">Lihat Detail</a>
+                <a href="{{ route('student.courses.detail', $course->id) }}" class="btn btn-light btn-sm mt-2">Lihat Detail</a>
             </div>
         @endforeach
     </div>

@@ -35,8 +35,8 @@ use App\Http\Controllers\Student\certificateController;
 use App\Http\Controllers\Student\ProfileController;
 use App\Http\Controllers\Student\EnrollmentController;
 use App\Http\Controllers\Student\GroupController as StudentGroupController;
-
-    
+use App\Http\Controllers\Student\StudentCertificateController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 
 // ============== HOME & LOGIN SELECTOR ==============
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
@@ -106,7 +106,7 @@ Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.'
     Route::put('/profile/update', [InstrukturController::class, 'updateProfile'])->name('profile.update');
 
     // Group (only index)
-    Route::get('group', [GroupController::class, 'index'])->name('group.index');
+    Route::get('group', [InstrukturGroupController::class, 'index'])->name('group.index');
 
     // Materi CRUD
     Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
@@ -140,7 +140,7 @@ Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.'
 
 // ============== STUDENT AREA ==============
 Route::middleware(['auth:student'])->prefix('student')->name('student.')->group(function () {
-    Route::get('/dashboard', [StudentController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     Route::get('/landingpage', [LandingPageController::class, 'index'])->name('landingpage');
     Route::get('/courses', [StudentCourseController::class, 'index'])->name('courses.index');
     Route::get('/courses/{id}', [StudentCourseController::class, 'show'])->name('courses.detail');
@@ -148,12 +148,16 @@ Route::middleware(['auth:student'])->prefix('student')->name('student.')->group(
     Route::post('/courses/{id}/enroll', [EnrollmentController::class, 'processEnrollment'])->name('enroll.process');
     Route::get('/enrollments/status/{id}', [EnrollmentController::class, 'enrollmentStatus'])->name('enroll.status');
     Route::get('/groups', [StudentGroupController::class, 'index'])->name('groups.index');
-    Route::get('/certificates', [certificateController::class, 'index'])->name('certificates.index');
-    Route::get('/certificates/{course}', [certificateController::class, 'show'])->name('certificates.show');
 
     // Profil
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+    // sertifikat
+    Route::get('/certificates', [StudentCertificateController::class, 'index'])->name('certificates.index');
+    Route::get('/certificates/{course}', [StudentCertificateController::class, 'show'])->name('certificates.show');
+    Route::get('/certificate/{course}', [StudentCertificateController::class, 'download'])->name('certificate.download');
+
 });
 
 

@@ -24,7 +24,7 @@ class GroupController extends Controller
                                  ->whereNotNull('whatsapp_link')
                                  ->get();
 
-        return view('instruktur.groups.index', compact('groups', 'coursesWithLink'));
+        return view('instruktur.group.index', compact('groups', 'coursesWithLink'));
     }
 
     public function create()
@@ -45,7 +45,9 @@ class GroupController extends Controller
         Group::create([
             'course_id'     => $request->course_id,
             'instruktur_id' => Auth::guard('instruktur')->id(),
-            'link'          => $request->link,
+            'title'         => $request->title,
+            'description'   => $request->description,
+            'whatsapp_link' => $request->whatsapp_link,
         ]);
 
         return redirect()

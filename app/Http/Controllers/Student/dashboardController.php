@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Instruktur;
+namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -13,13 +13,16 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $user = Auth::user();
+        $student = Auth::guard('student')->user();
 
-        $courses = Course::where('instruktur_id', $user->id)->get();
+        // Ambil semua course yang diikuti student
+        $enrolledCourses = $student->enrolledCourses()
+            ->with(['projects', 'materis', 'instruktur'])
+            ->get();
 
-        $selectedCourseId = $request->input('course_id') ?? ($courses->first()->id ?? null);
-
-        $activeTab = $request->input('active_tab', 'materi'); // default tab materi
+        // Ambil selected course ID dari query, atau pakai course pertama
+        $selectedCourseId = $request->input('course_id') ?? ($enrolledCourses->first()->id ?? null);
+        $activeTab = $request->input('active_tab', 'materi');
 
         $searchMateri = $request->input('search_materi');
         $searchProject = $request->input('search_project');
@@ -29,19 +32,21 @@ class DashboardController extends Controller
         $projects = collect();
 
         if ($selectedCourseId) {
-            $selectedCourse = Course::find($selectedCourseId);
+            $selectedCourse = $enrolledCourses->where('id', $selectedCourseId)->first();
 
             if ($selectedCourse) {
+                // Filter materi
                 if ($activeTab === 'materi') {
-                    $materiQuery = Materi::where('course_id', $selectedCourse->id);
+                    $materiQuery = $selectedCourse->materis();
                     if ($searchMateri) {
                         $materiQuery->where('judul', 'like', "%{$searchMateri}%");
                     }
                     $materi = $materiQuery->orderBy('created_at', 'desc')->get();
                 }
 
+                // Filter project
                 if ($activeTab === 'project') {
-                    $projectQuery = Project::where('course_id', $selectedCourse->id);
+                    $projectQuery = $selectedCourse->projects();
                     if ($searchProject) {
                         $projectQuery->where('judul', 'like', "%{$searchProject}%");
                     }
@@ -50,8 +55,9 @@ class DashboardController extends Controller
             }
         }
 
-        return view('instruktur.dashboard', compact(
-            'courses',
+        return view('student.dashboard', compact(
+            'student',
+            'enrolledCourses',
             'selectedCourse',
             'materi',
             'projects',

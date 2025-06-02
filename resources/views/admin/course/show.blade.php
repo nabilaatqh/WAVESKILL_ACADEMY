@@ -29,6 +29,18 @@
                 </div>
             @endif
 
+            @if($course->certificate_file)
+                <div class="mb-3">
+                    <strong>Sertifikat Template:</strong><br>
+                    <embed src="{{ asset('storage/' . $course->certificate_file) }}" type="application/pdf" width="100%" height="400px" class="rounded border mt-2">
+                    <p class="mt-2">
+                        <a href="{{ asset('storage/' . $course->certificate_file) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                            🔍 Lihat Sertifikat di Tab Baru
+                        </a>
+                    </p>
+                </div>
+            @endif
+
             @if($course->banner_image)
                 <div class="mb-3">
                     <strong>Banner Course:</strong><br>

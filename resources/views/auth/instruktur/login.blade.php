@@ -82,7 +82,7 @@
     <div class="login-container">
         <!-- Left Illustration -->
         <div class="left-section">
-            <img src="{{ asset('images/login-illustration.png') }}" alt="Ilustrasi">
+            <img src="{{ asset('images/admin/ilustrasi_login.png') }}" alt="Ilustrasi">
         </div>
 
         <!-- Right Form -->

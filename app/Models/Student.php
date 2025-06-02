@@ -7,14 +7,14 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\Course;
 use App\Models\Group;
 use App\Models\Certificate;
+use App\Models\Enrollment;
 
 class Student extends Authenticatable
 {
     use Notifiable;
 
-    protected $guard = 'student'; // Sesuai guard
-
-    protected $table = 'users'; // Pakai tabel users
+    protected $guard = 'student';
+    protected $table = 'users';
 
     protected $fillable = [
         'name', 'email', 'username', 'password', 'photo', 'phone',
@@ -28,14 +28,18 @@ class Student extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    // Relasi enrollments
     public function enrollments()
     {
         return $this->hasMany(Enrollment::class, 'student_id');
     }
 
-    public function enrolledcourse()
+    // ✅ Course yang sudah disetujui admin
+    public function approvedCourses()
     {
-        return $this->belongsToMany(Course::class, 'enrollments', 'student_id', 'course_id');
+        return $this->belongsToMany(Course::class, 'enrollments', 'student_id', 'course_id')
+                    ->withPivot('status')
+                    ->wherePivot('status', 'approved');
     }
 
     public function groups()
@@ -47,10 +51,9 @@ class Student extends Authenticatable
     {
         return $this->hasMany(Certificate::class, 'student_id');
     }
-    
-    public function course()
-    {
-        return $this->belongsToMany(Course::class, 'course_student');
-    }
 
+    public function submissions()
+    {
+        return $this->hasMany(\App\Models\Submission::class, 'student_id');
+    }
 }

@@ -40,38 +40,36 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_course'   => 'required|string|max:255',
-            'instruktur_id' => 'nullable|exists:users,id,role,instructor',
-            'deskripsi'     => 'nullable|string',
-            'harga'         => 'required|integer|min:0',
-            'whatsapp_link' => 'nullable|url',
-            'banner_image'  => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'nama_course'       => 'required|string|max:255',
+            'instruktur_id'     => 'nullable|exists:users,id,role,instructor',
+            'deskripsi'         => 'nullable|string',
+            'harga'             => 'required|integer|min:0',
+            'whatsapp_link'     => 'nullable|url',
+            'banner_image'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'certificate_file'  => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
-        // Handle banner image upload
+        // Upload banner
         if ($request->hasFile('banner_image')) {
-            $file      = $request->file('banner_image');
-            $filename  = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
-            $extension = $file->getClientOriginalExtension();
-            $finalName = $filename . '-' . time() . '.' . $extension;
-
-            $destination = public_path('storage/course_banners');
-            if (!file_exists($destination)) {
-                mkdir($destination, 0755, true);
-            }
-
-            $file->move($destination, $finalName);
-            $imagePath = 'course_banners/' . $finalName;
+            $banner = $request->file('banner_image');
+            $bannerPath = $banner->store('course_banners', 'public');
         }
 
-        // Create the course, including 'harga'
+        // Upload sertifikat
+        if ($request->hasFile('certificate_file')) {
+            $certificate = $request->file('certificate_file');
+            $certificatePath = $certificate->store('certificates', 'public');
+        }
+
         Course::create(
-            $request->only('nama_course', 'instruktur_id', 'deskripsi', 'harga', 'whatsapp_link')
-            + ['banner_image' => $imagePath ?? null]
+            $request->only('nama_course', 'instruktur_id', 'deskripsi', 'harga', 'whatsapp_link') + [
+                'banner_image'      => $bannerPath ?? null,
+                'certificate_file'  => $certificatePath ?? null,
+            ]
         );
 
         return redirect()->route('admin.course.index')
-                         ->with('success', 'Course berhasil ditambahkan');
+                        ->with('success', 'Course berhasil ditambahkan');
     }
 
     /**
@@ -89,42 +87,42 @@ class CourseController extends Controller
     public function update(Request $request, Course $course)
     {
         $request->validate([
-            'nama_course'   => 'nullable|string|max:255',
-            'instruktur_id' => 'nullable|exists:users,id,role,instructor',
-            'deskripsi'     => 'nullable|string',
-            'harga'         => 'nullable|integer|min:0',
-            'whatsapp_link' => 'nullable|url',
-            'banner_image'  => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'nama_course'       => 'nullable|string|max:255',
+            'instruktur_id'     => 'nullable|exists:users,id,role,instructor',
+            'deskripsi'         => 'nullable|string',
+            'harga'             => 'nullable|integer|min:0',
+            'whatsapp_link'     => 'nullable|url',
+            'banner_image'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'certificate_file'  => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
-        // If new banner is uploaded, delete the old one first
+        // Ganti banner jika ada
         if ($request->hasFile('banner_image')) {
-            if ($course->banner_image && file_exists(public_path('storage/' . $course->banner_image))) {
-                unlink(public_path('storage/' . $course->banner_image));
+            if ($course->banner_image && Storage::disk('public')->exists($course->banner_image)) {
+                Storage::disk('public')->delete($course->banner_image);
             }
-
-            $file      = $request->file('banner_image');
-            $filename  = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
-            $extension = $file->getClientOriginalExtension();
-            $finalName = $filename . '-' . time() . '.' . $extension;
-
-            $destination = public_path('storage/course_banners');
-            if (!file_exists($destination)) {
-                mkdir($destination, 0755, true);
-            }
-
-            $file->move($destination, $finalName);
-            $imagePath = 'course_banners/' . $finalName;
+            $banner = $request->file('banner_image');
+            $bannerPath = $banner->store('course_banners', 'public');
         }
 
-        // Update including 'harga'
+        // Ganti file sertifikat jika ada
+        if ($request->hasFile('certificate_file')) {
+            if ($course->certificate_file && Storage::disk('public')->exists($course->certificate_file)) {
+                Storage::disk('public')->delete($course->certificate_file);
+            }
+            $certificate = $request->file('certificate_file');
+            $certificatePath = $certificate->store('certificates', 'public');
+        }
+
         $course->update(
-            $request->only('nama_course', 'instruktur_id', 'deskripsi', 'harga', 'whatsapp_link')
-            + ['banner_image' => $imagePath ?? $course->banner_image]
+            $request->only('nama_course', 'instruktur_id', 'deskripsi', 'harga', 'whatsapp_link') + [
+                'banner_image'     => $bannerPath ?? $course->banner_image,
+                'certificate_file' => $certificatePath ?? $course->certificate_file,
+            ]
         );
 
         return redirect()->route('admin.course.index')
-                         ->with('success', 'Course berhasil diperbarui');
+                        ->with('success', 'Course berhasil diperbarui');
     }
 
     /**

@@ -15,8 +15,9 @@ use App\Models\Materi;
 class Course extends Model
 {
     use HasFactory;
-    protected $table = 'courses'; 
-    // Kolom yang bisa diisi massal
+
+    protected $table = 'courses';
+
     protected $fillable = [
         'nama_course',
         'instruktur_id',
@@ -24,42 +25,24 @@ class Course extends Model
         'harga',
         'whatsapp_link',
         'banner_image',
+        'certificate_file',
     ];
 
-    // Relasi ke instruktur (User dengan role 'instructor')
     public function instruktur()
     {
-        return $this->belongsTo(User::class, 'instruktur_id')
-                    ->where('role', 'instruktur');
+        return $this->belongsTo(User::class, 'instruktur_id');
     }
 
-    // Relasi: Course memiliki banyak Materi
     public function materis()
     {
         return $this->hasMany(Materi::class, 'course_id');
     }
 
-    // Relasi: Course memiliki banyak Project
     public function projects()
     {
         return $this->hasMany(Project::class, 'course_id');
     }
 
-    // Relasi: Course diikuti oleh banyak Student (User dengan role 'student')
-    public function students()
-    {
-        return $this->belongsToMany(
-            User::class,
-            'course_student',
-            'course_id',
-            'student_id'
-        )
-            ->where('role', 'student');
-    }
-
-    /**
-     * Grup WhatsApp / Telegram untuk course ini
-     */
     public function groups()
     {
         return $this->hasMany(Group::class);
@@ -79,5 +62,4 @@ class Course extends Model
     {
         return $this->hasMany(Certificate::class);
     }
-
-}   
+}
