@@ -83,6 +83,59 @@
             background-color: #ffffff;
             box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
         }
+
+        /* From Uiverse.io by JasonMep */
+        .button {
+        color: #ecf0f1;
+        font-size: 17px;
+        background-color: #e67e22;
+        border: 1px solid #f39c12;
+        border-radius: 5px;
+        cursor: pointer;
+        padding: 12px 0; /* Sesuai padding awal kamu */
+        box-shadow: 0px 6px 0px #d35400;
+        transition: all 0.1s;
+        width: 100%;        /* Agar tetap w-100 */
+        font-weight: bold;  /* Agar tetap fw-bold */
+        }
+
+        .button:active {
+        box-shadow: 0px 2px 0px #d35400;
+        position: relative;
+        top: 2px;
+        }
+
+        .button:hover {
+        background-color: #d35400;
+        color: white;
+        }
+
+        .btn-orange {
+        border: 2px solid#f39c12;
+        background-color: #e67e22;
+        border-radius: 0.9em;
+        cursor: pointer;
+        padding: 0.4em 0.9em;
+        transition: all ease-in-out 0.2s;
+        font-size: 16px;
+        }
+
+        .btn-orange span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        font-weight: 600;
+        line-height: 1;
+        }
+
+        .btn-orange:hover {
+        background-color: #e69500;
+    }
+
+
+
+
     </style>
 
     @yield('head')

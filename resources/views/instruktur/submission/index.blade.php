@@ -4,9 +4,9 @@
 
 @section('content')
 <div class="dashboard-wrapper">
-    <div class="materi-detail-card" style="max-width: 1140px; width: 95%; margin: auto; padding: 30px; background: #fff; border-radius: 16px; box-shadow: 0 8px 16px rgba(0,0,0,0.08);">
+    <div class="materi-detail-card" style="max-width: 1200px; width: 95%; margin: auto; padding: 30px; background: #fff; border-radius: 16px; box-shadow: 0 8px 16px rgba(0,0,0,0.08);">
 
-        <h2 class="materi-title" style="font-weight: 700; margin-bottom: 12px; color: #333;">Project: {{ $project->judul }}</h2>
+        <h2 class="materi-title" style="font-weight: 700; margin-bottom: 12px; color: #333;">{{ $project->judul }}</h2>
         <p class="materi-deskripsi" style="color: #555; margin-bottom: 24px; font-size: 1rem;">{{ $project->deskripsi }}</p>
 
         @php
@@ -34,25 +34,41 @@
             <p class="text-muted">File project belum tersedia.</p>
         @endif
 
-        <!-- Aksi -->
-        <div class="action-buttons mb-4 d-flex flex-wrap gap-3 align-items-center">
-            <button class="btn" onclick="toggleEditForm()" style="background-color: #FFA500; color: white; font-weight: 600; padding: 10px 20px; border-radius: 8px;">
-                ✏ Edit Project
+       
+
+        
+         <form action="{{ route('instruktur.project.edit',  $project->id) }}" method="GET" style="display:inline;">
+            <button type="submit"
+                    class="btn"
+                    style="background-color: #FFA500; color: white; font-weight: 600; padding: 10px 20px; border-radius: 8px;">
+                ✏ Edit
             </button>
+        </form>
 
-            <form action="{{ route('instruktur.project.destroy', $project->id) }}" method="POST" id="delete-form">
-                @csrf @method('DELETE')
-                <button type="button" onclick="confirmDelete()" class="btn" style="background-color: #dc3545; color: white; font-weight: 600; padding: 10px 20px; border-radius: 8px;">
-                    🗑 Hapus
-                </button>
-            </form>
+    <!-- Tombol Hapus -->
+    <form id="delete-project-form" action="{{ route('instruktur.project.destroy',  $project->id) }}" method="POST" style="display:inline;">
+        @csrf
+        @method('DELETE')
+        <button type="button" onclick="confirmDelete()" 
+                class="btn d-flex align-items-center"
+                style="background-color: #dc3545; color: white; font-weight: 600; padding: 8px 16px; border-radius: 8px;">
+            🗑 Hapus
+        </button>
+    </form>
 
-            <form action="{{ route('instruktur.dashboard', ['course_id' => $project->course_id, 'active_tab' => 'project']) }}" method="GET">
-                <button type="submit" class="btn" style="background-color: #008CBA; color: white; font-weight: 600; padding: 10px 20px; border-radius: 8px;">
-                    ← Kembali ke Dashboard
-                </button>
-            </form>
-        </div>
+    <!-- Tombol Kembali -->
+    <form action="{{ route('instruktur.dashboard', ['course_id' =>  $project->course_id]) }}" method="GET" style="display:inline;">
+        <button type="submit"
+                class="btn"
+                style="background-color: #008CBA; color: white; font-weight: 600; padding: 10px 20px; border-radius: 8px;">
+            ← Kembali ke Dashboard
+        </button>
+    </form>
+</div>
+
+        
+
+        
 
         <!-- Form Edit -->
         <div id="edit-form" style="display: none;" class="mt-3 p-3 border rounded bg-light mb-4">
