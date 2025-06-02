@@ -21,17 +21,16 @@
         <h3 class="text-center mb-4" style=" font-size: 28px; margin-bottom: 20px;">Profile Akun</h3>
 
         @if(session('success'))
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '{{ session('success') }}',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
-            });
-        </script>
+     <script>
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            confirmButtonColor: '#3085d6'
+        });
+    @endif
+</script>
         @endif
 
         @if(session('error'))

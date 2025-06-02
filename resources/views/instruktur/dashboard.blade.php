@@ -29,10 +29,12 @@
     </nav>
 
     <section id="section-materi">
-        <div class="text-center mb-3">
+        <div class="text-center mb-3"style="margin-bottom: 20px;">
             <span style="font-weight: bold; font-size: 25px; color: orange;">Daftar Materi {{ $selectedCourse->nama_course }}</span>
-            <button class="btn btn-success btn-sm ms-2" onclick="toggleMateriForm()">+</button>
+            <button class="btn-orange" onclick="toggleMateriForm()">
+    <span>+ create</span>
         </div>
+        
 
         <div class="row justify-content-center">
             <div class="col-md-4">
@@ -52,17 +54,17 @@
                          </div>
 
                         <div class="form-group" style="margin-bottom: 20px;">
-                        <label>Unggah Materi <span style="color: red;">*</span></label>
-                        <select name="tipe" class="form-control mb-2" required>
+                        <label>Tipe <span style="color: red;">*</span></label>
+                        <select name="tipe" class="form-control mb-2" style="margin-bottom: 20px;"> required>
                             <option value="pdf">PDF</option>
                             <option value="video">Video</option>
                             <option value="link">Link</option>
                         </select>
-                        <input type="file" name="file" class="form-control mb-2" accept=".pdf,.mp4,.">
-                        <button type="submit" class="btn btn-success w-100 fw-bold" style="padding: 12px 0; font-size: 16px; border-radius: 8px;">
-                                    <i class="fas fa-save me-2"></i> Simpan Materi
+                        <label>Upload File <span style="color: red;">*</span></label>
+                        <input type="file" name="file" class="form-control mb-2" style="margin-bottom: 20px;" accept=".pdf,.mp4,.">
+                        <button type="submit" class="button w-100 fw-bold">
+                            <i class="fas fa-save me-2"></i> Simpan Materi
                         </button>
-
                     </form>
                 </div>
             </div>
@@ -72,7 +74,10 @@
                     <input type="hidden" name="course_id" value="{{ $selectedCourse->id }}">
                     <input type="hidden" name="active_tab" value="materi">
                     <input type="search" name="search_materi" value="{{ request('search_materi') }}" placeholder="Cari Materi" class="form-control" style="width: 100%; max-width: 500px;" />
-                    <button type="submit" class="btn btn-primary">Cari</button>
+                    <button type="submit" class="btn-orange">
+  <span>Cari</span>
+</button>
+
                 </form>
 
                 @forelse($materi as $item)
@@ -98,9 +103,10 @@
     </section>
 
     <section id="section-project" class="d-none" style="margin-top: -5px;">
-        <div class="text-center mb-3" style="max-width: 1100px; margin: 0 auto; ">
+        <div class="text-center mb-3" style="max-width: 1100px; margin: 0 auto; margin-bottom: 20px;">
             <span style="font-weight: bold; font-size: 25px; color: orange;">Daftar Project {{ $selectedCourse->nama_course }}</span>
-            <button class="btn btn-primary btn-sm ms-2" onclick="toggleProjectForm()">+</button>
+        <button class="btn-orange" onclick="toggleProjectForm()">
+    <span>+ create</span>
         </div>
 
         <div class="row justify-content-center" style="max-width: 1100px; margin: 0 auto;">
@@ -110,17 +116,17 @@
                         @csrf
                         <input type="hidden" name="course_id" value="{{ $selectedCourse->id }}">
                         
-                        <div class="form-group">
-                            <label>Judul</label>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label>Judul Project</label>
                             <input type="text" name="judul" class="form-control" required>
                         </div>
 
-                        <div class="form-group">
-                            <label>Deskripsi</label>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label>Deskripsi Project</label>
                             <textarea name="deskripsi" class="form-control"></textarea>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-bottom: 20px;">
                             <label>Tipe</label>
                             <select name="tipe" class="form-control" required>
                                 <option value="pdf">PDF</option>
@@ -129,12 +135,14 @@
                             </select>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-bottom: 20px;">
                             <label>Upload File</label>
                             <input type="file" name="file" class="form-control" accept=".pdf,.mp4">
                         </div>
 
-                        <button type="submit" class="btn btn-success w-100 mt-3">Simpan Project</button>
+                         <button type="submit" class="button w-100 fw-bold" style="margin-bottom: 20px;">
+                            <i class="fas fa-save me-2"></i> Simpan Materi
+                        </button>
                     </form>
                 </div>
             </div>
@@ -144,7 +152,9 @@
                     <input type="hidden" name="course_id" value="{{ $selectedCourse->id }}">
                     <input type="hidden" name="active_tab" value="project">
                     <input type="search" name="search_project" value="{{ request('search_project') }}" placeholder="Cari Project" class="form-control" style="width: 100%; max-width: 500px;" />
-                    <button type="submit" class="btn btn-primary">Cari</button>
+                    <button type="submit" class="btn-orange">
+  <span>Cari</span>
+</button>
                 </form>
 
                 @forelse($projects as $item)
@@ -171,8 +181,8 @@
     </section>
 
     <section id="section-course" class="d-none" style="margin-top: -5px;">
-        <div class="materi-subtitle text-center mb-3" style="max-width: 1100px; margin: 0 auto; font-weight: bold; font-size: 25px; margin-bottom: 20px; color: orange;">Daftar Course yang Diajarkan</div>
-        <div class="course-list" style="max-width: 1100px; margin: 0 auto;">
+        <div class="materi-subtitle text-center mb-3 " style="max-width: 1100px; margin: 0 auto; font-weight: bold; font-size: 25px; margin-bottom: 20px; color: orange;">Daftar Course yang Diajarkan</div>
+        <div class="course-list" style="max-width: 1100px; margin: 0 auto; ">
             @forelse($courses as $course)
                 <div class="course-card mb-4" style="background: #f4d453; padding: 20px; border-radius: 16px; color: rgb(0, 0, 0); box-shadow: 0 4px 10px rgba(0,0,0,0.2); max-width: 1000px; margin: 20px auto;">
             @if($course->banner_image)
