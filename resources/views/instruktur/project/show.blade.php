@@ -28,13 +28,33 @@
         <h2>{{ $project->judul }}</h2>
         <p>{{ $project->deskripsi }}</p>
 
-        @if($project->tipe === 'pdf' && $project->file)
-            <div class="project-file">
-                <iframe src="{{ asset('storage/' . $project->file) }}" width="100%" height="600px" frameborder="0"></iframe>
+        @php
+            $extension = pathinfo($project->file, PATHINFO_EXTENSION);
+        @endphp
+
+        @if($project->file)
+            <div class="project-file mb-4" style="border-radius: 8px; overflow: hidden;">
+
+                @if ($extension === 'pdf')
+                    <iframe src="{{ asset('storage/' . $project->file) }}" width="100%" height="600px" style="border-radius: 8px; border: 1px solid #ccc;"></iframe>
+
+                @elseif ($extension === 'mp4')
+                    <video width="100%" height="auto" controls style="border-radius: 8px;">
+                        <source src="{{ asset('storage/' . $project->file) }}" type="video/mp4">
+                        Browser Anda tidak mendukung video.
+                    </video>
+
+                @else
+                    <a href="{{ asset('storage/' . $project->file) }}" target="_blank" class="btn btn-primary mt-2">
+                        📥 Lihat File Project
+                    </a>
+                @endif
+
             </div>
         @else
             <p class="text-muted">Project tidak tersedia atau belum diunggah.</p>
         @endif
+
     </div>
 </div>
 @endsection

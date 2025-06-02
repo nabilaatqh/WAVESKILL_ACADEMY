@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Login Akses')
-
+<link rel="stylesheet" href="{{ asset('css/instruktur.css') }}">
 @section('content')
 <style>
     body {
@@ -13,13 +13,15 @@
 
     .login-card {
         background-color: white;
-        border-radius: 20px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        padding: 40px;
-        max-width: 500px;
+        border-radius: 24px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        padding: 60px 50px;
+        max-width: 650px;
         margin: auto;
         text-align: center;
     }
+
+    
 
     .login-card h2 {
         font-weight: bold;
@@ -70,7 +72,7 @@
     <div class="text-center">
         <img src="{{ asset('images/login-illustration.png') }}" alt="Login Illustration" class="top-image">
 
-        <div class="login-card">
+        <div class="login-card" style="max-width: 720px; padding: 60px 50px;">
             <h2>Masuk Sebagai</h2>
             <div class="d-flex flex-wrap justify-content-center">
                 <a href="{{ route('instruktur.login') }}">

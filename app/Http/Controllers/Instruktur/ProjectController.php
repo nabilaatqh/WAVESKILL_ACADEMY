@@ -15,7 +15,8 @@ class ProjectController extends Controller
     {
         $user = Auth::user();
         $course = Course::where('instruktur_id', $user->id)->get();
-        return view('instruktur.project.index', compact('course'));
+        $projects = Project::whereIn('course_id', $course->pluck('id'))->get();
+        return view('instruktur.project.index', compact('course', 'projects'));
     }
 
     public function create()
@@ -29,36 +30,38 @@ class ProjectController extends Controller
         $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'tipe' => 'required|in:pdf,video,link',
+            'file' => 'nullable|file|mimes:pdf,mp4|max:20480',
             'course_id' => 'required|exists:courses,id',
-            'file' => 'nullable|file|mimes:pdf|max:20480',
         ]);
 
         $course = Course::findOrFail($request->course_id);
         if ($course->instruktur_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
+            abort(403);
         }
 
         $project = new Project();
         $project->judul = $request->judul;
         $project->deskripsi = $request->deskripsi;
-        $project->course_id = $course->id;
-        $project->tipe = 'pdf'; // langsung set pdf
+        $project->tipe = $request->tipe;
+        $project->course_id = $request->course_id;
 
         if ($request->hasFile('file')) {
-            $project->file = $request->file('file')->store('project_files', 'public');
+            $filePath = $request->file('file')->store('project_files', 'public');
+            $project->file = $filePath;
         }
 
         $project->save();
 
-        return redirect()->route('instruktur.dashboard', ['course_id' => $project->course_id])
-            ->with('success', 'Project berhasil ditambahkan.');
+        return redirect()->route('instruktur.dashboard', [
+            'course_id' => $project->course_id,
+            'active_tab' => 'project'
+        ])->with('success', 'Project berhasil ditambahkan.');
     }
+
 
     public function show(Project $project)
     {
-        if ($project->course->instruktur_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
-        }
         return view('instruktur.project.show', compact('project'));
     }
 
@@ -76,38 +79,39 @@ class ProjectController extends Controller
     public function update(Request $request, $id)
     {
         $project = Project::findOrFail($id);
+
         if ($project->course->instruktur_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
+            abort(403);
         }
 
         $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'tipe' => 'required|in:pdf,video,link',
+            'file' => 'nullable|file|mimes:pdf,mp4|max:20480',
             'course_id' => 'required|exists:courses,id',
-            'file' => 'nullable|file|mimes:pdf|max:20480',
         ]);
-
-        $course = Course::findOrFail($request->course_id);
-        if ($course->instruktur_id !== Auth::id()) {
-            abort(403, 'Unauthorized');
-        }
 
         $project->judul = $request->judul;
         $project->deskripsi = $request->deskripsi;
-        $project->course_id = $course->id;
-        $project->tipe = 'pdf';
+        $project->tipe = $request->tipe;
+        $project->course_id = $request->course_id;
 
         if ($request->hasFile('file')) {
-            if ($project->file) {
+            if ($project->file && Storage::disk('public')->exists($project->file)) {
                 Storage::disk('public')->delete($project->file);
             }
-            $project->file = $request->file('file')->store('project_files', 'public');
+
+            $filePath = $request->file('file')->store('project_files', 'public');
+            $project->file = $filePath;
         }
 
         $project->save();
 
-        return redirect()->route('instruktur.dashboard', ['course_id' => $project->course_id])
-            ->with('success', 'Project berhasil diperbarui.');
+        return redirect()->route('instruktur.dashboard', [
+            'course_id' => $project->course_id,
+            'active_tab' => 'project'
+        ])->with('success', 'Project berhasil diperbarui.');
     }
 
     public function destroy($id)

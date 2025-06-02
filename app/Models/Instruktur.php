@@ -10,6 +10,9 @@ class Instruktur extends Authenticatable
     use Notifiable;
 
     protected $guard = 'instruktur';
+    protected $table = 'users';
+    
+     
 
     protected $fillable = [
         'name',

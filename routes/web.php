@@ -52,6 +52,8 @@ Route::get('/instruktur/login', [InstructorLoginController::class, 'showLoginFor
 Route::post('/instruktur/login', [InstructorLoginController::class, 'login']);
 Route::post('/instruktur/logout', [InstructorLoginController::class, 'logout'])->name('instruktur.logout');
 
+
+
 // === STUDENT ===
 Route::get('/student/login', [StudentLoginController::class, 'showLoginForm'])->name('student.login');
 Route::post('/student/login', [StudentLoginController::class, 'login']);
@@ -80,6 +82,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 
 // ============== INSTRUKTUR AREA ==============
 Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.')->group(function () {
+    
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -111,8 +114,8 @@ Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.'
 
     // Submission
     Route::get('/project/{project}/submissions', [SubmissionController::class, 'index'])->name('submission.index');
-    Route::get('submission/detail/{submission}', [SubmissionController::class, 'show'])->name('submission.show');
-    Route::put('submission/detail/{submission}', [SubmissionController::class, 'update'])->name('submission.update');
+    Route::get('/submission/detail/{submission}', [SubmissionController::class, 'show'])->name('submission.show');
+    Route::put('/submission/detail/{submission}', [SubmissionController::class, 'update'])->name('submission.update');
 
     // Log Out
     Route::post('/logout', [InstrukturController::class, 'logout'])->name('logout');

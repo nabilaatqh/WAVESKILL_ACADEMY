@@ -13,9 +13,10 @@ class Project extends Model
         'judul',
         'deskripsi',
         'course_id',
+        'file',
+        'tipe', // TAMBAHKAN INI
     ];
 
-    // Relasi ke kelas
     public function course()
     {
         return $this->belongsTo(Course::class, 'course_id');

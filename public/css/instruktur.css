@@ -36,7 +36,6 @@ a {
 .sidebar .logo {
     width: 40px;
     height: 40px;
-    background-color: white;
     border-radius: 10px;
     margin-bottom: 10px;
     display: flex;
@@ -145,21 +144,37 @@ a {
     color: #F68B1F;
 }
 
+.welcome-text {
+    margin-bottom: 40px; /* atau 3rem atau 2.5em */
+}
+
+
 /* course yang diajar card */
 .course-card {
-    background-color: #FFF48D; /* kuning muda */
-    border-radius: 10px;
-    padding: 15px;
-    color: #333;
-    max-width: 500px;
-    margin-bottom: 30px;
-    box-shadow: 0 5px 15px rgba(246, 139, 31, 0.3); /* shadow lembut oranye */
+    background-color: #ffa500;
+    border-radius: 16px;
+    padding: 24px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    margin-bottom: 2rem;
+    font-size: 18px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .course-card img {
-    width: 100%;
-    border-radius: 8px;
-    margin-top: 10px;
+    max-width: 100%;
+    max-height: 250px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.course-card:hover {
+    transform: scale(1.01);
+    transition: 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
 
 /* Tab menu */
@@ -640,4 +655,27 @@ body, .dashboard-wrapper {
 
 .btn-submission:hover {
     background-color: #c45256;
+}
+
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh; /* atau 100vh kalau mau full screen */
+}
+
+.profile-card {
+    background: white;
+    padding: 40px; /* lebih lega */
+    border-radius: 16px;
+    max-width: 700px; /* diperbesar dari 500px */
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+    .profile-card {
+        padding: 20px;
+        max-width: 95%;
+    }
 }
