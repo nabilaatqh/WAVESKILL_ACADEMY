@@ -76,4 +76,10 @@ class EnrollmentController extends Controller
 
         return view('student.enroll.status', compact('enrollment'));
     }
+
+        public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
 }

@@ -15,6 +15,11 @@ class Project extends Model
         'course_id',
     ];
 
+    public function submissions()
+    {
+        return $this->hasMany(Submission::class, 'project_id');
+    }
+
     // Relasi ke kelas
     public function course()
     {

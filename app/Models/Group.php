@@ -13,7 +13,8 @@ class Group extends Model
         'course_id',
         'link_whatsapp',
         'deskripsi',
-        'title',           // nama grup/kategori grup
+        'title',
+        'nama_course'        // nama grup/kategori grup
     ];
 
     // Relasi ke Course

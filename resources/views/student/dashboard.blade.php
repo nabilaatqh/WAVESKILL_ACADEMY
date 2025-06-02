@@ -4,52 +4,67 @@
 
 @section('content')
 <div class="dashboard-container">
-    <!-- Header Section -->
-    <div class="welcome-header">
-        <h2 class="welcome-text">Halo Selamat Datang,</h2>
-        <h3 class="user-name">{{ auth()->guard('student')->user()->name ?? 'Student' }}</h3>
-    </div>
+    <!-- ===================== HEADER ===================== -->
+        <h2 class="fw-bold mb-3" style="color:#FFFA8D; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Halo Selamat Datang,</h2>
+        <h3 style="color: rgb(255, 251, 251); text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">{{ auth()->guard('student')->user()->name ?? 'Student' }}</h3>
 
-    <!-- Current Class Section -->
-    <div class="current-class-card" id="current-course">
-        <h4 class="class-title">Kursus kamu saat ini</h4>
+    <!-- ===================== CURRENT CLASS (KURSUS AKTIF) ===================== -->
+    <div id="current-course" class="current-class-card container mt-3 mb-4 p-0">
+    <h4 class="class-title ps-4 pt-3">Kelas kamu saat ini</h4>
 
-        @if ($$selectedCourse)
-            <div class="class-content mb-3" style="background-color: #FFB347; border-radius: 10px; padding: 15px; display: flex; gap: 15px; align-items: center;">
-                <div class="class-image" style="width: 35%;">
-                    <img src="{{ asset('images/' . ($$selectedCourse->image ?? 'default-course.png')) }}"
-                        alt="{{ $$selectedCourse->nama_course }}" style="width: 100%; border-radius: 10px;">
-                </div>
-                <div class="class-details" style="width: 65%; color: white;">
-                    <h3 class="course-title" style="font-weight: 600;">{{ $$selectedCourse->nama_course }}</h3>
-                    <p class="mb-0">Instruktur: <strong>{{ $$selectedCourse->instruktur->name ?? '-' }}</strong></p>
-                    <p class="course-description" style="font-size: 0.9rem;">
-                        {{ Str::limit($$selectedCourse->deskripsi, 150) }}
-                    </p>
-                    <a href="{{ route('student.courses.show', $$selectedCourse->id) }}" class="btn btn-light btn-sm mt-2">Lihat Detail Kelas</a>
-                </div>
+    @if ($selectedCourse)
+        <div class="class-content current-card">
+            <div class="class-image-wrapper">
+                <img 
+                  src="{{ 
+                      $selectedCourse->banner_image 
+                          ? asset('storage/' . $selectedCourse->banner_image) 
+                          : asset('image/default-course.png') 
+                  }}"
+                  alt="{{ $selectedCourse->nama_course }}" 
+                  class="class-image"
+                >
             </div>
-        @else
+            <div class="class-details">
+                <h3 class="course-title">{{ $selectedCourse->nama_course }}</h3>
+                <p class="course-instructor">
+                    Instruktur: <strong>{{ $selectedCourse->instruktur->name ?? '-' }}</strong>
+                </p>
+                <p class="course-description">{{ $selectedCourse->deskripsi }}</p>
+                <a 
+                  href="{{ route('student.courses.detail', $selectedCourse->id) }}" 
+                  class="btn btn-light btn-sm mt-2"
+                >
+                    Lihat Detail Kelas
+                </a>
+            </div>
+        </div>
+    @else
+        <div class="no-course px-4 pb-3">
             <p>Belum ada kursus aktif.</p>
-        @endif
+        </div>
+    @endif
     </div>
 
-    <!-- Navigation Tabs -->
-    <div class="navigation-tabs" style="margin-top: 20px;">
+
+    <!-- ===================== NAVIGATION TABS ===================== -->
+    <div class="navigation-tabs px-4 mb-4">
         <button class="tab tab-button active" data-tab="materi">Materi</button>
         <button class="tab tab-button" data-tab="project">Project</button>
         <button class="tab tab-button" data-tab="kelas-kamu">Kursus Kamu</button>
     </div>
 
-    <!-- Tab Materi -->
-    <div id="materi" class="tab-content" style="display: block; margin-top: 15px;">
-        <h4 style="color: #FFA017;">Materi dari Kursus: {{ $$selectedCourse->title ?? '-' }}</h4>
+    <!-- ===================== TAB Materi ===================== -->
+    <div id="materi" class="tab-content px-4" style="display: block; margin-top: 15px;">
+        <h4 style="color: #FFA017;">
+            Materi dari Kursus: {{ $selectedCourse->nama_course ?? '-' }}
+        </h4>
 
         @if ($materi->isEmpty())
-            <div style="background: #FFF3CD; padding: 15px; border-radius: 8px;">Belum ada materi tersedia.</div>
+            <div class="alert alert-warning">Belum ada materi tersedia.</div>
         @else
             @foreach ($materi as $item)
-                <div style="background: #FFF59D; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                <div class="alert alert-light mb-2 p-2 rounded">
                     <strong>{{ $item->judul }}</strong><br>
                     <small>{{ Str::limit($item->deskripsi, 100) }}</small>
                 </div>
@@ -57,48 +72,88 @@
         @endif
     </div>
 
-    <!-- Tab Project -->
-    <div id="project" class="tab-content" style="display: none; margin-top: 15px;">
-        <h4>Project dari Kursus: {{ $$selectedCourse->title ?? '-' }}</h4>
+    <!-- ===================== TAB Project ===================== -->
+    <div id="project" class="tab-content px-4" style="display: none; margin-top: 15px;">
+        <h4>
+            Project dari Kursus: {{ $selectedCourse->nama_course ?? '-' }}
+        </h4>
 
         @if ($projects->isEmpty())
-            <div style="background: #FFE5B4; padding: 15px; border-radius: 8px;">Belum ada project tersedia.</div>
+            <div class="alert alert-warning">Belum ada project tersedia.</div>
         @else
             @foreach ($projects as $project)
-                <div style="background: #FFF; padding: 15px; border-radius: 10px; margin-bottom: 10px; color: black;">
-                    <h5>{{ $project->judul }}</h5>
-                    <p>{{ Str::limit($project->deskripsi, 100) }}</p>
-                    <a href="{{ route('student.project.show', $project->id) }}" class="btn btn-sm btn-primary">Lihat Project</a>
+                <div class="card mb-3 p-2 project-card">
+                    <div class="card-body p-2">
+                        <h5 class="card-title">{{ $project->judul }}</h5>
+                        <p class="card-text">{{ Str::limit($project->deskripsi, 100) }}</p>
+                        {{-- <a 
+                          href="{{ route('student.project.show', $project->id) }}" 
+                          class="btn btn-sm btn-primary"
+                        >
+                            Lihat Project
+                        </a> --}}
+                    </div>
                 </div>
             @endforeach
         @endif
     </div>
 
-    <div id="kelas-kamu" class="tab-content" style="display: none; margin-top: 15px; color: white;">
+    <!-- ===================== TAB “Kursus Kamu” ===================== -->
+    <div id="kelas-kamu" class="tab-content px-4" style="display: none; margin-top: 15px;">
         <h4>Semua Kursus Kamu</h4>
-        @foreach ($enrolledCourses as $course)
-            <div class="class-card mb-3 select-course"
-                data-id="{{ $course->id }}"
-                data-nama="{{ $course->nama_course }}"
-                data-deskripsi="{{ $course->deskripsi }}"
-                data-image="{{ asset('images/' . ($course->image ?? 'default-course.png')) }}"
-                data-instruktur="{{ $course->instruktur->name ?? '-' }}"
-                style="background-color: #FF8C00; border-radius: 10px; padding: 15px; cursor: pointer;">
-                
-                <img src="{{ asset('images/' . ($course->image ?? 'default-course.png')) }}"
-                    alt="{{ $course->nama_course }}" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">
-                <h5 style="color: white;">{{ $course->nama_course }}</h5>
-                <p class="mb-1" style="color: white;">
-                    Instruktur: <strong>{{ $course->instruktur->name ?? '-' }}</strong>
-                </p>
-                <p style="color: white;">{{ Str::limit($course->deskripsi, 150) }}</p>
-                <a href="{{ route('student.courses.show', $course->id) }}" class="btn btn-light btn-sm mt-2">Lihat Detail</a>
-            </div>
-        @endforeach
+        <div class="row">
+            @foreach ($enrolledCourses as $course)
+                <div class="col-md-6 mb-3">
+                    {{-- 
+                      Bungkus seluruh kartu dengan <a> yang mengarah ke route student.dashboard 
+                      dengan query parameter ?course_id=…
+                    --}}
+                    <a 
+                      href="{{ route('student.dashboard') }}?course_id={{ $course->id }}" 
+                      style="text-decoration: none;"
+                    >
+                        <div 
+                          class="class-card p-3" 
+                          style="background-color: #FF8C00; border-radius: 10px; cursor: pointer;"
+                        >
+                            <div class="row align-items-center no-gutters">
+                                <div class="col-4 class-thumb">
+                                    <img 
+                                      src="{{ 
+                                          $course->banner_image 
+                                            ? asset('storage/' . $course->banner_image) 
+                                            : asset('image/default-course.png') 
+                                      }}" 
+                                      alt="{{ $course->nama_course }}" 
+                                      style="width:100%; height:100px; object-fit:cover; border-radius: 8px;"
+                                    >
+                                </div>
+                                <div class="col-8 class-info ps-3">
+                                    <h5 class="mb-1" style="color:white; font-size:1.1rem;">
+                                        {{ $course->nama_course }}
+                                    </h5>
+                                    <p class="mb-1 small" style="color:white;">
+                                        Instruktur: <strong>{{ $course->instruktur->name ?? '-' }}</strong>
+                                    </p>
+                                    <p class="mb-1 small" style="color:white;">
+                                        {{ Str::limit($course->deskripsi, 60) }}
+                                    </p>
+                                    <span class="btn btn-light btn-sm" style="pointer-events: none;">
+                                        Lihat Detail
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
+        </div>
     </div>
 </div>
 
+<!-- ===================== STYLE (agar tampilan sama seperti sebelumnya) ===================== -->
 <style>
+    /* ========== GAYA UMUM ========== */
     .welcome-header {
         margin-bottom: 25px;
     }
@@ -125,35 +180,82 @@
         text-decoration: none;
         font-weight: 600;
         transition: background-color 0.3s ease;
+        border: none;
     }
     .tab.active,
     .tab:hover {
         background-color: #FF8C00;
     }
+
+    /* ========== CURRENT COURSE CARD ========== */
+    .current-card {
+        background-color: #FFB347 !important;
+        border-radius: 10px;
+        padding: 15px !important;
+    }
+    .current-card .class-image img {
+        width: 100%;
+        border-radius: 10px;
+    }
+    .current-card .class-image {
+        width: 35%;
+    }
+    .current-card .class-details {
+        width: 65%;
+        color: white;
+    }
+    .current-card .course-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    .current-card .course-description {
+        font-size: 0.9rem;
+    }
+
+    /* ========== KURSUS KAMU CARD ========== */
+    .class-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .class-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .class-thumb img {
+        width: 100%;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .class-info h5,
+    .class-info p {
+        color: white;
+        margin-bottom: 4px;
+    }
+
+    /* ========== PROJECT CARD ========== */
+    .project-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    /* ========== GAP DI BAWAH KONTAINER TAB ========== */
+    .tab-content {
+        margin-bottom: 30px;
+    }
 </style>
 
+<!-- ===================== SCRIPT SWITCH TAB SEDERHANA ===================== -->
 <script>
-    document.querySelectorAll('.select-course').forEach(card => {
-        card.addEventListener('click', () => {
-            const id = card.dataset.id;
-            const nama = card.dataset.nama;
-            const deskripsi = card.dataset.deskripsi;
-            const image = card.dataset.image;
-            const instruktur = card.dataset.instruktur;
-
-            document.getElementById('current-course').innerHTML = `
-                <h4 class="class-title">Kursus kamu saat ini</h4>
-                <div class="class-content mb-3" style="background-color: #FFB347; border-radius: 10px; padding: 15px; display: flex; gap: 15px; align-items: center;">
-                    <div class="class-image" style="width: 35%;">
-                        <img src="${image}" alt="${nama}" style="width: 100%; border-radius: 10px;">
-                    </div>
-                    <div class="class-details" style="width: 65%; color: white;">
-                        <h3 class="course-title" style="font-weight: 600;">${nama}</h3>
-                        <p class="mb-0">Instruktur: <strong>${instruktur}</strong></p>
-                        <p class="course-description" style="font-size: 0.9rem;">${deskripsi.substring(0, 150)}</p>
-                        <a href="/student/courses/${id}" class="btn btn-light btn-sm mt-2">Lihat Detail Kelas</a>
-                    </div>
-                </div>`;
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.style.display = (content.id === tabId) ? 'block' : 'none';
+                });
+            });
         });
     });
 </script>

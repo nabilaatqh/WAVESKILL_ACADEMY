@@ -227,7 +227,6 @@
 </section>
 
 {{-- FITUR KEUNGGULAN --}}
-{{-- FITUR KEUNGGULAN --}}
 <section class="fitur-wrapper">
     <div class="container">
         <div class="card fitur-card">
@@ -279,7 +278,7 @@
         {{-- Grid responsif: 1 kolom HP, 2 kolom tablet, 3 kolom desktop --}}
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @php
-                $popularSix = $courses->take(6);
+                $popularSix = $courses->take(9);
             @endphp
 
             @forelse($popularSix as $course)
