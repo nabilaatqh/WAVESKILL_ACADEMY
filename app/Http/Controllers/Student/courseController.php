@@ -7,7 +7,8 @@ use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Student;
 use Illuminate\Http\Request;
-
+use App\Models\Enrollment;
+use App\Http\Requests\Student\CourseRequest;
 
 class courseController extends Controller
 {
@@ -35,9 +36,15 @@ class courseController extends Controller
     {
         // Detail course dengan relasi grup
         $course = Course::with('groups')->findOrFail($id)
-            ->select('id', 'nama_course as title', 'deskripsi', 'harga')
+            ->select('id', 'nama_course', 'deskripsi', 'harga','banner_image')
             ->findOrFail($id);
+        $student = Auth::guard('student')->user();
+        // Cek apakah student sudah pernah enroll di course ini
+        $enrollment = Enrollment::where('student_id', $student->id)
+            ->where('course_id', $id)
+            ->where('status', 'approved')
+            ->first();
 
-        return view('student.courses.show', compact('course'));
+        return view('student.courses.detail', compact('course', 'enrollment'));
     }
 }

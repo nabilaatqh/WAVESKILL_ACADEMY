@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Student\LandingPageRequest;
 use App\Http\Requests\Student\CourseRequest;
 use App\Models\Enrollment;
@@ -17,9 +18,9 @@ class StudentController extends Controller
             $student = auth()->guard('student')->user();
 
             // Ambil semua course yang diikuti student
-            $enrolledCourses = $student->enrolledCourses()->with(['materis', 'projects', 'instruktur'])->get();
+            $enrolledCourses = $student->enrolledcourse()->with(['materis', 'projects', 'instruktur'])->get();
             // Ambil ID course yang dipilih dari query string, jika ada
-             $selectedCourseId = $request->input('course_id') ?? ($enrolledCourses->first()->id ?? null);
+            $selectedCourseId = $request->input('course_id') ?? ($enrolledCourses->first()->id ?? null);
             // Ambil course pertama sebagai currentCourse (bisa pakai pilihan jika mau)
             $currentCourse = $enrolledCourses->firstWhere('id', $selectedCourseId);
 

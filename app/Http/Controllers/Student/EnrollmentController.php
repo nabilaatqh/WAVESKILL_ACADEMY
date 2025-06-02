@@ -8,6 +8,7 @@ use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 class EnrollmentController extends Controller
 {
     /**
@@ -25,13 +26,13 @@ class EnrollmentController extends Controller
             ->first();
 
         if ($existing) {
-            return redirect()->route('student.courses.show', $courseId)
+            return redirect()->route('student.courses.index', $courseId)
                 ->with('info', 'Anda sudah terdaftar di kursus ini.');
         }
 
-        $qrisImageUrl = asset('images/qris_sample.png');
+        $qrisImageUrl = asset('image/qris.png');
 
-        return view('student.enroll.form', compact('course', 'qrisImageUrl'));
+        return view('student.enroll.index', compact('course', 'qrisImageUrl'));
     }
 
     /**

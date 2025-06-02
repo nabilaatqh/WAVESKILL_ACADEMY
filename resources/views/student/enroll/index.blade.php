@@ -1,4 +1,4 @@
-@extends('layouts.student')
+@extends('layouts.landing')
 
 @section('title', 'Pembayaran Kursus')
 

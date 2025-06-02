@@ -1,3 +1,4 @@
+
 <?php
 
 return [
@@ -15,17 +16,17 @@ return [
 
         'admin' => [
             'driver' => 'session',
-            'provider' => 'admins',
+            'provider' => 'users'
         ],
 
         'instruktur' => [
             'driver' => 'session',
-            'provider' => 'instrukturs',
+            'provider' => 'users',
         ],
 
         'student' => [
             'driver' => 'session',
-            'provider' => 'students',
+            'provider' => 'users',
         ],
     ],
 
@@ -42,12 +43,12 @@ return [
 
         'instrukturs' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Instruktur::class,
+            'model' => App\Models\User::class,
         ],
 
         'students' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Student::class,
+            'model' => App\Models\User::class,
         ],
     ],
 
@@ -59,6 +60,7 @@ return [
             'throttle' => 60,
         ],
 
+        // opsional: reset password terpisah per role
         'admins' => [
             'provider' => 'admins',
             'table' => 'password_resets',

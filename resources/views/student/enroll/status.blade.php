@@ -1,4 +1,4 @@
-@extends('layouts.student')
+@extends('layouts.landing')
 
 @section('title', 'Status Pendaftaran Kursus')
 
@@ -16,7 +16,7 @@
                 @elseif($enrollment->status == 'approved')
                     <span class="badge bg-success">Pendaftaran Disetujui</span>
                     <br>
-                    <a href="{{ route('student.courses.show', $enrollment->course->id) }}" class="btn btn-sm btn-primary mt-2">Lihat Kelas</a>
+                    <a href="{{ route('student.dashboard', $enrollment->course->id) }}" class="btn btn-sm btn-primary mt-2">Lihat Kelas</a>
                 @else
                     <span class="badge bg-danger">Pendaftaran Ditolak</span>
                 @endif

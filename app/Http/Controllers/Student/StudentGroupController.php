@@ -4,6 +4,11 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Certificate;
+use App\Models\Course;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Enrollment;
+use App\Models\Group;
 
 class StudentGroupController extends Controller
 {

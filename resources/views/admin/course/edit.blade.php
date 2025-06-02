@@ -45,6 +45,15 @@
             </div>
 
             <div class="mb-3">
+                <label for="harga" class="form-label">Harga Course (dalam Rupiah)</label>
+                <input type="number" class="form-control @error('harga') is-invalid @enderror"
+                    id="harga" name="harga" value="{{ old('harga') }}" min="0" placeholder="Contoh: 150000">
+                @error('harga')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="mb-3">
                 <label for="whatsapp_link" class="form-label">Link WhatsApp Grup</label>
                 <input type="url" class="form-control @error('whatsapp_link') is-invalid @enderror"
                        name="whatsapp_link" value="{{ old('whatsapp_link', $course->whatsapp_link ?? '') }}"

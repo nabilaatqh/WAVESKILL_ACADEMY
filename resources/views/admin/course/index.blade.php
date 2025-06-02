@@ -27,6 +27,7 @@
                     <th>Instruktur</th>
                     <th>Jumlah Student</th>
                     <th>Link WhatsApp</th>
+                    <th>Harga</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -43,6 +44,13 @@
                             </a>
                         @else
                             <span class="text-muted">Belum ada</span>
+                        @endif
+                    </td>
+                    <td class="text-center">
+                        @if ($course->harga)
+                            Rp {{ number_format($course->harga, 0, ',', '.') }}
+                        @else
+                            <span class="text-muted">Gratis</span>
                         @endif
                     </td>
                     <td class="text-center">
@@ -63,7 +71,5 @@
             </tbody>
         </table>
     </div>
-
-
 </div>
 @endsection

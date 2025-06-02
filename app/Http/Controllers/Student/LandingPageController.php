@@ -4,10 +4,14 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use Illuminate\Support\Facades\DB;
+use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Student\LandingPageRequest;
-use App\Http\Requests\Student\CourseRequest;    
+use App\Models\Student;
+use App\Http\Requests\Student\CourseRequest;   
+
 
 class LandingPageController extends Controller
 {
@@ -17,9 +21,7 @@ class LandingPageController extends Controller
         if (!$student) {
             return redirect()->route('student.dashboard');
         }
-
-        $courses = Course::select('id', 'nama_course as title', 'harga')->latest()->take(5)->get();
-        
+        $courses = Course::select('id', 'nama_course', 'harga','banner_image','deskripsi')->latest()->take(9)->get();
         return view('student.landingpage', compact('student', 'courses'));
     }
 }

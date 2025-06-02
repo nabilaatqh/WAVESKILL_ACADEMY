@@ -35,19 +35,27 @@
         display: flex;
         justify-content: center;
         margin-bottom: 32px;
-    }
-
-    .profile-photo-wrapper img {
         width: 120px;
         height: 120px;
         border-radius: 50%;
-        object-fit: cover;
+        overflow: hidden;
         cursor: pointer;
         border: 3px solid #008080;
         transition: 0.3s ease;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    .profile-photo-wrapper img:hover {
+    .profile-photo-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        transition: opacity 0.3s ease;
+        display: block;
+    }
+
+    .profile-photo-wrapper:hover img {
         opacity: 0.8;
     }
 
@@ -76,6 +84,7 @@
         font-size: 1rem;
         color: #555;
         font-family: 'Poppins', sans-serif;
+        box-sizing: border-box;
     }
     textarea {
         resize: vertical;

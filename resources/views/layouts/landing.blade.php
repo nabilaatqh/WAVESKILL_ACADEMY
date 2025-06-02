@@ -1,3 +1,8 @@
+@php
+    use Illuminate\Support\Facades\Auth;
+    $student = Auth::guard('student')->user();
+@endphp
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -102,7 +107,7 @@
         <div class="d-flex align-items-center gap-3">
             {{-- Avatar dan Nama --}}
             <div class="profile-container">
-                <p class="profile-name">{{ $student->first_name }} {{ $student->last_name }}</p>
+                <p class="profile-name">{{ $student->first_name ?? '' }} {{ $student->last_name ?? '' }}</p>
                 <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#profileModal">
                     <img
                         src="{{ isset($student) && $student->photo

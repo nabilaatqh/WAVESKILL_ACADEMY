@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WelcomeController;
 
 // ADMIN CONTROLLERS
 use App\Http\Controllers\Admin\AdminController;
@@ -28,16 +29,17 @@ use App\Http\Controllers\Instruktur\SubmissionController;
 
 // STUDENT CONTROLLERS
 use App\Http\Controllers\Student\StudentController;
-use App\Http\Controllers\Student\CourseController as StudentCourseController;
+use App\Http\Controllers\Student\courseController as StudentCourseController;
 use App\Http\Controllers\Student\LandingPageController;
-use App\Http\Controllers\Student\CertificateController;
+use App\Http\Controllers\Student\certificateController;
 use App\Http\Controllers\Student\ProfileController;
 use App\Http\Controllers\Student\EnrollmentController;
 use App\Http\Controllers\Student\GroupController as StudentGroupController;
+
     
 
 // ============== HOME & LOGIN SELECTOR ==============
-Route::get('/', fn () => view('welcome'))->name('welcome');
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
 Route::get('/login', function () {
     if (Auth::guard('instruktur')->check()) return redirect()->route('instruktur.dashboard');
@@ -138,13 +140,13 @@ Route::middleware(['auth:student'])->prefix('student')->name('student.')->group(
     Route::get('/dashboard', [StudentController::class, 'index'])->name('dashboard');
     Route::get('/landingpage', [LandingPageController::class, 'index'])->name('landingpage');
     Route::get('/courses', [StudentCourseController::class, 'index'])->name('courses.index');
-    Route::get('/courses/{id}', [StudentCourseController::class, 'show'])->name('courses.show');
-    Route::get('/courses/{id}/enroll', [EnrollmentController::class, 'showEnrollmentForm'])->name('enroll.form');
+    Route::get('/courses/{id}', [StudentCourseController::class, 'show'])->name('courses.detail');
+    Route::get('/courses/{id}/enroll', [EnrollmentController::class, 'showEnrollmentForm'])->name('enroll.index');
     Route::post('/courses/{id}/enroll', [EnrollmentController::class, 'processEnrollment'])->name('enroll.process');
     Route::get('/enrollments/status/{id}', [EnrollmentController::class, 'enrollmentStatus'])->name('enroll.status');
     Route::get('/groups', [StudentGroupController::class, 'index'])->name('groups.index');
     Route::get('/certificates', [certificateController::class, 'index'])->name('certificates.index');
-    Route::get('/certificates/{course}', [CertificateController::class, 'show'])->name('certificates.show');
+    Route::get('/certificates/{course}', [certificateController::class, 'show'])->name('certificates.show');
 
     // Profil
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');

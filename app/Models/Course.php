@@ -54,7 +54,7 @@ class Course extends Model
             'course_id',
             'student_id'
         )
-                    ->where('role', 'student');
+            ->where('role', 'student');
     }
 
     /**

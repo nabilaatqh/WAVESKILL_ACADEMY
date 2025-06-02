@@ -8,43 +8,50 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Models\Group;
 
 class CourseController extends Controller
 {
-    // Tampilkan semua course
+    /**
+     * Display a listing of the courses.
+     */
     public function index()
     {
-        // Eager load instruktur dan hitung jumlah student
-        $courses = Course::with('instruktur')->withCount('students')->paginate(10);
+        // Eager load instruktur and count students
+        $courses = Course::with('instruktur')
+            ->withCount('students')
+            ->paginate(10);
 
         return view('admin.course.index', compact('courses'));
     }
 
-    // Tampilkan form tambah course
+    /**
+     * Show the form for creating a new course.
+     */
     public function create()
     {
-        // Ambil semua instruktur dari users dengan role 'instructor'
-        $instrukturs = User::where('role', 'instructor')->get(); // Ganti 'instruktur' dengan 'instructor'
+        // Get all instructors
+        $instrukturs = User::where('role', 'instructor')->get();
         return view('admin.course.create', compact('instrukturs'));
     }
 
-        // Simpan course baru
+    /**
+     * Store a newly created course in storage.
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'nama_course' => 'required|string|max:255',
+            'nama_course'   => 'required|string|max:255',
             'instruktur_id' => 'nullable|exists:users,id,role,instructor',
-            'deskripsi' => 'nullable|string',
+            'deskripsi'     => 'nullable|string',
+            'harga'         => 'required|integer|min:0',
             'whatsapp_link' => 'nullable|url',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'banner_image'  => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Upload banner jika ada
-        $imagePath = null;
+        // Handle banner image upload
         if ($request->hasFile('banner_image')) {
-            $file = $request->file('banner_image');
-            $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+            $file      = $request->file('banner_image');
+            $filename  = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
             $extension = $file->getClientOriginalExtension();
             $finalName = $filename . '-' . time() . '.' . $extension;
 
@@ -57,51 +64,47 @@ class CourseController extends Controller
             $imagePath = 'course_banners/' . $finalName;
         }
 
-        // Simpan course
-        $course = Course::create([
-            'nama_course' => $request->nama_course,
-            'instruktur_id' => $request->instruktur_id,
-            'deskripsi' => $request->deskripsi,
-            'whatsapp_link' => $request->whatsapp_link,
-            'banner_image' => $imagePath,
-        ]);
+        // Create the course, including 'harga'
+        Course::create(
+            $request->only('nama_course', 'instruktur_id', 'deskripsi', 'harga', 'whatsapp_link')
+            + ['banner_image' => $imagePath ?? null]
+        );
 
-        // 🆕 Buat grup default otomatis
-        Group::create([
-            'title' => 'Grup ' . $course->nama_course,
-            'whatsapp_link' => $request->whatsapp_link, // boleh null, bisa diedit nanti
-            'course_id' => $course->id,
-        ]);
-
-        return redirect()->route('admin.course.index')->with('success', 'Course dan grup default berhasil dibuat');
+        return redirect()->route('admin.course.index')
+                         ->with('success', 'Course berhasil ditambahkan');
     }
 
-    // Tampilkan form edit course
+    /**
+     * Show the form for editing the specified course.
+     */
     public function edit(Course $course)
     {
-        // Ambil semua instruktur dari users dengan role 'instructor'
-        $instrukturs = User::where('role', 'instructor')->get(); // Ganti 'instruktur' dengan 'instructor'
+        $instrukturs = User::where('role', 'instructor')->get();
         return view('admin.course.edit', compact('course', 'instrukturs'));
     }
 
-    // Update course
+    /**
+     * Update the specified course in storage.
+     */
     public function update(Request $request, Course $course)
     {
         $request->validate([
-            'nama_course' => 'required|string|max:255',
+            'nama_course'   => 'nullable|string|max:255',
             'instruktur_id' => 'nullable|exists:users,id,role,instructor',
-            'deskripsi' => 'nullable|string',
+            'deskripsi'     => 'nullable|string',
+            'harga'         => 'nullable|integer|min:0',
             'whatsapp_link' => 'nullable|url',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'banner_image'  => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        // If new banner is uploaded, delete the old one first
         if ($request->hasFile('banner_image')) {
             if ($course->banner_image && file_exists(public_path('storage/' . $course->banner_image))) {
                 unlink(public_path('storage/' . $course->banner_image));
             }
 
-            $file = $request->file('banner_image');
-            $filename = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+            $file      = $request->file('banner_image');
+            $filename  = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
             $extension = $file->getClientOriginalExtension();
             $finalName = $filename . '-' . time() . '.' . $extension;
 
@@ -114,26 +117,37 @@ class CourseController extends Controller
             $imagePath = 'course_banners/' . $finalName;
         }
 
+        // Update including 'harga'
         $course->update(
-            $request->only('nama_course', 'instruktur_id', 'deskripsi', 'whatsapp_link') + [
-                'banner_image' => $imagePath ?? null,
-            ]
+            $request->only('nama_course', 'instruktur_id', 'deskripsi', 'harga', 'whatsapp_link')
+            + ['banner_image' => $imagePath ?? $course->banner_image]
         );
 
-        return redirect()->route('admin.course.index')->with('success', 'Course berhasil diperbarui');
+        return redirect()->route('admin.course.index')
+                         ->with('success', 'Course berhasil diperbarui');
     }
 
-    // Hapus course
+    /**
+     * Remove the specified course from storage.
+     */
     public function destroy(Course $course)
     {
+        // Delete banner file if exists
+        if ($course->banner_image && file_exists(public_path('storage/' . $course->banner_image))) {
+            unlink(public_path('storage/' . $course->banner_image));
+        }
+
         $course->delete();
-        return redirect()->route('admin.course.index')->with('success', 'Course berhasil dihapus');
+        return redirect()->route('admin.course.index')
+                         ->with('success', 'Course berhasil dihapus');
     }
 
-    // Detail course dengan daftar student
+    /**
+     * Display the specified course details (admin view).
+     */
     public function show(Course $course)
     {
-        // load relasi instruktur dan students
+        // Eager load instructor and students
         $course->load('instruktur', 'students');
         return view('admin.course.show', compact('course'));
     }
