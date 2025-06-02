@@ -1,54 +1,61 @@
+{{-- resources/views/student/course_cards.blade.php --}}
 @extends('layouts.student')
 
-@section('title', 'Daftar Grup Kelas')
+@section('title', 'Daftar Course')
 
 @section('content')
-<div class="container">
-    <h2 class="mb-4 text-white">Daftar Grup Kelas</h2>
+<div class="container py-4">
+    <h3 class="text-white mb-4" style="color: rgb(255, 251, 251); text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">📚 Semua Group Course</h3>
 
-    @if ($groups->isEmpty())
-        <div class="alert alert-info text-center text-white bg-transparent border-0">
-            Belum ada grup yang bisa kamu ikuti saat ini.<br>
-            Silakan tunggu verifikasi pembayaran oleh admin.
+    @if ($courses->isEmpty())
+        <div class="alert alert-info bg-light text-dark">
+            Belum ada course yang tersedia.
         </div>
     @else
-        <div class="row g-4">
-            @foreach ($groups as $group)
-                <div class="col-md-6">
-                    <div class="card bg-warning text-dark p-3 shadow-sm rounded">
-                        @if ($group->course && $group->course->banner_image)
-                            <img src="{{ asset('storage/' . $group->course->banner_image) }}"
-                                alt="{{ $group->course->nama_course }}"
-                                class="img-fluid rounded mb-3"
-                                style="max-height: 150px; object-fit: cover;">
-                        @else
-                            <img src="{{ asset('images/default-course.png') }}"
-                                alt="Default Image"
-                                class="img-fluid rounded mb-3"
-                                style="max-height: 150px; object-fit: cover;">
-                        @endif
+        <div class="row">
+            @foreach ($courses as $course)
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                        {{-- Banner penuh --}}
+                        <img 
+                            src="{{ asset('storage/' . $course->banner_image) }}" 
+                            class="card-img-top" 
+                            alt="Banner {{ $course->nama_course }}" 
+                            style="object-fit: cover; height: 180px; width: 100%;"
+                        >
 
-                        <h5 class="mb-2">{{ $group->course->nama_course }}</h5>
+                        {{-- Konten di bawah banner --}}
+                        <div class="card-body" style="background-color: #ffb347;">
+                            {{-- Judul Course --}}
+                            <h5 class="card-title mb-1" style="color: rgb(255, 251, 251); text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"">{{ $course->nama_course }}</h5>
 
-                        <p class="text-dark" style="font-size: 0.9rem;">
-                            {{ Str::limit($group->course->deskripsi ?? 'Tidak ada deskripsi.', 150) }}
-                        </p>
+                            {{-- Deskripsi singkat (maks. 60 karakter) --}}
+                            <p style="font-size: 0.9rem; color: rgb(255, 251, 251); text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"">
+                                {{ \Illuminate\Support\Str::limit($course->deskripsi ?? 'Tidak ada deskripsi.', 60, '...') }}
+                            </p>
 
-                        @if ($group->course->whatsapp_link)
-                            <a href="{{ $group->course->whatsapp_link }}" target="_blank" class="btn btn-danger w-100 mt-3">Join Grup Whatsapp</a>
-                        @else
-                            <button class="btn btn-secondary w-100 mt-3" disabled>Tidak ada link WA</button>
-                        @endif
+                            {{-- Tombol Link WhatsApp --}}
+                            @if ($course->whatsapp_link)
+                                <a href="{{ $course->whatsapp_link }}" target="_blank" class="btn btn-sm btn-success px-3">
+                                    <i class="fab fa-whatsapp me-1"></i> Gabung WA
+                                </a>
+                            @else
+                                <button class="btn btn-sm btn-secondary px-3" disabled>
+                                    WA Belum Tersedia
+                                </button>
+                            @endif
+                        </div>
                     </div>
                 </div>
             @endforeach
         </div>
+
+        {{-- pagination, jika menggunakan paginate --}}
+        @if(method_exists($courses, 'links'))
+            <div class="d-flex justify-content-center mt-4">
+                {{ $courses->links() }}
+            </div>
+        @endif
     @endif
 </div>
-
-<style>
-    .container {
-        max-width: 900px;
-    }
-</style>
 @endsection

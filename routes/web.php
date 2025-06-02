@@ -141,6 +141,7 @@ Route::middleware(['auth:instruktur'])->prefix('instruktur')->name('instruktur.'
 // ============== STUDENT AREA ==============
 Route::middleware(['auth:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/student/dashboard/{course}', [StudentController::class, 'index'])->name('dashboard.selected');
     Route::get('/landingpage', [LandingPageController::class, 'index'])->name('landingpage');
     Route::get('/courses', [StudentCourseController::class, 'index'])->name('courses.index');
     Route::get('/courses/{id}', [StudentCourseController::class, 'show'])->name('courses.detail');

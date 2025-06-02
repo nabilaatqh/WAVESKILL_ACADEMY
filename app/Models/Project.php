@@ -14,8 +14,13 @@ class Project extends Model
         'deskripsi',
         'course_id',
         'file',
-        'tipe', // TAMBAHKAN INI
+        'tipe', 
     ];
+
+    public function submissions()
+    {
+        return $this->hasMany(Submission::class, 'project_id');
+    }
 
     public function course()
     {
