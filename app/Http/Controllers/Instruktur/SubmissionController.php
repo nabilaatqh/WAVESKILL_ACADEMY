@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SubmissionController extends Controller
 {
-    // Tampilkan semua submission dari mahasiswa untuk 1 project
+    // Tampilkan semua submission dari Student untuk 1 project
     public function index($projectId)
     {
         $project = Project::with('course')->findOrFail($projectId);

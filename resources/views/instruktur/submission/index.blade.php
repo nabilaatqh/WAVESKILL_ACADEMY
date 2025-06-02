@@ -78,18 +78,18 @@
             </form>
         </div>
 
-        <!-- Tabel Submission Mahasiswa -->
+        <!-- Tabel Submission Student -->
         <div class="table-responsive">
-            <h5 class="mt-4 mb-3" style="color: #333;">Submission Mahasiswa:</h5>
+            <h5 class="mt-4 mb-3" style="color: #333;">Submission Student:</h5>
 
             @if($submissions->isEmpty())
-                <p class="text-muted">Belum ada submission dari mahasiswa.</p>
+                <p class="text-muted">Belum ada submission dari Student.</p>
             @else
                 <table class="table table-bordered bg-white">
                     <thead class="table-warning">
                         <tr>
                             <th>#</th>
-                            <th>Nama Mahasiswa</th>
+                            <th>Nama Student</th>
                             <th>File</th>
                             <th>Nilai</th>
                             <th>Catatan</th>
@@ -130,7 +130,7 @@
     function confirmDelete() {
         Swal.fire({
             title: 'Yakin ingin menghapus project ini?',
-            text: "Tindakan ini akan menghapus semua submission dari mahasiswa!",
+            text: "Tindakan ini akan menghapus semua submission dari Student!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#e74c3c',

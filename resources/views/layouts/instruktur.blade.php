@@ -4,11 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@yield('title', 'Dashboard Instruktur')</title>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('css/instruktur.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/backsite/instruktur/grup_kelas.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="{{ asset('css/backsite/instruktur/grup_kelas.css') }}" rel="stylesheet">
     <link rel="icon" href="{{ asset('image/logo.png') }}" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         .dropdown-profile {
             position: relative;
@@ -20,10 +22,10 @@
             right: 0;
             background: white;
             border: 1px solid #ccc;
-            padding: 10px;
-            min-width: 150px;
-            display: none;
             border-radius: 6px;
+            padding: 10px;
+            min-width: 160px;
+            display: none;
             z-index: 999;
         }
 
@@ -32,9 +34,9 @@
             display: block;
             width: 100%;
             text-align: left;
+            padding: 6px 10px;
             background: none;
             border: none;
-            padding: 6px 10px;
             cursor: pointer;
             color: #333;
         }
@@ -44,11 +46,11 @@
             background-color: #f5f5f5;
         }
 
-        .profile:hover .dropdown-menu {
+        .dropdown-profile:hover .dropdown-menu {
             display: block;
         }
 
-        .profile img {
+        .dropdown-profile img {
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -56,28 +58,41 @@
             border: 2px solid white;
         }
 
+        .topbar {
+            height: 80px;
+            padding: 16px 24px;
+            background-color: #FFA500;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .profile-name {
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
         #materi-form.card,
         #project-form.card {
             display: none;
-            width: 100%;
             max-width: 1100px;
-            margin: 20px 0;
+            margin: 20px auto;
             padding: 2rem 1.5rem;
             border-radius: 16px;
             background-color: #ffffff;
             box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
         }
     </style>
+
     @yield('head')
 </head>
 <body>
 
     <div class="sidebar">
-        <!-- Logo -->
-        <div class="logo text-center" style="margin-bottom: 20px;">
-            <img src="{{ asset('image/logo.png') }}" alt="Logo" style="width: 65px; height: auto; background-color: transparent;">
+        <div class="logo text-center mb-3">
+            <img src="{{ asset('image/logo.png') }}" alt="Logo" style="width: 65px;">
         </div>
-        <!-- Menu navigasi -->
         <a href="{{ route('instruktur.dashboard') }}" class="{{ request()->routeIs('instruktur.dashboard') ? 'active' : '' }}" title="Home">
             <i class="fas fa-home"></i>
         </a>
@@ -87,30 +102,30 @@
         <a href="{{ route('instruktur.profile.edit') }}" class="{{ request()->routeIs('instruktur.profile.*') ? 'active' : '' }}" title="Profil">
             <i class="fas fa-user"></i>
         </a>
-
         @if(isset($selectedCourse) && $selectedCourse->whatsapp_group_link)
-        <a href="{{ $selectedCourse->whatsapp_group_link }}" target="_blank" title="Grup WhatsApp" style="margin-top: 15px;">
-            <i class="fab fa-whatsapp"></i>
-        </a>
+            <a href="{{ $selectedCourse->whatsapp_group_link }}" target="_blank" title="Grup WhatsApp" style="margin-top: 15px;">
+                <i class="fab fa-whatsapp"></i>
+            </a>
         @endif
     </div>
 
     <div class="main-content">
-        <div class="topbar" style="height: 80px; padding: 16px 24px; background-color: #FFA500; display: flex; align-items: center;">
-            <div class="profile dropdown-profile">
-                @php
-                    $instruktur = Auth::guard('instruktur')->user();
-                    $fotoPath = $instruktur->foto;
-                    $fotoUrl = $fotoPath && file_exists(public_path('storage/' . $fotoPath))
-                        ? asset('storage/' . $fotoPath)
-                        : 'https://ui-avatars.com/api/?name=' . urlencode($instruktur->nama_awal . ' ' . $instruktur->nama_akhir);
-                @endphp
+        @php
+            $instruktur = Auth::guard('instruktur')->user();
+            $fotoUrl = $instruktur->photo && file_exists(public_path('storage/' . $instruktur->photo))
+                ? asset('storage/' . $instruktur->photo)
+                : asset('images/avatar-placeholder.png');
+        @endphp
 
-                <img src="{{ $fotoUrl }}" alt="Foto Profil">
-                <span class="name" style="margin-left: 8px; color: white; font-weight: bold;">
-                    {{ $instruktur->nama_awal }}
-                </span>
-                <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
+        <header class="topbar">
+            <div class="profile-container d-flex align-items-center dropdown-profile">
+                <p class="profile-name mb-0">
+                    {{ $instruktur->first_name ?? 'Instruktur' }} {{ $instruktur->last_name ?? '' }}
+                </p>
+                <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#profileModal">
+                    <img src="{{ $fotoUrl }}" alt="Avatar">
+                </button>
+                <i class="fas fa-chevron-down ms-2 text-white"></i>
 
                 <div class="dropdown-menu">
                     <a href="{{ route('instruktur.profile.edit') }}">
@@ -122,7 +137,7 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </header>
 
         <div class="content-area">
             @yield('content')

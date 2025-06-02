@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Materi;
 use App\Models\Course;
+use App\Models\Student;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\MateriUploaded;
 
 class MateriController extends Controller
 {
@@ -34,6 +36,11 @@ class MateriController extends Controller
             'course_id' => 'required|exists:courses,id'
         ]);
 
+        $course = Course::findOrFail($request->course_id);
+        if ($course->instruktur_id !== Auth::id()) {
+            abort(403);
+        }
+
         $materi = new Materi();
         $materi->judul = $request->judul;
         $materi->deskripsi = $request->deskripsi;
@@ -46,8 +53,17 @@ class MateriController extends Controller
 
         $materi->save();
 
+        // ✅ Kirim notifikasi ke student yang enrolled dan approved
+        $students = Student::whereHas('approvedCourses', function ($q) use ($materi) {
+            $q->where('courses.id', $materi->course_id);
+        })->get();
+
+        foreach ($students as $student) {
+            $student->notify(new MateriUploaded($course->nama_course, $materi->judul));
+        }
+
         return redirect()->route('instruktur.dashboard', ['course_id' => $materi->course_id])
-            ->with('success', 'Materi berhasil ditambahkan.');
+            ->with('success', 'Materi berhasil ditambahkan dan notifikasi dikirim.');
     }
 
     public function edit($id)
@@ -74,17 +90,18 @@ class MateriController extends Controller
         $materi->tipe = $request->tipe;
         $materi->course_id = $request->course_id;
 
-         // Cek apakah ada file diupload
-    if ($request->hasFile('file')) {
-        // Simpan ke folder 'materi' di storage/app/public/materi
-        $file = $request->file('file')->store('materi', 'public');
-        $materi->file = $file;
+        if ($request->hasFile('file')) {
+            if ($materi->file && Storage::disk('public')->exists($materi->file)) {
+                Storage::disk('public')->delete($materi->file);
+            }
+            $file = $request->file('file')->store('materi_files', 'public');
+            $materi->file = $file;
+        }
+
+        $materi->save();
+
+        return redirect()->route('instruktur.materi.show', $materi->id)->with('success', 'Materi berhasil diperbarui!');
     }
-
-    $materi->save();
-
-    return redirect()->route('instruktur.materi.show', $materi->id)->with('success', 'Materi berhasil diperbarui!');
-}
 
     public function destroy($id)
     {

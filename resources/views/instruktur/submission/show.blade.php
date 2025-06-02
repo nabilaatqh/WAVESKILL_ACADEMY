@@ -7,7 +7,7 @@
     <h4 class="materi-subtitle mb-4">Detail Submission</h4>
 
     <div class="card bg-white p-4 mb-4">
-        <h5 class="mb-2">Nama Mahasiswa:</h5>
+        <h5 class="mb-2">Nama Student:</h5>
         <p>{{ $submission->student->name }}</p>
 
         <h5 class="mt-3 mb-2">File Submission:</h5>

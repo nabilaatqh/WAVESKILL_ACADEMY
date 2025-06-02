@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Course;
 use App\Models\Group;
 use App\Models\Certificate;
 use App\Models\Enrollment;
 
-class Student extends Authenticatable
+class Student extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
 

@@ -34,6 +34,17 @@ class StudentLoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('student')->attempt($credentials, $request->filled('remember'))) {
+            $user = Auth::guard('student')->user();
+
+            // ✅ Cek apakah sudah verifikasi email
+            if (!$user->hasVerifiedEmail()) {
+                Auth::guard('student')->logout();
+
+                return back()->withErrors([
+                    'email' => 'Email belum diverifikasi. Silakan cek inbox Gmail kamu dan klik link verifikasi.',
+                ])->withInput($request->only('email'));
+            }
+
             return redirect()->intended(route('student.landingpage'));
         }
 

@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -18,8 +18,6 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
-
-        // Tambahan profil
         'nama_awal',
         'nama_akhir',
         'domisili',
@@ -62,39 +60,32 @@ class User extends Authenticatable
         return $this->hasMany(Course::class, 'instruktur_id');
     }
 
-    // Alias jika butuh course() di mana-mana
     public function course()
     {
         return $this->courses();
     }
 
     // ======================== RELASI UNTUK STUDENT ========================
-
-    // Course yang diikuti oleh student
     public function enrolledCourses()
     {
         return $this->belongsToMany(Course::class, 'enrollments', 'student_id', 'course_id');
     }
 
-    // Alias enrollments
     public function enrollments()
     {
         return $this->enrolledCourses();
     }
 
-    // Relasi ke submissions (project submissions student)
     public function submissions()
     {
         return $this->hasMany(Submission::class, 'student_id');
     }
 
-    // Relasi ke sertifikat yang dimiliki student
     public function certificates()
     {
         return $this->hasMany(Certificate::class, 'student_id');
     }
 
-    // Grup (jika digunakan)
     public function groups()
     {
         return $this->belongsToMany(Group::class, 'group_student', 'student_id', 'group_id');

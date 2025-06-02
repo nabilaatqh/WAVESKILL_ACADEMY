@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\Registered;
 
 class StudentRegisterController extends Controller
 {
@@ -22,14 +24,22 @@ class StudentRegisterController extends Controller
             'password' => 'required|min:6|confirmed',
         ]);
 
-        User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => 'student',
-            'is_active'=> true,
+        // ✅ Buat user
+        $user = User::create([
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'password'  => Hash::make($request->password),
+            'role'      => 'student',
+            'is_active' => true,
         ]);
 
-        return redirect()->route('student.login')->with('success', 'Pendaftaran berhasil. Silakan login.');
+        // ✅ Trigger email verifikasi
+        event(new Registered($user));
+
+        // ✅ Login otomatis
+        Auth::guard('student')->login($user);
+
+        // ✅ Redirect ke halaman verifikasi
+        return redirect()->route('verification.notice');
     }
 }

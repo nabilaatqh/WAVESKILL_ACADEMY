@@ -3,7 +3,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Login Mahasiswa – WaveSkill Academy</title>
+    <title>Login Student – WaveSkill Academy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     {{-- Google Fonts Poppins --}}
@@ -171,13 +171,13 @@
     {{-- Bagian Kiri: Ilustrasi --}}
     <div class="left-section">
         {{-- Ganti “about.png” dengan ilustrasi login sesuai kebutuhan --}}
-        <img src="{{ asset('image/about.png') }}" alt="Ilustrasi Mahasiswa">
+        <img src="{{ asset('image/about.png') }}" alt="Ilustrasi Student">
     </div>
 
     {{-- Bagian Kanan: Form Login --}}
     <div class="right-section">
         <div class="login-box">
-            <h2>Login Mahasiswa</h2>
+            <h2>Login Student</h2>
             <p class="subtitle">Akses materi dan tugas Anda di sini</p>
 
             @if(session('error'))
@@ -197,7 +197,7 @@
                         type="email"
                         name="email"
                         class="form-control"
-                        placeholder="Email Mahasiswa"
+                        placeholder="Email Student"
                         value="{{ old('email') }}"
                         required
                         autofocus

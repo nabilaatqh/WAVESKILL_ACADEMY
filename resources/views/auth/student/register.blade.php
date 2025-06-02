@@ -1,4 +1,3 @@
-{{-- resources/views/auth/register.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -13,9 +12,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        /* ----------------------------------------------------------------------------------------------------
-           Reset & Font
-        ---------------------------------------------------------------------------------------------------- */
         body, html {
             margin: 0;
             padding: 0;
@@ -24,27 +20,21 @@
             background-color: #ffffff;
         }
 
-        /* ----------------------------------------------------------------------------------------------------
-           Split-Screen Container
-        ---------------------------------------------------------------------------------------------------- */
         .register-section {
             display: flex;
             min-height: 100vh;
         }
 
-        /* --------------------------------------------------
-           Bagian Kiri: Gambar Ilustrasi
-        -------------------------------------------------- */
         .register-left {
             flex: 1;
-            background-color: #ffb347; /* oranye */
+            background-color: #ffb347;
             position: relative;
             overflow: hidden;
         }
         .register-left .image-wrapper {
-            display: flex;                  /* jadikan flex container */
-            align-items: center;            /* center vertikal */
-            justify-content: center;        /* center horisontal */
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
             height: 100%;
         }
@@ -54,47 +44,36 @@
             object-fit: contain;
         }
 
-        /* --------------------------------------------------
-           Bagian Kanan: Form Registrasi
-        -------------------------------------------------- */
         .register-right {
             flex: 1;
-            background-color: #44d9f7; /* biru */
+            background-color: #44d9f7;
             display: flex;
-            align-items: center;          /* center vertikal */
-            justify-content: center;      /* center horisontal */
+            align-items: center;
+            justify-content: center;
             padding: 2rem;
         }
 
-        /* ----------------------------------------------------------------------------------------------------
-           Form Container di Halaman Register
-        ---------------------------------------------------------------------------------------------------- */
         .register-form-card {
             background-color: transparent;
             width: 100%;
             max-width: 420px;
         }
 
-        /* Heading Utama */
         .register-form-card h2 {
             color: #ffffff;
             font-weight: 700;
             margin-bottom: 1rem;
             font-size: 1.75rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);  /* efek bayangan ringan */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
         }
 
-        /* Subtitle di bawah heading */
         .register-form-card .subtitle {
-            color: #FFFA8D; /* kuning muda yang seragam */
-            margin-bottom: 2rem;
+            color: #FFFA8D;
+            margin-bottom: 1rem;
             font-size: 0.95rem;
             font-weight: 500;
         }
 
-        /* ----------------------------------------------------------------------------------------------------
-           Style Input & Button
-        ---------------------------------------------------------------------------------------------------- */
         .form-control {
             border-radius: 50px;
             height: 48px;
@@ -108,17 +87,19 @@
             font-family: 'Poppins', sans-serif;
             color: #333;
         }
+
         .form-control::placeholder {
-            color: #888; /* placeholder lebih soft */
+            color: #888;
             opacity: 1;
         }
+
         .form-control:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgba(255,255,255,0.5);
         }
 
         .btn-register {
-            background-color: #f26d6d; /* pink/merah agak tua */
+            background-color: #f26d6d;
             color: #ffffff;
             border-radius: 50px;
             padding: 0.5rem 2rem;
@@ -131,17 +112,16 @@
             margin-top: 1rem;
             font-family: 'Poppins', sans-serif;
         }
+
         .btn-register:hover {
             background-color: #e85c5c;
         }
+
         .btn-register:active {
             transform: translateY(2px);
             box-shadow: 0 2px 0 #b33939;
         }
 
-        /* ----------------------------------------------------------------------------------------------------
-           Responsive Adjustments
-        ---------------------------------------------------------------------------------------------------- */
         @media (max-width: 767.98px) {
             .register-section {
                 flex-direction: column;
@@ -149,10 +129,10 @@
             .register-left, .register-right {
                 flex: none;
                 width: 100%;
-                height: 50vh;        /* bagi jadi 50%/50% secara vertikal */
+                height: 50vh;
             }
             .register-left {
-                height: 35vh;        /* sedikit lebih kecil untuk gambar */
+                height: 35vh;
             }
             .register-right {
                 height: 65vh;
@@ -162,88 +142,66 @@
                 max-width: 100%;
             }
         }
+
+        .email-notif-info {
+            color: #fff;
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
 
 <section class="register-section">
-    {{-- Bagian Kiri (Gambar) --}}
     <div class="register-left">
         <div class="image-wrapper">
-            {{-- Ganti “your-placeholder.png” dengan ilustrasi pilihan Anda --}}
             <img src="{{ asset('image/about.png') }}" alt="Ilustrasi" />
         </div>
     </div>
 
-    {{-- Bagian Kanan (Form) --}}
     <div class="register-right">
         <div class="register-form-card">
             <h2>Selamat datang di WaveSkill Academy!</h2>
             <p class="subtitle">Daftarkan akunmu sekarang</p>
 
+            <div class="email-notif-info">
+                Setelah mendaftar, kamu akan menerima email verifikasi.<br>
+                Pastikan untuk mengecek <strong>inbox Gmail</strong> kamu dan klik link verifikasi agar akunmu aktif.
+            </div>
+
             <form method="POST" action="{{ route('student.register') }}">
                 @csrf
 
-                {{-- Nama Lengkap --}}
-                <input
-                    type="text"
-                    name="name"
-                    class="form-control"
-                    placeholder="Nama Lengkap"
-                    value="{{ old('name') }}"
-                    required
-                />
+                <input type="text" name="name" class="form-control" placeholder="Nama Lengkap" value="{{ old('name') }}" required>
                 @error('name')
                     <div class="text-warning small mb-3">{{ $message }}</div>
                 @enderror
 
-                {{-- Email --}}
-                <input
-                    type="email"
-                    name="email"
-                    class="form-control"
-                    placeholder="Email"
-                    value="{{ old('email') }}"
-                    required
-                />
+                <input type="email" name="email" class="form-control" placeholder="Email" value="{{ old('email') }}" required>
                 @error('email')
                     <div class="text-warning small mb-3">{{ $message }}</div>
                 @enderror
 
-                {{-- Password --}}
-                <input
-                    type="password"
-                    name="password"
-                    class="form-control"
-                    placeholder="Password"
-                    required
-                />
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
                 @error('password')
                     <div class="text-warning small mb-3">{{ $message }}</div>
                 @enderror
 
-                {{-- Konfirmasi Password --}}
-                <input
-                    type="password"
-                    name="password_confirmation"
-                    class="form-control"
-                    placeholder="Konfirmasi Password"
-                    required
-                />
+                <input type="password" name="password_confirmation" class="form-control" placeholder="Konfirmasi Password" required>
                 @error('password_confirmation')
                     <div class="text-warning small mb-3">{{ $message }}</div>
                 @enderror
 
-                {{-- Tombol Daftar --}}
-                <button type="submit" class="btn-register">
-                    Daftar
-                </button>
+                <button type="submit" class="btn-register">Daftar</button>
             </form>
         </div>
     </div>
 </section>
 
-{{-- Bootstrap JS --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

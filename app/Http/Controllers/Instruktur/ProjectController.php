@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Instruktur;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Course;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\ProjectUploaded;
 
 class ProjectController extends Controller
 {
@@ -53,12 +55,20 @@ class ProjectController extends Controller
 
         $project->save();
 
+        // ✅ Kirim notifikasi ke semua student yang enrolled & disetujui
+        $students = Student::whereHas('approvedCourses', function ($q) use ($project) {
+            $q->where('courses.id', $project->course_id);
+        })->get();
+
+        foreach ($students as $student) {
+            $student->notify(new ProjectUploaded($course->nama_course, $project->judul));
+        }
+
         return redirect()->route('instruktur.dashboard', [
             'course_id' => $project->course_id,
             'active_tab' => 'project'
-        ])->with('success', 'Project berhasil ditambahkan.');
+        ])->with('success', 'Project berhasil ditambahkan dan notifikasi telah dikirim.');
     }
-
 
     public function show(Project $project)
     {

@@ -9,7 +9,6 @@ use App\Models\Group;
 use App\Models\Certificate;
 use App\Models\Enrollment;
 use App\Models\Project;
-use App\Models\Kelas;
 use App\Models\Materi;
 
 class Course extends Model
@@ -53,10 +52,11 @@ class Course extends Model
         return $this->hasMany(Enrollment::class);
     }
 
-    public function kelass()
-    {
-        return $this->hasMany(Kelas::class);
-    }
+    public function students()
+{
+    return $this->belongsToMany(Student::class, 'enrollments', 'course_id', 'student_id');
+}
+
 
     public function certificates()
     {

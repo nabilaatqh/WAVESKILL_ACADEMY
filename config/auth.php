@@ -48,7 +48,7 @@ return [
 
         'students' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\user::class,
         ],
     ],
 
