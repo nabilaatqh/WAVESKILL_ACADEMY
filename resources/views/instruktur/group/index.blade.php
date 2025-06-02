@@ -3,23 +3,35 @@
 @section('title', 'Daftar Grup Kelas')
 
 @section('content')
-<div class="container">
+<link rel="stylesheet" href="{{ asset('css/backsite/grup_kelas.css') }}">
+
+<div class="container-center">
     <h3 class="title-group">Daftar Grup Kelas</h3>
 
-    @forelse($course as $course)
-    <div class="group-card">
-    @if($course->banner)
-        <img src="{{ asset('storage/' . $course->banner) }}" class="group-banner" alt="Banner {{ $course->nama_course }}">
-    @endif
-    <div class="group-body">
-        <h4>{{ $course->nama_course }}</h4>
-        <p>{{ $course->deskripsi }}</p>
-        <a href="{{ $course->whatsapp_link }}" target="_blank" class="group-btn">Lihat Grup Whatsapp</a>
-    </div>
-</div>
+    <div class="dashboard-wrapper container-center wrapper-grup">
 
-    @empty
-        <p class="no-course">Belum ada course dengan grup WhatsApp.</p>
-    @endforelse
+        @forelse($course as $course)
+        <div class="course-card mb-5">
+            {{-- Banner Course --}}
+            @if($course->banner_image)
+                <img src="{{ asset('storage/' . $course->banner_image) }}" alt="Course Banner" class="course-banner">
+            @else
+                <img src="https://via.placeholder.com/1000x250?text=Course+Banner" alt="Default Banner" class="course-banner">
+            @endif
+
+            {{-- Isi Card --}}
+            <div class="group-body">
+                <h1 class="course-title">{{ $course->nama_course }}</h1>
+                <p class="course-summary">Kursus ini dirancang khusus untuk pemula yang ingin mempelajari dasar-dasar desain UI/UX menggunakan Figma. kamu akan belajar bagaimana merancang tampilan aplikasi/web dari nol, memahami prinsip desain, hingga membuat prototipe interaktif</p>
+                <p class="course-description">{{ $course->deskripsi }}</p>
+            </div>
+
+            <a href="{{ $course->whatsapp_link }}" target="_blank" class="group-btn">Lihat Grup Whatsapp</a>
+        </div>
+        @empty
+            <p class="text-center text-muted">Belum ada course dengan grup WhatsApp.</p>
+        @endforelse
+
+    </div>
 </div>
 @endsection

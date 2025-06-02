@@ -74,18 +74,17 @@ class MateriController extends Controller
         $materi->tipe = $request->tipe;
         $materi->course_id = $request->course_id;
 
-        if ($request->hasFile('file')) {
-            if ($materi->file) {
-                Storage::disk('public')->delete($materi->file);
-            }
-            $materi->file = $request->file('file')->store('materi_files', 'public');
-        }
-
-        $materi->save();
-
-        return redirect()->route('instruktur.dashboard', ['course_id' => $materi->course_id])
-            ->with('success', 'Materi berhasil diperbarui.');
+         // Cek apakah ada file diupload
+    if ($request->hasFile('file')) {
+        // Simpan ke folder 'materi' di storage/app/public/materi
+        $file = $request->file('file')->store('materi', 'public');
+        $materi->file = $file;
     }
+
+    $materi->save();
+
+    return redirect()->route('instruktur.materi.show', $materi->id)->with('success', 'Materi berhasil diperbarui!');
+}
 
     public function destroy($id)
     {

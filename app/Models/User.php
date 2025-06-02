@@ -63,22 +63,35 @@ class User extends Authenticatable
         return $this->role === 'instruktur';
     }
 
+    /**
+     * Relasi untuk instruktur yang memiliki banyak course
+     */
     public function courses()
     {
         return $this->hasMany(Course::class, 'instruktur_id');
     }
 
-    // Relasi dengan course (student)
+    /**
+     * Alias relasi course untuk kompatibilitas (dari versi lain)
+     */
+    public function course()
+    {
+        return $this->hasMany(Course::class, 'instruktur_id');
+    }
+
+    /**
+     * Relasi many-to-many antara student dan course
+     */
     public function enrolledcourse()
     {
         return $this->belongsToMany(Course::class, 'course_student', 'student_id', 'course_id');
     }
 
-    // Di dalam class User
-
+    /**
+     * Alias untuk enrolledcourse
+     */
     public function enrollments()
     {
         return $this->enrolledcourse();
     }
-
 }

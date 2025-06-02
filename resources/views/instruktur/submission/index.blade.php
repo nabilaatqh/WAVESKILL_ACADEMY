@@ -3,83 +3,121 @@
 @section('title', 'Submission Project')
 
 @section('content')
-<div class="dashboard-wrapper container-center">
+<div class="dashboard-wrapper">
+    <div class="materi-detail-card" style="max-width: 1140px; width: 95%; margin: auto; padding: 30px; background: #fff; border-radius: 16px; box-shadow: 0 8px 16px rgba(0,0,0,0.08);">
 
-    <h4 class="materi-subtitle mb-3">Submission Project: {{ $project->judul }}</h4>
+        <h2 class="materi-title" style="font-weight: 700; margin-bottom: 12px; color: #333;">Project: {{ $project->judul }}</h2>
+        <p class="materi-deskripsi" style="color: #555; margin-bottom: 24px; font-size: 1rem;">{{ $project->deskripsi }}</p>
 
-    {{-- Tombol Edit & Hapus --}}
-    <div class="mb-3 d-flex gap-2">
-        <button class="btn btn-sm btn-outline-warning" onclick="toggleEditForm()">✏️ Edit Project</button>
+        @php
+            $ext = pathinfo($project->file, PATHINFO_EXTENSION);
+        @endphp
 
-        <form action="{{ route('instruktur.project.destroy', $project->id) }}" method="POST" id="delete-form">
-            @csrf
-            @method('DELETE')
-            <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete()">🗑️ Hapus Project</button>
-        </form>
-    </div>
-
-    {{-- Form Edit --}}
-    <div id="edit-form" style="display: none;" class="mt-3 p-3 border rounded bg-light mb-4">
-        <form method="POST" action="{{ route('instruktur.project.update', $project->id) }}" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-
-            <div class="mb-2">
-                <label for="judul" class="form-label">Judul Project</label>
-                <input type="text" id="judul" name="judul" value="{{ $project->judul }}" class="form-control" required>
+        @if($ext === 'pdf')
+            <div class="materi-file" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; margin-bottom: 30px;">
+                <iframe src="{{ asset('storage/' . $project->file) }}" width="100%" height="600px" frameborder="0"></iframe>
             </div>
-
-            <div class="mb-2">
-                <label for="deskripsi" class="form-label">Deskripsi</label>
-                <textarea id="deskripsi" name="deskripsi" rows="3" class="form-control">{{ $project->deskripsi }}</textarea>
+        @elseif($ext === 'mp4')
+            <div class="materi-file" style="border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                <video width="100%" height="auto" controls style="display: block; border-radius: 8px;">
+                    <source src="{{ asset('storage/' . $project->file) }}" type="video/mp4">
+                    Browser Anda tidak mendukung tag video.
+                </video>
             </div>
-
-            <div class="mb-3">
-                <label for="file" class="form-label">File Project (Opsional)</label>
-                <input type="file" id="file" name="file" class="form-control">
+        @elseif($ext && $project->file)
+            <div class="materi-link mb-4">
+                <a href="{{ asset('storage/' . $project->file) }}" target="_blank" rel="noopener noreferrer" style="color: #F68B1F; font-weight: 600; font-size: 1.1rem;">
+                    📥 Klik untuk unduh file project →
+                </a>
             </div>
+        @else
+            <p class="text-muted">File project belum tersedia.</p>
+        @endif
 
-            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-        </form>
-    </div>
+        <!-- Aksi -->
+        <div class="action-buttons mb-4 d-flex flex-wrap gap-3 align-items-center">
+            <button class="btn" onclick="toggleEditForm()" style="background-color: #FFA500; color: white; font-weight: 600; padding: 10px 20px; border-radius: 8px;">
+                ✏ Edit Project
+            </button>
 
-    {{-- Tabel Submission --}}
-    @if($submissions->isEmpty())
-        <p class="text-white">Belum ada submission dari mahasiswa.</p>
-    @else
-        <div class="table-responsive">
-            <table class="table table-bordered bg-white">
-                <thead class="table-warning">
-                    <tr>
-                        <th>#</th>
-                        <th>Nama Mahasiswa</th>
-                        <th>File</th>
-                        <th>Nilai</th>
-                        <th>Catatan</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($submissions as $index => $submission)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $submission->student->name }}</td>
-                        <td>
-                            <a href="{{ asset('storage/' . $submission->file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                📥 Lihat File
-                            </a>
-                        </td>
-                        <td>{{ $submission->nilai ?? '-' }}</td>
-                        <td>{{ $submission->catatan ?? '-' }}</td>
-                        <td>
-                            <a href="{{ route('instruktur.submission.show', $submission->id) }}" class="btn btn-sm btn-warning">Detail</a>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            <form action="{{ route('instruktur.project.destroy', $project->id) }}" method="POST" id="delete-form">
+                @csrf @method('DELETE')
+                <button type="button" onclick="confirmDelete()" class="btn" style="background-color: #dc3545; color: white; font-weight: 600; padding: 10px 20px; border-radius: 8px;">
+                    🗑 Hapus
+                </button>
+            </form>
+
+            <form action="{{ route('instruktur.dashboard', ['course_id' => $project->course_id, 'active_tab' => 'project']) }}" method="GET">
+                <button type="submit" class="btn" style="background-color: #008CBA; color: white; font-weight: 600; padding: 10px 20px; border-radius: 8px;">
+                    ← Kembali ke Dashboard
+                </button>
+            </form>
         </div>
-    @endif
+
+        <!-- Form Edit -->
+        <div id="edit-form" style="display: none;" class="mt-3 p-3 border rounded bg-light mb-4">
+            <form method="POST" action="{{ route('instruktur.project.update', $project->id) }}" enctype="multipart/form-data">
+                @csrf @method('PUT')
+
+                <div class="mb-2">
+                    <label class="form-label">Judul Project</label>
+                    <input type="text" name="judul" value="{{ $project->judul }}" class="form-control" required>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea name="deskripsi" rows="3" class="form-control">{{ $project->deskripsi }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Unggah File Baru (Opsional)</label>
+                    <input type="file" name="file" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            </form>
+        </div>
+
+        <!-- Tabel Submission Mahasiswa -->
+        <div class="table-responsive">
+            <h5 class="mt-4 mb-3" style="color: #333;">Submission Mahasiswa:</h5>
+
+            @if($submissions->isEmpty())
+                <p class="text-muted">Belum ada submission dari mahasiswa.</p>
+            @else
+                <table class="table table-bordered bg-white">
+                    <thead class="table-warning">
+                        <tr>
+                            <th>#</th>
+                            <th>Nama Mahasiswa</th>
+                            <th>File</th>
+                            <th>Nilai</th>
+                            <th>Catatan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($submissions as $index => $submission)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $submission->student->name }}</td>
+                            <td>
+                                <a href="{{ asset('storage/' . $submission->file) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    📥 Lihat File
+                                </a>
+                            </td>
+                            <td>{{ $submission->nilai ?? '-' }}</td>
+                            <td>{{ $submission->catatan ?? '-' }}</td>
+                            <td>
+                                <a href="{{ route('instruktur.submission.show', $submission->id) }}" class="btn btn-sm btn-warning">Detail</a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endif
+        </div>
+    </div>
 </div>
 
 @push('scripts')

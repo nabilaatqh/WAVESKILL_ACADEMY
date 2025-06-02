@@ -1,184 +1,201 @@
 @extends('layouts.instruktur')
 
 @section('title', 'Dashboard Instruktur')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 @section('content')
-<div class="dashboard-wrapper container-center">
-    <div class="welcome-section">
-        <h3>
-            Halo Selamat Datang,<br>
-            instruktur, <span class="highlight">{{ Auth::user()->name }}</span>
-        </h3>
+<div class="dashboard-wrapper container-center" style="max-width: 1100px; margin: 0 auto;">
 
-        @if($selectedCourse)
-        <div class="course-card">
-            @if($selectedCourse->banner_image)
-            <img src="{{ asset('storage/' . $selectedCourse->banner_image) }}" alt="Course Banner" style="max-width: 100%; max-height: 200px;">
-            @endif
-            <h4>{{ $selectedCourse->nama_course }}</h4>
-            <p>{{ $selectedCourse->deskripsi }}</p>
-        </div>
-        @else
-        <p class="no-course">Belum ada course yang ditambahkan.</p>
-        @endif
+    <div class="welcome-text text-center mb-4">
+        <h1 style="font-size: 32px; font-weight: 700; line-height: 1.2; color: #008080;">Halo Selamat Datang,</h1>
+        <h1 style="font-size: 32px; font-weight: 700; line-height: 1.2; color: white;">Instruktur, {{ Auth::user()->name }}</h1>
     </div>
 
-    <nav class="tab-menu">
+    @if($selectedCourse)
+    <div class="course-card mb-4" style="background: #ffa500; padding: 20px; border-radius: 16px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+        <div style="font-size: 24px; font-weight: bold; margin-bottom: 12px;">Kelas yang diajar saat ini</div>
+        @if($selectedCourse->banner_image)
+            <img src="{{ asset('storage/' . $selectedCourse->banner_image) }}" alt="Course Banner" style="width: 100%; max-height: 320px; object-fit: cover; border-radius: 12px; margin-bottom: 12px;">
+        @endif
+        <h2 style="font-size: 24px; font-weight: bold;">{{ $selectedCourse->nama_course }}</h2>
+        <p style="font-size: 20px;">Kursus ini dirancang khusus untuk pemula yang ingin mempelajari dasar-dasar desain UI/UX menggunakan Figma. kamu akan belajar bagaimana merancang tampilan aplikasi/web dari nol, memahami prinsip desain, hingga membuat prototipe interaktif</p>
+        <p style="font-size: 14px;">{{ $selectedCourse->deskripsi }}</p>
+    </div>
+
+    <nav class="tab-menu d-flex justify-content-center mb-4" style="gap: 12px;">
         <button class="tab-button active" id="tab-materi">Materi</button>
         <button class="tab-button" id="tab-project">Project</button>
         <button class="tab-button" id="tab-course">Course Kamu</button>
     </nav>
 
     <section id="section-materi">
-        @if($selectedCourse)
-        <div class="materi-subtitle mb-3 d-flex justify-content-between align-items-center">
-            <span>Daftar Materi {{ $selectedCourse->nama_course }}</span>
-            <button class="btn btn-success btn-sm" onclick="toggleMateriForm()">+</button>
+        <div class="text-center mb-3">
+            <span style="font-weight: bold; font-size: 25px; color: orange;">Daftar Materi {{ $selectedCourse->nama_course }}</span>
+            <button class="btn btn-success btn-sm ms-2" onclick="toggleMateriForm()">+</button>
         </div>
 
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-md-4">
-                <div id="materi-form" style="display: none;" class="p-3 border rounded bg-light mb-3">
+                <div id="materi-form" style="display: none;" class="card p-4 mb-4 border-0 shadow" >
+                    
                     <form action="{{ route('instruktur.materi.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="course_id" value="{{ $selectedCourse->id }}">
-
+                        <div class="form-group" style="margin-bottom: 20px;">
+                        <label>Judul Materi <span style="color: red;">*</span></label>
                         <input type="text" name="judul" class="form-control mb-2" placeholder="Judul Materi" required>
-                        <textarea name="deskripsi" class="form-control mb-2" placeholder="Deskripsi Materi" rows="2"></textarea>
+                         </div>
+                         
+                        <div class="form-group" style="margin-bottom: 20px;">
+                        <label>Deskripsi Materi <span style="color: red;">*</span></label>
+                        <textarea name="deskripsi" class="form-control mb-2" placeholder="Deskripsi Materi" rows="3"></textarea>
+                         </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                        <label>Unggah Materi <span style="color: red;">*</span></label>
                         <select name="tipe" class="form-control mb-2" required>
                             <option value="pdf">PDF</option>
                             <option value="video">Video</option>
                             <option value="link">Link</option>
                         </select>
                         <input type="file" name="file" class="form-control mb-2" accept=".pdf,.mp4,.">
+                        <button type="submit" class="btn btn-success w-100 fw-bold" style="padding: 12px 0; font-size: 16px; border-radius: 8px;">
+                                    <i class="fas fa-save me-2"></i> Simpan Materi
+                        </button>
 
-                        <button type="submit" class="btn btn-primary w-100">Simpan Materi</button>
                     </form>
                 </div>
             </div>
 
             <div class="col-md-8">
-                <form method="GET" action="{{ route('instruktur.dashboard') }}" class="mb-3 d-flex">
+                <form method="GET" action="{{ route('instruktur.dashboard') }}" class="mb-3 d-flex justify-content-center align-items-center" style="gap: 10px; margin-bottom: 20px;">
                     <input type="hidden" name="course_id" value="{{ $selectedCourse->id }}">
                     <input type="hidden" name="active_tab" value="materi">
-                    <input
-                        type="search"
-                        name="search_materi"
-                        value="{{ request('search_materi') }}"
-                        placeholder="Cari Materi"
-                        class="form-control"
-                    />
-                    <button type="submit" class="btn btn-primary ms-2">Cari</button>
+                    <input type="search" name="search_materi" value="{{ request('search_materi') }}" placeholder="Cari Materi" class="form-control" style="width: 100%; max-width: 500px;" />
+                    <button type="submit" class="btn btn-primary">Cari</button>
                 </form>
 
                 @forelse($materi as $item)
-                <div class="materi-item d-flex justify-content-between align-items-start mb-3 p-3 border rounded">
-                    <div class="materi-content">
-                        <strong>{{ $item->judul }}</strong>
-                        <p>{{ $item->deskripsi }}</p>
+                    <div class="materi-item d-flex justify-content-between align-items-start mb-3 p-3 border rounded">
+                        <div class="materi-content">
+                            <strong>{{ $item->judul }}</strong>
+                            <p>{{ $item->deskripsi }}</p>
+                        </div>
+                        <div class="materi-action d-flex flex-column gap-2">
+                            <a href="{{ route('instruktur.materi.show', $item->id) }}" class="detail-btn" title="Detail Materi" aria-label="Detail Materi">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
-
-                    <div class="materi-action d-flex flex-column gap-2">
-                        <a href="{{ route('instruktur.materi.show', $item->id) }}" class="detail-btn" title="Detail Materi" aria-label="Detail Materi">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
                 @empty
-                <p class="text-white">Belum ada materi untuk course ini.</p>
+                    <p class="text-white">Belum ada materi untuk course ini.</p>
                 @endforelse
             </div>
         </div>
-        @else
-        <p class="text-white">Belum ada course aktif.</p>
-        @endif
     </section>
 
-    <section id="section-project" class="d-none">
-        @if($selectedCourse)
-        <div class="materi-subtitle mb-3 d-flex justify-content-between align-items-center">
-            <span>Daftar Project {{ $selectedCourse->nama_course }}</span>
-            <button class="btn btn-primary btn-sm" onclick="toggleProjectForm()">+</button>
+    <section id="section-project" class="d-none" style="margin-top: -5px;">
+        <div class="text-center mb-3" style="max-width: 1100px; margin: 0 auto; ">
+            <span style="font-weight: bold; font-size: 25px; color: orange;">Daftar Project {{ $selectedCourse->nama_course }}</span>
+            <button class="btn btn-primary btn-sm ms-2" onclick="toggleProjectForm()">+</button>
         </div>
 
-        <div class="row">
+        <div class="row justify-content-center" style="max-width: 1100px; margin: 0 auto;">
             <div class="col-md-4">
-                <div id="project-form" style="display: none;" class="p-3 border rounded bg-light mb-3">
+                  <div id="project-form" style="display: none;" class="card p-4 mb-4 border-0 shadow" >
                     <form action="{{ route('instruktur.project.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="course_id" value="{{ $selectedCourse->id }}">
-                        <input type="text" name="judul" class="form-control mb-2" placeholder="Judul Project" required>
-                        <textarea name="deskripsi" class="form-control mb-2" placeholder="Deskripsi Project" rows="2"></textarea>
-                        <input type="file" name="file" class="form-control mb-2" accept=".pdf">
-                        <button type="submit" class="btn btn-success w-100">Simpan</button>
+                        
+                        <div class="form-group">
+                            <label>Judul</label>
+                            <input type="text" name="judul" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Deskripsi</label>
+                            <textarea name="deskripsi" class="form-control"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tipe</label>
+                            <select name="tipe" class="form-control" required>
+                                <option value="pdf">PDF</option>
+                                <option value="video">Video</option>
+                                <option value="link">Link</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Upload File</label>
+                            <input type="file" name="file" class="form-control" accept=".pdf,.mp4">
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 mt-3">Simpan Project</button>
                     </form>
                 </div>
             </div>
 
             <div class="col-md-8">
-                <form method="GET" action="{{ route('instruktur.dashboard') }}" class="mb-3 d-flex">
+                <form method="GET" action="{{ route('instruktur.dashboard') }}" class="mb-3 d-flex justify-content-center align-items-center" style="gap: 10px;  margin-bottom: 20px;">
                     <input type="hidden" name="course_id" value="{{ $selectedCourse->id }}">
                     <input type="hidden" name="active_tab" value="project">
-                    <input
-                        type="search"
-                        name="search_project"
-                        value="{{ request('search_project') }}"
-                        placeholder="Cari Project"
-                        class="form-control"
-                    />
-                    <button type="submit" class="btn btn-primary ms-2">Cari</button>
+                    <input type="search" name="search_project" value="{{ request('search_project') }}" placeholder="Cari Project" class="form-control" style="width: 100%; max-width: 500px;" />
+                    <button type="submit" class="btn btn-primary">Cari</button>
                 </form>
 
                 @forelse($projects as $item)
-                <div class="project-item">
-                    <div class="project-info">
-                        <div class="project-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" class="feather feather-file-text" viewBox="0 0 24 24" width="24" height="24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="9" y2="9"></line></svg>
+                    <div class="materi-item d-flex justify-content-between align-items-start mb-3 p-3 border rounded">
+                        <div class="materi-content">
+                            <strong>{{ $item->judul }}</strong>
+                            <p>{{ $item->deskripsi ?? 'Deskripsi tidak tersedia' }}</p>
                         </div>
-                        <div class="project-details">
-                            <div class="project-title">{{ $item->judul }}</div>
-                            <div class="project-description">{{ $item->deskripsi ?? 'Deskripsi tidak tersedia' }}</div>
-                            <div class="project-description" style="font-size: 13px; margin-top: 4px;">50 Project dikumpulkan</div>
+                        <div class="materi-action d-flex flex-column gap-2">
+                            <a href="{{ route('instruktur.submission.index', $item->id) }}" class="detail-btn" title="Lihat Submission Project" aria-label="Lihat Submission Project">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </a>
                         </div>
                     </div>
-                    <a href="{{ route('instruktur.submission.index', $item->id) }}" class="btn-submission">Lihat Submission</a>
-                </div>
                 @empty
-                <p class="text-white">Belum ada project untuk course ini.</p>
+                    <p class="text-white">Belum ada project untuk course ini.</p>
                 @endforelse
+
             </div>
         </div>
-        @else
-        <p class="text-white">Belum ada course aktif.</p>
-        @endif
     </section>
 
-    <section id="section-course" class="d-none">
-        <div class="materi-subtitle">Daftar Course yang Diajarkan</div>
-        <div class="course-list">
+    <section id="section-course" class="d-none" style="margin-top: -5px;">
+        <div class="materi-subtitle text-center mb-3" style="max-width: 1100px; margin: 0 auto; font-weight: bold; font-size: 25px; margin-bottom: 20px; color: orange;">Daftar Course yang Diajarkan</div>
+        <div class="course-list" style="max-width: 1100px; margin: 0 auto;">
             @forelse($courses as $course)
-                <div class="kelas-horizontal-card">
-                    <div class="card-image">
-                        @if(!empty($course->banner_image))
-                            <img src="{{ asset('storage/' . $course->banner_image) }}" alt="Course Banner" style="max-width: 150px; max-height: 100px;">
-                        @else
-                            <img src="https://via.placeholder.com/150x100?text=Course" alt="Default Banner">
-                        @endif
-                    </div>
-                    <div class="card-content">
-                        <h5>{{ $course->nama_course }}</h5>
-                        <p>{{ $course->deskripsi }}</p>
-                        <a href="{{ route('instruktur.dashboard', ['course_id' => $course->id]) }}" class="btn-lihat">Lihat materi →</a>
-                    </div>
-                </div>
+                <div class="course-card mb-4" style="background: #f4d453; padding: 20px; border-radius: 16px; color: rgb(0, 0, 0); box-shadow: 0 4px 10px rgba(0,0,0,0.2); max-width: 1000px; margin: 20px auto;">
+            @if($course->banner_image)
+                <img src="{{ asset('storage/' . $course->banner_image) }}" alt="Course Banner"
+                    style="width: 100%; max-height: 320px; object-fit: cover; border-radius: 12px; margin-bottom: 12px;">
+            @else
+                <img src="https://via.placeholder.com/1000x220?text=Course"
+                    alt="Default Banner"
+                    style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; margin-bottom: 12px;">
+            @endif
+            <h2 style="font-size: 24px; font-weight: bold;">{{ $course->nama_course }}</h2>
+            <p style="font-size: 16px;">{{ Str::limit($course->deskripsi, 160) }}</p>
+            <a href="{{ route('instruktur.dashboard', ['course_id' => $course->id]) }}" class="btn btn-light mt-2" style="font-weight: bold;">Lihat materi →</a>
+        </div>
+
             @empty
-                <p class="no-course">Belum ada course untuk ditampilkan.</p>
+                <p class="text-white">Belum ada course untuk ditampilkan.</p>
             @endforelse
         </div>
     </section>
+    @else
+        <p class="text-white">Belum ada course aktif.</p>
+    @endif
 </div>
 
 <script>
@@ -224,3 +241,18 @@
     }
 </script>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            confirmButtonColor: '#3085d6'
+        });
+    @endif
+</script>
+@endpush
+

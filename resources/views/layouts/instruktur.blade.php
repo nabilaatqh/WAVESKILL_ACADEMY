@@ -6,7 +6,9 @@
     <title>@yield('title', 'Dashboard Instruktur')</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="{{ asset('css/instruktur.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/backsite/instruktur/grup_kelas.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" href="{{ asset('image/logo.png') }}" type="image/png">
     <style>
         .dropdown-profile {
             position: relative;
@@ -53,13 +55,29 @@
             object-fit: cover;
             border: 2px solid white;
         }
+
+        #materi-form.card,
+        #project-form.card {
+            display: none;
+            width: 100%;
+            max-width: 1100px;
+            margin: 20px 0;
+            padding: 2rem 1.5rem;
+            border-radius: 16px;
+            background-color: #ffffff;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+        }
     </style>
     @yield('head')
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo">WS</div>
 
+    <div class="sidebar">
+        <!-- Logo -->
+        <div class="logo text-center" style="margin-bottom: 20px;">
+            <img src="{{ asset('image/logo.png') }}" alt="Logo" style="width: 65px; height: auto; background-color: transparent;">
+        </div>
+        <!-- Menu navigasi -->
         <a href="{{ route('instruktur.dashboard') }}" class="{{ request()->routeIs('instruktur.dashboard') ? 'active' : '' }}" title="Home">
             <i class="fas fa-home"></i>
         </a>
@@ -78,19 +96,21 @@
     </div>
 
     <div class="main-content">
-        <div class="topbar">
-            <div class="notif" title="Notifikasi">
-                <i class="fas fa-bell"></i>
-            </div>
-
+        <div class="topbar" style="height: 80px; padding: 16px 24px; background-color: #FFA500; display: flex; align-items: center;">
             <div class="profile dropdown-profile">
                 @php
-                    $foto = Auth::user()->foto;
-                    $urlFoto = $foto ? asset('storage/' . $foto) : asset('images/avatar-default.png');
+                    $instruktur = Auth::guard('instruktur')->user();
+                    $fotoPath = $instruktur->foto;
+                    $fotoUrl = $fotoPath && file_exists(public_path('storage/' . $fotoPath))
+                        ? asset('storage/' . $fotoPath)
+                        : 'https://ui-avatars.com/api/?name=' . urlencode($instruktur->nama_awal . ' ' . $instruktur->nama_akhir);
                 @endphp
-                <img src="{{ $urlFoto }}" alt="Avatar">
-                <span class="name">{{ Auth::user()->name }}</span>
-                <i class="fas fa-chevron-down"></i>
+
+                <img src="{{ $fotoUrl }}" alt="Foto Profil">
+                <span class="name" style="margin-left: 8px; color: white; font-weight: bold;">
+                    {{ $instruktur->nama_awal }}
+                </span>
+                <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
 
                 <div class="dropdown-menu">
                     <a href="{{ route('instruktur.profile.edit') }}">

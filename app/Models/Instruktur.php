@@ -4,17 +4,15 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Instruktur extends Authenticatable
 {
-    use Notifiable, HasFactory;
+    use Notifiable;
 
-    // Kalau use table users (default Laravel)
-//  protected $table = 'users'; 
-
-    // Jika butuh guard khusus, pastikan juga di config/auth.php ada guard instruktur
     protected $guard = 'instruktur';
+    protected $table = 'users';
+    
+     
 
     protected $fillable = [
         'name',
