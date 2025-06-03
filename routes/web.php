@@ -37,6 +37,10 @@ use App\Http\Controllers\Student\EnrollmentController;
 use App\Http\Controllers\Student\GroupController as StudentGroupController;
 use App\Http\Controllers\Student\StudentCertificateController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\MateriController as StudentMateriController;
+use App\Http\Controllers\Student\ProjectController as StudentProjectController;
+use App\Http\Controllers\Student\SubmissionController as StudentSubmissionController;
+
 
 
 // ============== HOME & LOGIN SELECTOR ==============
@@ -139,13 +143,22 @@ Route::middleware(['auth:student', 'verified'])->prefix('student')->name('studen
     Route::post('/courses/{id}/enroll', [EnrollmentController::class, 'processEnrollment'])->name('enroll.process');
     Route::get('/enrollments/status/{id}', [EnrollmentController::class, 'enrollmentStatus'])->name('enroll.status');
     Route::get('/groups', [StudentGroupController::class, 'index'])->name('groups.index');
+    
+    Route::get('/materi', [StudentMateriController::class, 'index'])->name('materi.index');
+    Route::get('/materi/{id}', [StudentMateriController::class, 'show'])->name('materi.show');
+
+    Route::get('/project', [StudentProjectController::class, 'index'])->name('project.index');
+    Route::get('/project/{id}', [StudentProjectController::class, 'show'])->name('project.show');
+
+    Route::post('/project/{id}/submit', [StudentProjectController::class, 'submit'])->name('project.submit.store');
 
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::get('/certificates', [StudentCertificateController::class, 'index'])->name('certificates.index');
     Route::get('/certificates/{course}', [StudentCertificateController::class, 'show'])->name('certificates.show');
-    Route::get('/certificate/{course}', [StudentCertificateController::class, 'download'])->name('certificate.download');
+    Route::get('/certificates/{course}/download', [StudentCertificateController::class, 'download'])->name('certificates.download');
+
 });
 
 

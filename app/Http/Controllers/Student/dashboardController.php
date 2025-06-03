@@ -15,10 +15,8 @@ class DashboardController extends Controller
     {
         $student = Auth::guard('student')->user();
 
-        // Ambil semua course yang diikuti student
-        $enrolledCourses = $student->enrolledCourses()
-            ->with(['projects', 'materis', 'instruktur'])
-            ->get();
+        // Ambil semua course yang diikuti student dan relasi terkait
+        $enrolledCourses = $student->enrollcourses()->with(['projects', 'materis', 'instruktur'])->get();
 
         // Ambil selected course ID dari query, atau pakai course pertama
         $selectedCourseId = $request->input('course_id') ?? ($enrolledCourses->first()->id ?? null);
@@ -32,7 +30,7 @@ class DashboardController extends Controller
         $projects = collect();
 
         if ($selectedCourseId) {
-            $selectedCourse = $enrolledCourses->where('id', $selectedCourseId)->first();
+            $selectedCourse = $enrolledCourses->firstWhere('id', $selectedCourseId);
 
             if ($selectedCourse) {
                 // Filter materi
@@ -45,13 +43,11 @@ class DashboardController extends Controller
                 }
 
                 // Filter project
-                if ($activeTab === 'project') {
-                    $projectQuery = $selectedCourse->projects();
-                    if ($searchProject) {
-                        $projectQuery->where('judul', 'like', "%{$searchProject}%");
-                    }
-                    $projects = $projectQuery->orderBy('created_at', 'desc')->get();
+                $projectQuery = $selectedCourse->projects();
+                if ($searchProject) {
+                    $projectQuery->where('judul', 'like', "%{$searchProject}%");
                 }
+                $projects = $projectQuery->orderBy('created_at', 'desc')->get();
             }
         }
 

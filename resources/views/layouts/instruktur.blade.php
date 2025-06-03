@@ -132,10 +132,6 @@
         .btn-orange:hover {
         background-color: #e69500;
     }
-
-
-
-
     </style>
 
     @yield('head')
@@ -165,18 +161,19 @@
     <div class="main-content">
         @php
             $instruktur = Auth::guard('instruktur')->user();
-            $fotoUrl = $instruktur->photo && file_exists(public_path('storage/' . $instruktur->photo))
+            $fotoUrl = $instruktur->photo
                 ? asset('storage/' . $instruktur->photo)
                 : asset('images/avatar-placeholder.png');
         @endphp
 
         <header class="topbar">
-            <div class="profile-container d-flex align-items-center dropdown-profile">
-                <p class="profile-name mb-0">
+            <div class="d-flex align-items-center justify-content-end w-100 pe-3 dropdown-profile">
+                <p class="profile-name mb-0 me-2">
                     {{ $instruktur->first_name ?? 'Instruktur' }} {{ $instruktur->last_name ?? '' }}
                 </p>
                 <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#profileModal">
-                    <img src="{{ $fotoUrl }}" alt="Avatar">
+                    <img src="{{ $fotoUrl }}" alt="Avatar"
+                        style="width: 36px; height: 36px; object-fit: cover; border-radius: 50%; border: 2px solid white;">
                 </button>
                 <i class="fas fa-chevron-down ms-2 text-white"></i>
 

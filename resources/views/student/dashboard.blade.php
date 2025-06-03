@@ -64,38 +64,38 @@
             <div class="alert alert-warning">Belum ada materi tersedia.</div>
         @else
             @foreach ($materi as $item)
-                <div class="alert alert-light mb-2 p-2 rounded">
-                    <strong>{{ $item->judul }}</strong><br>
-                    <small>{{ Str::limit($item->deskripsi, 100) }}</small>
+                <div class="d-flex justify-content-between align-items-center mb-3" style="background-color: #fffdeb; padding: 12px 18px; border-radius: 12px; border-left: 5px solid orange; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div>
+                        <div style="font-weight: 600;">{{ $item->judul }}</div>
+                        <small>{{ $item->deskripsi }}</small>
+                    </div>
+                    <a href="{{ route('student.materi.show', $item->id) }}" class="btn btn-sm" style="background-color: orange; color: white; border-radius: 50%;">
+                        <i class="fas fa-eye"></i>
+                    </a>
                 </div>
+
             @endforeach
         @endif
     </div>
 
     <!-- ===================== TAB Project ===================== -->
     <div id="project" class="tab-content px-4" style="display: none; margin-top: 15px;">
-        <h4>
-            Project dari Kursus: {{ $selectedCourse->nama_course ?? '-' }}
-        </h4>
+        <h5 class="mt-4 text-white">Project dari Kursus: {{ $selectedCourse->nama_course }}</h5>
 
         @if ($projects->isEmpty())
             <div class="alert alert-warning">Belum ada project tersedia.</div>
         @else
             @foreach ($projects as $project)
-                <div class="card mb-3 p-2 project-card">
-                    <div class="card-body p-2">
+                <div class="card mb-3">
+                    <div class="card-body">
                         <h5 class="card-title">{{ $project->judul }}</h5>
-                        <p class="card-text">{{ Str::limit($project->deskripsi, 100) }}</p>
-                        {{-- <a 
-                          href="{{ route('student.project.show', $project->id) }}" 
-                          class="btn btn-sm btn-primary"
-                        >
-                            Lihat Project
-                        </a> --}}
+                        <p class="card-text">{{ $project->deskripsi }}</p>
+                        <a href="{{ route('student.project.show', $project->id) }}" class="btn btn-sm btn-primary mt-2">Lihat</a>
                     </div>
                 </div>
             @endforeach
         @endif
+
     </div>
 
     <!-- ===================== TAB “Kursus Kamu” ===================== -->

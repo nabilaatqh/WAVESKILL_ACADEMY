@@ -10,51 +10,60 @@ use Illuminate\Support\Str;
 
 class StudentCertificateController extends Controller
 {
+    // Tampilkan daftar course yang punya sertifikat
     public function index()
     {
         $student = auth()->guard('student')->user();
 
-        $courses = $student->courses()
+        // Hanya tampilkan course yang punya sertifikat dan sudah diselesaikan
+        $courses = $student->enrollcourses()
             ->with(['projects', 'instruktur'])
-            ->get();
+            ->whereHas('projects') // pastikan ada project
+            ->get()
+            ->filter(function ($course) use ($student) {
+                $completed = $student->submissions()->where('course_id', $course->id)->count();
+                return $completed >= $course->projects->count() && $course->certificate_file;
+            });
 
-        $student->load('submissions');
-
-        return view('student.certificate.index', compact('courses', 'student'));
+        return view('student.certificates.index', [
+            'coursesWithCertificates' => $courses,
+        ]);
     }
 
+    // Tampilkan preview sertifikat
     public function show($courseId)
     {
-        $student = auth()->guard('student')->user();
+        $student = Auth::guard('student')->user();
         $course = Course::with(['projects', 'instruktur'])->findOrFail($courseId);
 
-        $student->load('submissions');
+        $completed = $student->submissions()->where('course_id', $courseId)->count();
+        $total = $course->projects->count();
 
-        return view('student.certificate.show', compact('course', 'student'));
+        if ($completed < $total || !$course->certificate_file) {
+            return redirect()->back()->with('error', 'Sertifikat belum tersedia.');
+        }
+
+        return view('pdf.certificate', [
+            'studentName' => $student->name,
+            'courseName' => $course->nama_course,
+            'instrukturName' => $course->instruktur->name ?? '-',
+            'templatePath' => asset('storage/' . $course->certificate_file),
+        ]);
     }
 
+    // Unduh PDF Sertifikat
     public function download($courseId)
     {
         $student = Auth::guard('student')->user();
-        $course = Course::with('projects')->findOrFail($courseId);
+        $course = Course::with(['projects', 'instruktur'])->findOrFail($courseId);
 
-        // Hitung project yang sudah diselesaikan student
-        $completed = $student->submissions()
-            ->where('course_id', $courseId)
-            ->count();
-
+        $completed = $student->submissions()->where('course_id', $courseId)->count();
         $total = $course->projects->count();
 
-        // Cek apakah semua project sudah selesai
-        if ($completed < $total) {
-            return redirect()->back()->with('error', 'Kamu belum menyelesaikan semua project.');
+        if ($completed < $total || !$course->certificate_file) {
+            return redirect()->back()->with('error', 'Sertifikat belum tersedia.');
         }
 
-        if (!$course->certificate_file) {
-            return redirect()->back()->with('error', 'Sertifikat belum tersedia untuk course ini.');
-        }
-
-        // Buat PDF sertifikat dengan nama student
         $pdf = Pdf::loadView('pdf.certificate', [
             'studentName' => $student->name,
             'courseName' => $course->nama_course,
@@ -62,6 +71,6 @@ class StudentCertificateController extends Controller
             'templatePath' => public_path('storage/' . $course->certificate_file),
         ])->setPaper('A4', 'landscape');
 
-        return $pdf->download('sertifikat-' . Str::slug($student->name) . '.pdf');
+        return $pdf->download('sertifikat-' . Str::slug($student->name) . '-' . Str::slug($course->nama_course) . '.pdf');
     }
 }
