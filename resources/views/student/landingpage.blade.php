@@ -117,7 +117,7 @@
     }
 
 
-    /* Wrapper gambar agar su   dut atas ikut membulat */
+    /* Wrapper gambar agar sudut atas ikut membulat */
     .populer-img-wrapper {
         height: 180px;
         overflow: hidden;
@@ -186,7 +186,7 @@
         margin-top: auto;
     }
 
-    /* Responsif: tombol harga menjadi penuh lebar pada layar sempit */
+    /* Responsif: tombol harga menjadi ful-width pada layar sempit */
     @media (max-width: 576px) {
         .populer-footer .price-button {
             width: 100%;
@@ -354,4 +354,20 @@
         </div>
     </div>
 </section>
+
+{{-- Tambahkan SweetAlert bila session('success') ada --}}
+@if(session('success'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        });
+    </script>
+@endif
+
 @endsection

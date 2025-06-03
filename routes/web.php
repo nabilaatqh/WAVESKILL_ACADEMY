@@ -35,6 +35,8 @@ use App\Http\Controllers\Student\certificateController;
 use App\Http\Controllers\Student\ProfileController;
 use App\Http\Controllers\Student\EnrollmentController;
 use App\Http\Controllers\Student\GroupController as StudentGroupController;
+use App\Http\Controllers\Student\MateriController as StudentMateriController;
+use App\Http\Controllers\Student\ProjectController as StudentProjectController;
 
     
 
@@ -146,10 +148,12 @@ Route::middleware(['auth:student'])->prefix('student')->name('student.')->group(
     Route::post('/courses/{id}/enroll', [EnrollmentController::class, 'processEnrollment'])->name('enroll.process');
     Route::get('/enrollments/status/{id}', [EnrollmentController::class, 'enrollmentStatus'])->name('enroll.status');
     Route::get('/groups', [StudentGroupController::class, 'index'])->name('groups.index');
-    Route::get('/certificates', [certificateController::class, 'index'])->name('certificates.index');
-    Route::get('/certificates/{course}', [certificateController::class, 'show'])->name('certificates.show');
+    Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
+    Route::get('/certificates/{course}', [CertificateController::class, 'show'])->name('certificates.show');
+    Route::get('/materi/{id}', [StudentMateriController::class, 'show'])->name('materi.index');
+    Route::get('/project/{id}', [StudentProjectController::class, 'show'])->name('project.show');
 
-    // Profil
+   
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });

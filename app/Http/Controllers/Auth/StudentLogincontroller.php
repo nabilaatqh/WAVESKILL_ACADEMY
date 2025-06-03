@@ -34,7 +34,9 @@ class StudentLoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('student')->attempt($credentials, $request->filled('remember'))) {
-            return redirect()->intended(route('student.landingpage'));
+            return redirect()
+            ->intended(route('student.landingpage'))
+            ->with('success', 'Anda berhasil masuk!');
         }
 
         return back()->withErrors([

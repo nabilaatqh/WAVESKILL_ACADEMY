@@ -164,6 +164,9 @@
             }
         }
     </style>
+
+    {{-- SweetAlert2 --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -225,6 +228,20 @@
         </div>
     </div>
 </div>
+
+{{-- SweetAlert2: tampilkan jika ada session 'success' --}}
+<script>
+    @if(session('success'))
+        Swal.fire({
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        });
+    @endif
+</script>
 
 {{-- Bootstrap JS (opsional) --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

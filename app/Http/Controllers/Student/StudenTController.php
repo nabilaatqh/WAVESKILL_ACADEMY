@@ -22,10 +22,8 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Ambil data student yang sedang login
         $student = Auth::guard('student')->user();
 
-        // 2. Ambil seluruh Course yang di‐enroll oleh student (status “approved”), with relasi instruktur
         $enrolledCourses = Course::whereIn('id', function($q) use ($student) {
                 $q->select('course_id')
                   ->from('enrollments')
@@ -35,17 +33,12 @@ class StudentController extends Controller
             ->with('instruktur')
             ->get();
 
-        // 3. Tentukan selectedCourseId:
-        //    - Jika ada query parameter “course_id” (di URL), pakai itu
-        //    - Jika tidak, pilih ID course pertama di koleksi $enrolledCourses
-        //    - Jika student belum enroll sama sekali, maka null
+        
         $selectedCourseId = $request->input('course_id')
                              ?? ($enrolledCourses->first()->id ?? null);
 
-        // 4. Temukan objek “selectedCourse” dari koleksi $enrolledCourses
         $selectedCourse = $enrolledCourses->firstWhere('id', $selectedCourseId);
 
-        // 5. Ambil materi dan project dari selectedCourse (jika ada)
         if ($selectedCourse) {
             // a) Materi
             $materi = Materi::where('course_id', $selectedCourse->id)
@@ -62,12 +55,12 @@ class StudentController extends Controller
             $projects = collect();
         }
 
-        // 6. Kembalikan view ‘student.dashboard’ dengan semua variabel yang dibutuhkan
         return view('student.dashboard', compact(
             'enrolledCourses',
             'selectedCourse',
             'materi',
-            'projects'
+            'projects',
+            'selectedCourseId'
         ));
     }
 }
