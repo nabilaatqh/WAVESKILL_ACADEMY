@@ -5,121 +5,8 @@
     <title>@yield('title', 'Student Panel - WaveSkill')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #54c7ef;
-        }
-
-        .app-container {
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .sidebar {
-            width: 70px;
-            background-color: #ff9042;
-            color: white;
-            padding: 1rem 0.3rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            box-sizing: border-box;
-        }
-
-        .sidebar .logo {
-            width: 50px;
-            height: 50px;
-            background-color: white;
-            border-radius: 50%;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .sidebar .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .sidebar a {
-            color: white;
-            font-size: 1.8rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            transition: background-color 0.2s;
-            text-decoration: none;
-        }
-
-        .sidebar a.active,
-        .sidebar a:hover {
-            background-color: #e67e22;
-        }
-
-        .topbar {
-            height: 70px;
-            background-color: #ffb347;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-            box-sizing: border-box;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-
-        .profile-container {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            border: 2px solid rgba(255, 255, 255, 0.6);
-            border-radius: 50px;
-            padding: 4px 10px 4px 12px;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .profile-name {
-            color: #fff;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .nav-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
-        }
-
-        .main-content-wrapper {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .content {
-            padding: 2rem 2.5rem;
-            height: calc(100vh - 70px);
-            overflow-y: auto;
-            box-sizing: border-box;
-            background-color: #54c7ef;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('frontsite/student/studentlayout.css') }}">
+    
 </head>
 <body>
 <div class="app-container">
@@ -178,9 +65,10 @@
                         @endif
                     </div>
                     <div class="modal-footer">
-                        <form method="POST" action="{{ route('student.logout') }}">
+                        <!-- Form Logout sudah diubah: button bertipe button dan dikasih ID -->
+                        <form id="logout-form" method="POST" action="{{ route('student.logout') }}">
                             @csrf
-                            <button type="submit" class="btn btn-danger">Logout</button>
+                            <button type="button" id="logout-button" class="btn btn-danger">Logout</button>
                         </form>
                     </div>
                 </div>
@@ -192,7 +80,39 @@
         </main>
     </div>
 </div>
+
+<!-- Bootstrap JS dan SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Script konfirmasi Logout dengan SweetAlert2 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutButton = document.getElementById('logout-button');
+    const logoutForm   = document.getElementById('logout-form');
+
+    if (logoutButton && logoutForm) {
+        logoutButton.addEventListener('click', function(e) {
+            e.preventDefault(); // Mencegah langsung submit
+
+            Swal.fire({
+                title: 'Yakin ingin logout?',
+                text: 'Anda akan keluar dari sesi ini.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, logout',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    logoutForm.submit();
+                }
+            });
+        });
+    }
+});
+</script>
+
 @stack('scripts')
 </body>
 </html>

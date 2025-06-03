@@ -1,0 +1,75 @@
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        /* Topbar ala layout student */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+            background-color: #ffb347;
+            padding: 0 2rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        /* Brand */
+        .brand {
+            display: flex;
+            align-items: center;
+            color: #fff;
+            text-decoration: none;
+            padding: 60px;
+        }
+        .brand img {
+            height: 44px;
+            margin-right: 10px;
+        }
+        .brand-text {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #ffffff;
+            line-height: 1;
+            margin-bottom: 0;
+        }
+        /* Notifikasi */
+        .notif-icon {
+            position: relative;
+            cursor: pointer;
+            color: #fff;
+            font-size: 1.5rem;
+        }
+        .notif-icon .badge {
+            position: absolute;
+            top: -4px;
+            right: -6px;
+            background: #dc3545;
+            color: #fff;
+            font-size: 0.6rem;
+            padding: 2px 5px;
+            border-radius: 50%;
+        }
+        /* Avatar & Name */
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 4px; 
+            padding: 70px;
+        }
+        .profile-name {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1.2;
+            margin: 0;
+            padding-top: 3px;
+        }
+        .nav-icon {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid white;
+        }
